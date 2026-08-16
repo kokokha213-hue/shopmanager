@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Shop Manager - Premium Shop Management System</title>
     
-    <!-- Firebase SDK (Compatible Version) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     
-    <!-- Chart.js for charts -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <style>
@@ -96,22 +96,6 @@
             padding: 20px;
         }
 
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 50%);
-            animation: rotate 30s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .login-box {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -127,14 +111,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-logo {
@@ -258,13 +236,6 @@
             border-radius: var(--radius-xs);
             margin-bottom: 20px;
             display: none;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
         }
 
         .app-container {
@@ -285,6 +256,7 @@
             bottom: 0;
             z-index: 100;
             transition: var(--transition);
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -480,6 +452,9 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 20px;
+            position: relative;
+            height: 350px;
+            overflow: hidden;
         }
 
         .chart-card h3 {
@@ -488,12 +463,24 @@
             font-size: 1rem;
         }
 
+        .chart-container {
+            position: relative;
+            height: calc(100% - 50px);
+            width: 100%;
+        }
+
+        .chart-container canvas {
+            max-height: 100% !important;
+            max-width: 100% !important;
+        }
+
         .table-container {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
             margin-bottom: 20px;
+            overflow-x: auto;
         }
 
         .table {
@@ -535,16 +522,10 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            animation: fadeIn 0.3s;
         }
 
         .modal-overlay.active {
             display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal {
@@ -557,7 +538,6 @@
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s;
         }
 
         .modal-header {
@@ -591,8 +571,8 @@
             color: var(--text-primary);
             box-shadow: var(--shadow-lg);
             z-index: 2000;
-            animation: slideInRight 0.3s;
             display: none;
+            animation: slideInRight 0.3s;
         }
 
         .toast.show {
@@ -600,14 +580,8 @@
         }
 
         @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .mobile-nav {
@@ -647,6 +621,39 @@
             margin-bottom: 4px;
         }
 
+        .receipt {
+            background: white;
+            color: black;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .receipt-items {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .receipt-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
@@ -679,43 +686,19 @@
                 grid-template-columns: 1fr;
             }
 
+            .chart-card {
+                height: 300px;
+            }
+
             .quick-actions {
                 grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
                 gap: 8px;
             }
-        }
 
-        .receipt {
-            background: white;
-            color: black;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .receipt-items {
-            border-top: 1px dashed #000;
-            border-bottom: 1px dashed #000;
-            padding: 10px 0;
-            margin: 10px 0;
-        }
-
-        .receipt-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .receipt-total {
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-align: right;
+            .top-header {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -803,60 +786,55 @@
                     </div>
                 </div>
 
-                <div class="stats-grid" id="dashboardStats">
-                    <!-- Stats will be dynamically populated -->
-                </div>
+                <div class="stats-grid" id="dashboardStats"></div>
 
                 <h2 style="margin-bottom: 16px;">Quick Actions</h2>
                 <div class="quick-actions">
                     <div class="quick-action-btn" onclick="showPage('sale')">
-                        <span class="qa-icon">➕</span>
-                        New Sale
+                        <span class="qa-icon">➕</span> New Sale
                     </div>
                     <div class="quick-action-btn" onclick="showPage('products')">
-                        <span class="qa-icon">📦</span>
-                        Add Product
+                        <span class="qa-icon">📦</span> Add Product
                     </div>
                     <div class="quick-action-btn" onclick="showPage('purchases')">
-                        <span class="qa-icon">🚚</span>
-                        Add Stock
+                        <span class="qa-icon">🚚</span> Add Stock
                     </div>
                     <div class="quick-action-btn" onclick="showPage('expenses')">
-                        <span class="qa-icon">💸</span>
-                        Add Expense
+                        <span class="qa-icon">💸</span> Add Expense
                     </div>
                     <div class="quick-action-btn" onclick="showPage('customers')">
-                        <span class="qa-icon">👥</span>
-                        Add Customer
+                        <span class="qa-icon">👥</span> Add Customer
                     </div>
                     <div class="quick-action-btn" onclick="receivePayment()">
-                        <span class="qa-icon">💰</span>
-                        Receive Payment
+                        <span class="qa-icon">💰</span> Receive Payment
                     </div>
                     <div class="quick-action-btn" onclick="showPage('closing')">
-                        <span class="qa-icon">📊</span>
-                        Daily Closing
+                        <span class="qa-icon">📊</span> Daily Closing
                     </div>
                 </div>
 
                 <div class="charts-grid">
                     <div class="chart-card">
                         <h3>Sales Trend (Last 7 Days)</h3>
-                        <canvas id="salesChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
                     </div>
                     <div class="chart-card">
                         <h3>Profit Trend (Last 7 Days)</h3>
-                        <canvas id="profitChart"></canvas>
+                        <div class="chart-container">
+                            <canvas id="profitChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
-                <div class="chart-card">
+                <div class="chart-card" style="height: auto; min-height: 200px;">
                     <h3>Low Stock Alerts</h3>
                     <div id="topProducts"></div>
                 </div>
             </div>
 
-            <!-- Sale Page -->
+            <!-- Other pages remain same but hidden -->
             <div id="salePage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -886,9 +864,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="saleItems">
-                            <!-- Sale items will be added here -->
-                        </tbody>
+                        <tbody id="saleItems"></tbody>
                     </table>
                 </div>
 
@@ -914,7 +890,6 @@
                 </div>
             </div>
 
-            <!-- Products Page -->
             <div id="productsPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -939,14 +914,11 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="productsTable">
-                            <!-- Products will be dynamically loaded -->
-                        </tbody>
+                        <tbody id="productsTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Purchases Page -->
             <div id="purchasesPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -995,14 +967,11 @@
                                 <th>Supplier</th>
                             </tr>
                         </thead>
-                        <tbody id="purchasesTable">
-                            <!-- Purchase history will be loaded here -->
-                        </tbody>
+                        <tbody id="purchasesTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Stock Page -->
             <div id="stockPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1026,14 +995,11 @@
                                 <th>Adjust</th>
                             </tr>
                         </thead>
-                        <tbody id="stockTable">
-                            <!-- Stock data will be loaded here -->
-                        </tbody>
+                        <tbody id="stockTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Customers Page -->
             <div id="customersPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1055,14 +1021,11 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="customersTable">
-                            <!-- Customers will be loaded here -->
-                        </tbody>
+                        <tbody id="customersTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Expenses Page -->
             <div id="expensesPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1083,14 +1046,11 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="expensesTable">
-                            <!-- Expenses will be loaded here -->
-                        </tbody>
+                        <tbody id="expensesTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Reports Page -->
             <div id="reportsPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1109,11 +1069,9 @@
                     </select>
                 </div>
 
-                <div id="reportSummary" class="stats-grid">
-                    <!-- Report summary will be loaded here -->
-                </div>
+                <div id="reportSummary" class="stats-grid"></div>
 
-                <div class="chart-card">
+                <div class="chart-card" style="height: auto;">
                     <h3>Product-wise Profit</h3>
                     <table class="table">
                         <thead>
@@ -1125,14 +1083,11 @@
                                 <th>Profit</th>
                             </tr>
                         </thead>
-                        <tbody id="productWiseProfit">
-                            <!-- Product wise profit will be loaded here -->
-                        </tbody>
+                        <tbody id="productWiseProfit"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Daily Closing Page -->
             <div id="closingPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1149,16 +1104,13 @@
                     <div class="table-container">
                         <div style="padding: 20px;">
                             <h3>Today's Summary</h3>
-                            <div id="closingDetails" style="margin-top: 20px;">
-                                <!-- Closing details will be loaded here -->
-                            </div>
+                            <div id="closingDetails" style="margin-top: 20px;"></div>
                             <button class="btn" style="max-width: 200px; margin-top: 20px;" onclick="confirmClosing()">Confirm Closing</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Settings Page -->
             <div id="settingsPage" class="page" style="display: none;">
                 <div class="top-header">
                     <div>
@@ -1205,24 +1157,19 @@
         <div class="mobile-nav">
             <div class="mobile-nav-items">
                 <div class="mobile-nav-item active" onclick="showPage('dashboard')">
-                    <span class="mni-icon">🏠</span>
-                    Home
+                    <span class="mni-icon">🏠</span> Home
                 </div>
                 <div class="mobile-nav-item" onclick="showPage('sale')">
-                    <span class="mni-icon">🛒</span>
-                    Sale
+                    <span class="mni-icon">🛒</span> Sale
                 </div>
                 <div class="mobile-nav-item" onclick="showPage('stock')">
-                    <span class="mni-icon">📦</span>
-                    Stock
+                    <span class="mni-icon">📦</span> Stock
                 </div>
                 <div class="mobile-nav-item" onclick="showPage('customers')">
-                    <span class="mni-icon">👥</span>
-                    Customers
+                    <span class="mni-icon">👥</span> Customers
                 </div>
                 <div class="mobile-nav-item" onclick="showMoreMenu()">
-                    <span class="mni-icon">☰</span>
-                    More
+                    <span class="mni-icon">☰</span> More
                 </div>
             </div>
         </div>
@@ -1230,16 +1177,14 @@
 
     <!-- Modal Container -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modalContent">
-            <!-- Modal content will be dynamically inserted -->
-        </div>
+        <div class="modal" id="modalContent"></div>
     </div>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
     <script>
-        // Firebase Configuration - Aapki Config
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCymZBNffUZuVG1NGSqJ5KNrhktXny8uYY",
             authDomain: "shop-managemen.firebaseapp.com",
@@ -1254,7 +1199,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const analytics = firebase.analytics();
 
         // Global Variables
         let currentUser = null;
@@ -1262,7 +1206,9 @@
         let productsCache = [];
         let customersCache = [];
         let isDarkMode = true;
-        let charts = {};
+        let salesChartInstance = null;
+        let profitChartInstance = null;
+        let chartsInitialized = false;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -1303,7 +1249,6 @@
             
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                // Success - onAuthStateChanged will handle the transition
             } catch (error) {
                 errorDiv.textContent = getErrorMessage(error.code);
                 errorDiv.style.display = 'block';
@@ -1348,7 +1293,6 @@
                 loadExpenses(),
                 loadPurchases()
             ]);
-            initializeCharts();
             initializeDemoData();
         }
 
@@ -1362,7 +1306,6 @@
                 targetPage.style.display = 'block';
             }
             
-            // Update navigation
             document.querySelectorAll('.sidebar-nav-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -1370,7 +1313,6 @@
                 item.classList.remove('active');
             });
             
-            // Update specific page data
             switch(pageName) {
                 case 'dashboard':
                     loadDashboardData();
@@ -1525,6 +1467,11 @@
                 document.getElementById('dashboardStats').innerHTML = statsHTML;
                 
                 loadLowStockAlerts();
+                
+                if (!chartsInitialized) {
+                    initializeCharts();
+                }
+                
                 await updateCharts();
                 
             } catch (error) {
@@ -1559,6 +1506,174 @@
                 document.getElementById('topProducts').innerHTML = alertsHTML;
             } catch (error) {
                 console.error('Error loading low stock alerts:', error);
+            }
+        }
+
+        // Charts Functions
+        function initializeCharts() {
+            if (chartsInitialized) {
+                if (salesChartInstance) {
+                    salesChartInstance.destroy();
+                }
+                if (profitChartInstance) {
+                    profitChartInstance.destroy();
+                }
+            }
+            
+            const salesCanvas = document.getElementById('salesChart');
+            const profitCanvas = document.getElementById('profitChart');
+            
+            if (!salesCanvas || !profitCanvas) {
+                console.error('Chart canvases not found');
+                return;
+            }
+            
+            const salesCtx = salesCanvas.getContext('2d');
+            const profitCtx = profitCanvas.getContext('2d');
+            
+            salesChartInstance = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Sales: Rs. ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rs. ' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+            
+            profitChartInstance = new Chart(profitCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Profit',
+                        data: [],
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Profit: Rs. ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rs. ' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+            
+            chartsInitialized = true;
+        }
+
+        async function updateCharts() {
+            if (!salesChartInstance || !profitChartInstance) {
+                return;
+            }
+            
+            const days = [];
+            const salesData = [];
+            const profitData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                try {
+                    const salesSnapshot = await db.collection('sales')
+                        .where('date', '==', dateStr)
+                        .get();
+                    
+                    let dailySales = 0;
+                    let dailyProfit = 0;
+                    
+                    salesSnapshot.docs.forEach(doc => {
+                        const sale = doc.data();
+                        dailySales += sale.total || 0;
+                        dailyProfit += sale.profit || 0;
+                    });
+                    
+                    salesData.push(dailySales);
+                    profitData.push(dailyProfit);
+                    
+                } catch (error) {
+                    console.error('Error loading chart data:', error);
+                    salesData.push(0);
+                    profitData.push(0);
+                }
+            }
+            
+            if (salesChartInstance) {
+                salesChartInstance.data.labels = days;
+                salesChartInstance.data.datasets[0].data = salesData;
+                salesChartInstance.update();
+            }
+            
+            if (profitChartInstance) {
+                profitChartInstance.data.labels = days;
+                profitChartInstance.data.datasets[0].data = profitData;
+                profitChartInstance.update();
             }
         }
 
@@ -3045,109 +3160,10 @@
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
         }
 
-        // Load saved theme
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'light') {
             isDarkMode = false;
             document.body.classList.add('light-mode');
-        }
-
-        // Charts Functions
-        function initializeCharts() {
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            charts.sales = new Chart(salesCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [],
-                        borderColor: '#3b82f6',
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-            
-            const profitCtx = document.getElementById('profitChart').getContext('2d');
-            charts.profit = new Chart(profitCtx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Profit',
-                        data: [],
-                        backgroundColor: '#10b981'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        async function updateCharts() {
-            const days = [];
-            const salesData = [];
-            const profitData = [];
-            
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
-                
-                try {
-                    const salesSnapshot = await db.collection('sales')
-                        .where('date', '==', dateStr)
-                        .get();
-                    
-                    let dailySales = 0;
-                    let dailyProfit = 0;
-                    
-                    salesSnapshot.docs.forEach(doc => {
-                        const sale = doc.data();
-                        dailySales += sale.total || 0;
-                        dailyProfit += sale.profit || 0;
-                    });
-                    
-                    salesData.push(dailySales);
-                    profitData.push(dailyProfit);
-                    
-                } catch (error) {
-                    console.error('Error loading chart data:', error);
-                    salesData.push(0);
-                    profitData.push(0);
-                }
-            }
-            
-            if (charts.sales) {
-                charts.sales.data.labels = days;
-                charts.sales.data.datasets[0].data = salesData;
-                charts.sales.update();
-            }
-            
-            if (charts.profit) {
-                charts.profit.data.labels = days;
-                charts.profit.data.datasets[0].data = profitData;
-                charts.profit.update();
-            }
         }
 
         // Toast Function
@@ -3168,90 +3184,13 @@
                 
                 if (productsSnapshot.docs.length === 0) {
                     const demoProducts = [
-                        {
-                            name: 'Eggs',
-                            icon: '🥚',
-                            category: 'Grocery',
-                            unit: 'Pack',
-                            packQuantity: 12,
-                            purchasePrice: 250,
-                            sellingPrice: 300,
-                            currentStock: 10,
-                            minStock: 3,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Biscuits',
-                            icon: '🍪',
-                            category: 'Grocery',
-                            unit: 'Box',
-                            packQuantity: 24,
-                            purchasePrice: 400,
-                            sellingPrice: 500,
-                            currentStock: 15,
-                            minStock: 5,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Milk',
-                            icon: '🥛',
-                            category: 'Dairy',
-                            unit: 'Liter',
-                            packQuantity: 1,
-                            purchasePrice: 150,
-                            sellingPrice: 180,
-                            currentStock: 20,
-                            minStock: 10,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Mobile Charger',
-                            icon: '🔌',
-                            category: 'Electronics',
-                            unit: 'Piece',
-                            packQuantity: 1,
-                            purchasePrice: 300,
-                            sellingPrice: 500,
-                            currentStock: 8,
-                            minStock: 2,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Earphones',
-                            icon: '🎧',
-                            category: 'Electronics',
-                            unit: 'Piece',
-                            packQuantity: 1,
-                            purchasePrice: 200,
-                            sellingPrice: 350,
-                            currentStock: 12,
-                            minStock: 3,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Mobile Cable',
-                            icon: '🔗',
-                            category: 'Electronics',
-                            unit: 'Piece',
-                            packQuantity: 1,
-                            purchasePrice: 100,
-                            sellingPrice: 200,
-                            currentStock: 25,
-                            minStock: 5,
-                            status: 'active'
-                        },
-                        {
-                            name: 'Bottled Water',
-                            icon: '💧',
-                            category: 'Beverages',
-                            unit: 'Bottle',
-                            packQuantity: 1,
-                            purchasePrice: 50,
-                            sellingPrice: 80,
-                            currentStock: 40,
-                            minStock: 10,
-                            status: 'active'
-                        }
+                        { name: 'Eggs', icon: '🥚', category: 'Grocery', unit: 'Pack', packQuantity: 12, purchasePrice: 250, sellingPrice: 300, currentStock: 10, minStock: 3, status: 'active' },
+                        { name: 'Biscuits', icon: '🍪', category: 'Grocery', unit: 'Box', packQuantity: 24, purchasePrice: 400, sellingPrice: 500, currentStock: 15, minStock: 5, status: 'active' },
+                        { name: 'Milk', icon: '🥛', category: 'Dairy', unit: 'Liter', packQuantity: 1, purchasePrice: 150, sellingPrice: 180, currentStock: 20, minStock: 10, status: 'active' },
+                        { name: 'Mobile Charger', icon: '🔌', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 300, sellingPrice: 500, currentStock: 8, minStock: 2, status: 'active' },
+                        { name: 'Earphones', icon: '🎧', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 200, sellingPrice: 350, currentStock: 12, minStock: 3, status: 'active' },
+                        { name: 'Mobile Cable', icon: '🔗', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 100, sellingPrice: 200, currentStock: 25, minStock: 5, status: 'active' },
+                        { name: 'Bottled Water', icon: '💧', category: 'Beverages', unit: 'Bottle', packQuantity: 1, purchasePrice: 50, sellingPrice: 80, currentStock: 40, minStock: 10, status: 'active' }
                     ];
                     
                     for (const product of demoProducts) {
