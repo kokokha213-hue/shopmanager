@@ -1,0 +1,3274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shop Manager - Premium Shop Management System</title>
+    
+    <!-- Firebase SDK (Compatible Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #131a2a;
+            --bg-card-hover: #1a2338;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --glass-bg: rgba(19, 26, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        .light-mode {
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a2338 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .login-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-logo p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input, .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .input-wrapper input:focus, .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-wrapper .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 4px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: var(--radius-xs);
+            margin-bottom: 20px;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-nav-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav-item.active {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .sidebar-nav-item .icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+        }
+
+        .top-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .top-header .date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+            background: var(--bg-card-hover);
+        }
+
+        .stat-card .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-card .stat-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .stat-card.accent { border-left: 4px solid var(--accent); }
+        .stat-card.success { border-left: 4px solid var(--success); }
+        .stat-card.warning { border-left: 4px solid var(--warning); }
+        .stat-card.danger { border-left: 4px solid var(--danger); }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .quick-action-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .quick-action-btn:hover {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .quick-action-btn .qa-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .chart-card h3 {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--bg-card-hover);
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .table tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            animation: slideInRight 0.3s;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 8px;
+            z-index: 100;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 8px;
+            font-size: 0.75rem;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--accent);
+        }
+
+        .mobile-nav-item .mni-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                padding-bottom: 80px;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        .receipt {
+            background: white;
+            color: black;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .receipt-items {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .receipt-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <h1>SHOP MANAGER</h1>
+                <p>Manage Your Shop. Know Your Profit.</p>
+            </div>
+            <div id="loginError" class="error-message"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email / Username</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn" id="loginBtn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>SHOP MANAGER</h2>
+            </div>
+            <div class="sidebar-nav">
+                <a class="sidebar-nav-item active" onclick="showPage('dashboard')">
+                    <span class="icon">🏠</span> Dashboard
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('sale')">
+                    <span class="icon">🛒</span> New Sale
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('products')">
+                    <span class="icon">📦</span> Products
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('purchases')">
+                    <span class="icon">🚚</span> Purchases
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('stock')">
+                    <span class="icon">📊</span> Stock
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('customers')">
+                    <span class="icon">👥</span> Customers
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('expenses')">
+                    <span class="icon">💸</span> Expenses
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('reports')">
+                    <span class="icon">📈</span> Reports
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('closing')">
+                    <span class="icon">🌙</span> Daily Closing
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('settings')">
+                    <span class="icon">⚙️</span> Settings
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page">
+                <div class="top-header">
+                    <div>
+                        <h1>Good Evening 👋</h1>
+                        <p class="date" id="currentDate"></p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                        <button class="icon-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid" id="dashboardStats">
+                    <!-- Stats will be dynamically populated -->
+                </div>
+
+                <h2 style="margin-bottom: 16px;">Quick Actions</h2>
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="showPage('sale')">
+                        <span class="qa-icon">➕</span>
+                        New Sale
+                    </div>
+                    <div class="quick-action-btn" onclick="showPage('products')">
+                        <span class="qa-icon">📦</span>
+                        Add Product
+                    </div>
+                    <div class="quick-action-btn" onclick="showPage('purchases')">
+                        <span class="qa-icon">🚚</span>
+                        Add Stock
+                    </div>
+                    <div class="quick-action-btn" onclick="showPage('expenses')">
+                        <span class="qa-icon">💸</span>
+                        Add Expense
+                    </div>
+                    <div class="quick-action-btn" onclick="showPage('customers')">
+                        <span class="qa-icon">👥</span>
+                        Add Customer
+                    </div>
+                    <div class="quick-action-btn" onclick="receivePayment()">
+                        <span class="qa-icon">💰</span>
+                        Receive Payment
+                    </div>
+                    <div class="quick-action-btn" onclick="showPage('closing')">
+                        <span class="qa-icon">📊</span>
+                        Daily Closing
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Sales Trend (Last 7 Days)</h3>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Profit Trend (Last 7 Days)</h3>
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Low Stock Alerts</h3>
+                    <div id="topProducts"></div>
+                </div>
+            </div>
+
+            <!-- Sale Page -->
+            <div id="salePage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>New Sale</h1>
+                        <p class="date">Create a new sale transaction</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 20px;">
+                        <div class="form-group">
+                            <label>Search Product</label>
+                            <input type="text" id="productSearch" placeholder="Search product..." onkeyup="searchProducts()">
+                        </div>
+                        <div id="productSearchResults"></div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="saleItems">
+                            <!-- Sale items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Payment Method</label>
+                        <select id="paymentMethod">
+                            <option value="cash">Cash</option>
+                            <option value="credit">Credit / Udhaar</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; display: none;" id="customerSelectGroup">
+                        <label>Customer (Required for Credit)</label>
+                        <select id="customerSelect">
+                            <option value="">Select Customer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <h2>Total: <span id="saleTotal">Rs. 0</span></h2>
+                    <button class="btn" style="max-width: 200px; margin-top: 10px;" onclick="completeSale()">Save Sale</button>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div id="productsPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Products</h1>
+                        <p class="date">Manage your products</p>
+                    </div>
+                    <button class="btn" style="max-width: 150px;" onclick="showAddProduct()">+ Add Product</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Unit</th>
+                                <th>Purchase Price</th>
+                                <th>Selling Price</th>
+                                <th>Stock</th>
+                                <th>Profit/Unit</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTable">
+                            <!-- Products will be dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Purchases Page -->
+            <div id="purchasesPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Purchases</h1>
+                        <p class="date">Add new stock</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 20px;">
+                        <h3>Add New Purchase</h3>
+                        <form id="purchaseForm" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Product</label>
+                                <select id="purchaseProduct" required>
+                                    <option value="">Select Product</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" id="purchaseQuantity" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Purchase Price (per unit)</label>
+                                <input type="number" id="purchasePrice" required min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Supplier</label>
+                                <input type="text" id="purchaseSupplier">
+                            </div>
+                            <button type="submit" class="btn" style="max-width: 200px;">Add Purchase</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <h3 style="padding: 20px;">Purchase History</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price/Unit</th>
+                                <th>Total</th>
+                                <th>Supplier</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchasesTable">
+                            <!-- Purchase history will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stock Page -->
+            <div id="stockPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Stock Management</h1>
+                        <p class="date">Monitor your inventory</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Current Stock</th>
+                                <th>Unit</th>
+                                <th>Purchase Cost</th>
+                                <th>Selling Price</th>
+                                <th>Potential Profit</th>
+                                <th>Stock Value</th>
+                                <th>Status</th>
+                                <th>Adjust</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockTable">
+                            <!-- Stock data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customers Page -->
+            <div id="customersPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Customers</h1>
+                        <p class="date">Manage customers and Udhaar</p>
+                    </div>
+                    <button class="btn" style="max-width: 150px;" onclick="showAddCustomer()">+ Add Customer</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Total Credit</th>
+                                <th>Paid</th>
+                                <th>Remaining</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <!-- Customers will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Expenses Page -->
+            <div id="expensesPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Expenses</h1>
+                        <p class="date">Track your business expenses</p>
+                    </div>
+                    <button class="btn" style="max-width: 150px;" onclick="showAddExpense()">+ Add Expense</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Note</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expensesTable">
+                            <!-- Expenses will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Reports</h1>
+                        <p class="date">View your business performance</p>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Filter</label>
+                    <select id="reportFilter" onchange="loadReports()">
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+
+                <div id="reportSummary" class="stats-grid">
+                    <!-- Report summary will be loaded here -->
+                </div>
+
+                <div class="chart-card">
+                    <h3>Product-wise Profit</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Sold</th>
+                                <th>Sales</th>
+                                <th>Cost</th>
+                                <th>Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productWiseProfit">
+                            <!-- Product wise profit will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Daily Closing Page -->
+            <div id="closingPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Daily Closing</h1>
+                        <p class="date">Close today's business</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding: 40px;">
+                    <button class="btn" style="max-width: 300px; font-size: 1.5rem; padding: 20px;" onclick="showClosingSummary()">🌙 CLOSE TODAY</button>
+                </div>
+
+                <div id="closingSummary" style="display: none;">
+                    <div class="table-container">
+                        <div style="padding: 20px;">
+                            <h3>Today's Summary</h3>
+                            <div id="closingDetails" style="margin-top: 20px;">
+                                <!-- Closing details will be loaded here -->
+                            </div>
+                            <button class="btn" style="max-width: 200px; margin-top: 20px;" onclick="confirmClosing()">Confirm Closing</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page" style="display: none;">
+                <div class="top-header">
+                    <div>
+                        <h1>Settings</h1>
+                        <p class="date">Configure your shop</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div style="padding: 20px;">
+                        <form id="settingsForm">
+                            <div class="form-group">
+                                <label>Shop Name</label>
+                                <input type="text" id="shopName">
+                            </div>
+                            <div class="form-group">
+                                <label>Owner Name</label>
+                                <input type="text" id="ownerName">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" id="shopPhone">
+                            </div>
+                            <div class="form-group">
+                                <label>WhatsApp Number</label>
+                                <input type="text" id="whatsappNumber">
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" id="shopAddress">
+                            </div>
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <input type="text" id="currency" value="PKR / Rs.">
+                            </div>
+                            <button type="submit" class="btn" style="max-width: 200px;">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav">
+            <div class="mobile-nav-items">
+                <div class="mobile-nav-item active" onclick="showPage('dashboard')">
+                    <span class="mni-icon">🏠</span>
+                    Home
+                </div>
+                <div class="mobile-nav-item" onclick="showPage('sale')">
+                    <span class="mni-icon">🛒</span>
+                    Sale
+                </div>
+                <div class="mobile-nav-item" onclick="showPage('stock')">
+                    <span class="mni-icon">📦</span>
+                    Stock
+                </div>
+                <div class="mobile-nav-item" onclick="showPage('customers')">
+                    <span class="mni-icon">👥</span>
+                    Customers
+                </div>
+                <div class="mobile-nav-item" onclick="showMoreMenu()">
+                    <span class="mni-icon">☰</span>
+                    More
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <!-- Modal content will be dynamically inserted -->
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Firebase Configuration - Aapki Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCymZBNffUZuVG1NGSqJ5KNrhktXny8uYY",
+            authDomain: "shop-managemen.firebaseapp.com",
+            projectId: "shop-managemen",
+            storageBucket: "shop-managemen.firebasestorage.app",
+            messagingSenderId: "939121818644",
+            appId: "1:939121818644:web:794bef48dbb2cd651f3b01",
+            measurementId: "G-B6QW5FZ903"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // Global Variables
+        let currentUser = null;
+        let currentSaleItems = [];
+        let productsCache = [];
+        let customersCache = [];
+        let isDarkMode = true;
+        let charts = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentDate();
+            checkAuthState();
+        });
+
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function checkAuthState() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('appContainer').style.display = 'flex';
+                    initializeApp();
+                } else {
+                    document.getElementById('loginScreen').style.display = 'flex';
+                    document.getElementById('appContainer').style.display = 'none';
+                }
+            });
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            loginBtn.classList.add('loading');
+            errorDiv.style.display = 'none';
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                // Success - onAuthStateChanged will handle the transition
+            } catch (error) {
+                errorDiv.textContent = getErrorMessage(error.code);
+                errorDiv.style.display = 'block';
+                loginBtn.classList.remove('loading');
+            }
+        });
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+
+        function getErrorMessage(errorCode) {
+            const messages = {
+                'auth/invalid-email': 'Invalid email address.',
+                'auth/user-disabled': 'This account has been disabled.',
+                'auth/user-not-found': 'No account found with this email.',
+                'auth/wrong-password': 'Incorrect password.',
+                'auth/invalid-credential': 'Invalid email or password.',
+                'auth/too-many-requests': 'Too many attempts. Please try again later.'
+            };
+            return messages[errorCode] || 'Login failed. Please try again.';
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                showToast('Error logging out. Please try again.');
+            }
+        }
+
+        async function initializeApp() {
+            await Promise.all([
+                loadProducts(),
+                loadCustomers(),
+                loadDashboardData(),
+                loadExpenses(),
+                loadPurchases()
+            ]);
+            initializeCharts();
+            initializeDemoData();
+        }
+
+        // Navigation
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.style.display = 'none');
+            
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Update specific page data
+            switch(pageName) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'purchases':
+                    loadPurchases();
+                    break;
+                case 'stock':
+                    loadStock();
+                    break;
+                case 'customers':
+                    loadCustomers();
+                    break;
+                case 'expenses':
+                    loadExpenses();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'closing':
+                    loadClosingData();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+            }
+        }
+
+        function showMoreMenu() {
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Menu</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div style="display: grid; gap: 10px;">
+                    <button class="btn" onclick="showPage('products'); closeModal();">📦 Products</button>
+                    <button class="btn" onclick="showPage('purchases'); closeModal();">🚚 Purchases</button>
+                    <button class="btn" onclick="showPage('expenses'); closeModal();">💸 Expenses</button>
+                    <button class="btn" onclick="showPage('reports'); closeModal();">📈 Reports</button>
+                    <button class="btn" onclick="showPage('closing'); closeModal();">🌙 Daily Closing</button>
+                    <button class="btn" onclick="showPage('settings'); closeModal();">⚙️ Settings</button>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Dashboard Functions
+        async function loadDashboardData() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            try {
+                const salesSnapshot = await db.collection('sales')
+                    .where('date', '==', today)
+                    .get();
+                
+                let totalSales = 0;
+                let totalProfit = 0;
+                let cashSales = 0;
+                let creditSales = 0;
+                let productsSold = 0;
+                let totalOrders = salesSnapshot.docs.length;
+                
+                salesSnapshot.docs.forEach(doc => {
+                    const sale = doc.data();
+                    totalSales += sale.total || 0;
+                    totalProfit += sale.profit || 0;
+                    
+                    if (sale.paymentMethod === 'cash') {
+                        cashSales += sale.total || 0;
+                    } else {
+                        creditSales += sale.total || 0;
+                    }
+                    
+                    if (sale.items) {
+                        sale.items.forEach(item => {
+                            productsSold += item.quantity || 0;
+                        });
+                    }
+                });
+                
+                const expensesSnapshot = await db.collection('expenses')
+                    .where('date', '==', today)
+                    .get();
+                
+                let totalExpenses = 0;
+                expensesSnapshot.docs.forEach(doc => {
+                    totalExpenses += doc.data().amount || 0;
+                });
+                
+                const customersSnapshot = await db.collection('customers').get();
+                let totalUdhaar = 0;
+                customersSnapshot.docs.forEach(doc => {
+                    totalUdhaar += doc.data().remainingCredit || 0;
+                });
+                
+                const netProfit = totalProfit - totalExpenses;
+                
+                const statsHTML = `
+                    <div class="stat-card accent">
+                        <div class="stat-label">Today's Sales</div>
+                        <div class="stat-value">Rs. ${totalSales.toFixed(2)}</div>
+                        <div class="stat-icon">💰</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Today's Profit</div>
+                        <div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div>
+                        <div class="stat-icon">📈</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Today's Expenses</div>
+                        <div class="stat-value">Rs. ${totalExpenses.toFixed(2)}</div>
+                        <div class="stat-icon">💸</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-label">Net Profit</div>
+                        <div class="stat-value">Rs. ${netProfit.toFixed(2)}</div>
+                        <div class="stat-icon">🎯</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Products Sold</div>
+                        <div class="stat-value">${productsSold}</div>
+                        <div class="stat-icon">📦</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">${totalOrders}</div>
+                        <div class="stat-icon">🛒</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cash Received</div>
+                        <div class="stat-value">Rs. ${cashSales.toFixed(2)}</div>
+                        <div class="stat-icon">💵</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Udhaar</div>
+                        <div class="stat-value">Rs. ${totalUdhaar.toFixed(2)}</div>
+                        <div class="stat-icon">📋</div>
+                    </div>
+                `;
+                
+                document.getElementById('dashboardStats').innerHTML = statsHTML;
+                
+                loadLowStockAlerts();
+                await updateCharts();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Error loading dashboard data');
+            }
+        }
+
+        async function loadLowStockAlerts() {
+            try {
+                const productsSnapshot = await db.collection('products')
+                    .where('currentStock', '<=', 5)
+                    .limit(10)
+                    .get();
+                
+                let alertsHTML = '';
+                
+                if (productsSnapshot.docs.length === 0) {
+                    alertsHTML = '<p style="color: var(--text-secondary);">No low stock alerts</p>';
+                } else {
+                    productsSnapshot.docs.forEach(doc => {
+                        const product = doc.data();
+                        const status = product.currentStock === 0 ? '🔴' : '🟡';
+                        alertsHTML += `
+                            <div style="padding: 10px; margin: 5px 0; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+                                ${status} <strong>${product.name}</strong> - ${product.currentStock} ${product.unit} left
+                            </div>
+                        `;
+                    });
+                }
+                
+                document.getElementById('topProducts').innerHTML = alertsHTML;
+            } catch (error) {
+                console.error('Error loading low stock alerts:', error);
+            }
+        }
+
+        // Products Functions
+        async function loadProducts() {
+            try {
+                const productsSnapshot = await db.collection('products').get();
+                productsCache = [];
+                
+                productsSnapshot.docs.forEach(doc => {
+                    productsCache.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayProducts(productsCache);
+                updateProductSelects();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showToast('Error loading products');
+            }
+        }
+
+        function displayProducts(products) {
+            const tableBody = document.getElementById('productsTable');
+            
+            if (products.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">No products yet<br>Add your first product to start managing your shop.</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            products.forEach(product => {
+                const profitPerUnit = (product.sellingPrice || 0) - (product.purchasePrice || 0);
+                const status = product.currentStock === 0 ? '🔴 Out of Stock' : 
+                              (product.currentStock <= product.minStock ? '🟡 Low Stock' : '🟢 In Stock');
+                
+                html += `
+                    <tr>
+                        <td>${product.icon || '📦'} ${product.name || ''}</td>
+                        <td>${product.category || ''}</td>
+                        <td>${product.unit || ''}</td>
+                        <td>Rs. ${(product.purchasePrice || 0).toFixed(2)}</td>
+                        <td>Rs. ${(product.sellingPrice || 0).toFixed(2)}</td>
+                        <td>${product.currentStock || 0}</td>
+                        <td>Rs. ${profitPerUnit.toFixed(2)}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editProduct('${product.id}')">✏️</button>
+                            <button class="icon-btn" onclick="deleteProduct('${product.id}')">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        function showAddProduct() {
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Add Product</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Icon (Emoji) - Optional</label>
+                        <input type="text" id="productIcon" placeholder="🥚 📱 🍪">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="productCategory">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Type *</label>
+                        <select id="productUnit" required>
+                            <option value="Piece">Piece</option>
+                            <option value="Pack">Pack</option>
+                            <option value="Dozen">Dozen</option>
+                            <option value="Box">Box</option>
+                            <option value="Bottle">Bottle</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Gram">Gram</option>
+                            <option value="Liter">Liter</option>
+                            <option value="Meter">Meter</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pack Quantity (if applicable)</label>
+                        <input type="number" id="productPackQuantity" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Price *</label>
+                        <input type="number" id="productPurchasePrice" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price *</label>
+                        <input type="number" id="productSellingPrice" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Stock *</label>
+                        <input type="number" id="productCurrentStock" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Stock Level</label>
+                        <input type="number" id="productMinStock" min="0" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <input type="text" id="productSupplier">
+                    </div>
+                    <button type="submit" class="btn">Add Product</button>
+                </form>
+            `;
+            
+            modal.classList.add('active');
+            
+            document.getElementById('addProductForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await addProduct();
+            });
+        }
+
+        async function addProduct() {
+            const productData = {
+                name: document.getElementById('productName').value,
+                icon: document.getElementById('productIcon').value || '📦',
+                category: document.getElementById('productCategory').value || 'General',
+                unit: document.getElementById('productUnit').value,
+                packQuantity: document.getElementById('productPackQuantity').value || null,
+                purchasePrice: parseFloat(document.getElementById('productPurchasePrice').value),
+                sellingPrice: parseFloat(document.getElementById('productSellingPrice').value),
+                currentStock: parseInt(document.getElementById('productCurrentStock').value),
+                minStock: parseInt(document.getElementById('productMinStock').value) || 5,
+                supplier: document.getElementById('productSupplier').value || '',
+                status: 'active',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdBy: currentUser.email
+            };
+            
+            try {
+                await db.collection('products').add(productData);
+                closeModal();
+                showToast('Product Added Successfully ✓');
+                loadProducts();
+            } catch (error) {
+                console.error('Error adding product:', error);
+                showToast('Error adding product. Please try again.');
+            }
+        }
+
+        async function editProduct(productId) {
+            const product = productsCache.find(p => p.id === productId);
+            if (!product) return;
+            
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Edit Product</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="editProductForm">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input type="text" id="editProductName" value="${product.name || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Icon (Emoji)</label>
+                        <input type="text" id="editProductIcon" value="${product.icon || '📦'}">
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="editProductCategory" value="${product.category || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Price *</label>
+                        <input type="number" id="editProductPurchasePrice" value="${product.purchasePrice || 0}" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price *</label>
+                        <input type="number" id="editProductSellingPrice" value="${product.sellingPrice || 0}" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Stock Level</label>
+                        <input type="number" id="editProductMinStock" value="${product.minStock || 5}" min="0">
+                    </div>
+                    <button type="submit" class="btn">Update Product</button>
+                </form>
+            `;
+            
+            modal.classList.add('active');
+            
+            document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await updateProduct(productId);
+            });
+        }
+
+        async function updateProduct(productId) {
+            const productData = {
+                name: document.getElementById('editProductName').value,
+                icon: document.getElementById('editProductIcon').value || '📦',
+                category: document.getElementById('editProductCategory').value || 'General',
+                purchasePrice: parseFloat(document.getElementById('editProductPurchasePrice').value),
+                sellingPrice: parseFloat(document.getElementById('editProductSellingPrice').value),
+                minStock: parseInt(document.getElementById('editProductMinStock').value) || 5,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await db.collection('products').doc(productId).update(productData);
+                closeModal();
+                showToast('Product Updated Successfully ✓');
+                loadProducts();
+            } catch (error) {
+                console.error('Error updating product:', error);
+                showToast('Error updating product. Please try again.');
+            }
+        }
+
+        async function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                try {
+                    await db.collection('products').doc(productId).delete();
+                    showToast('Product Deleted Successfully ✓');
+                    loadProducts();
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    showToast('Error deleting product. Please try again.');
+                }
+            }
+        }
+
+        function updateProductSelects() {
+            const purchaseSelect = document.getElementById('purchaseProduct');
+            if (purchaseSelect) {
+                purchaseSelect.innerHTML = '<option value="">Select Product</option>' + 
+                    productsCache.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            }
+        }
+
+        // Sales Functions
+        function searchProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const resultsDiv = document.getElementById('productSearchResults');
+            
+            if (searchTerm.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+            
+            const filtered = productsCache.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) && p.currentStock > 0
+            );
+            
+            if (filtered.length === 0) {
+                resultsDiv.innerHTML = '<p style="padding: 10px; color: var(--text-secondary);">No products found</p>';
+                return;
+            }
+            
+            let html = '<div style="max-height: 300px; overflow-y: auto;">';
+            filtered.forEach(product => {
+                html += `
+                    <div style="padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer;" 
+                         onmouseover="this.style.background='var(--bg-card-hover)'" 
+                         onmouseout="this.style.background='transparent'"
+                         onclick="addToSale('${product.id}')">
+                        <strong>${product.icon || '📦'} ${product.name}</strong><br>
+                        <small>Stock: ${product.currentStock} ${product.unit} | Price: Rs. ${product.sellingPrice.toFixed(2)}</small>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function addToSale(productId) {
+            const product = productsCache.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = currentSaleItems.find(item => item.productId === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+                if (existingItem.quantity > product.currentStock) {
+                    showToast('Stock is not enough.');
+                    existingItem.quantity = product.currentStock;
+                }
+            } else {
+                currentSaleItems.push({
+                    productId: productId,
+                    name: product.name,
+                    icon: product.icon || '📦',
+                    quantity: 1,
+                    sellingPrice: product.sellingPrice,
+                    purchasePrice: product.purchasePrice,
+                    unit: product.unit
+                });
+            }
+            
+            updateSaleDisplay();
+            document.getElementById('productSearch').value = '';
+            document.getElementById('productSearchResults').innerHTML = '';
+        }
+
+        function updateSaleDisplay() {
+            const saleItemsBody = document.getElementById('saleItems');
+            let total = 0;
+            
+            if (currentSaleItems.length === 0) {
+                saleItemsBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No items added</td></tr>';
+                document.getElementById('saleTotal').textContent = 'Rs. 0';
+                return;
+            }
+            
+            let html = '';
+            currentSaleItems.forEach((item, index) => {
+                const itemTotal = item.quantity * item.sellingPrice;
+                total += itemTotal;
+                
+                html += `
+                    <tr>
+                        <td>${item.icon} ${item.name}</td>
+                        <td>
+                            <input type="number" value="${item.quantity}" min="1" 
+                                   onchange="updateQuantity(${index}, this.value)" 
+                                   style="width: 60px; padding: 8px; background: var(--bg-card-hover); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary);">
+                        </td>
+                        <td>Rs. ${item.sellingPrice.toFixed(2)}</td>
+                        <td>Rs. ${itemTotal.toFixed(2)}</td>
+                        <td><button class="icon-btn" onclick="removeFromSale(${index})">❌</button></td>
+                    </tr>
+                `;
+            });
+            
+            saleItemsBody.innerHTML = html;
+            document.getElementById('saleTotal').textContent = 'Rs. ' + total.toFixed(2);
+        }
+
+        function updateQuantity(index, quantity) {
+            const product = productsCache.find(p => p.id === currentSaleItems[index].productId);
+            const qty = parseInt(quantity);
+            
+            if (qty < 1) {
+                showToast('Please enter a valid quantity.');
+                return;
+            }
+            
+            if (product && qty > product.currentStock) {
+                showToast('Stock is not enough.');
+                currentSaleItems[index].quantity = product.currentStock;
+            } else {
+                currentSaleItems[index].quantity = qty;
+            }
+            
+            updateSaleDisplay();
+        }
+
+        function removeFromSale(index) {
+            currentSaleItems.splice(index, 1);
+            updateSaleDisplay();
+        }
+
+        async function completeSale() {
+            if (currentSaleItems.length === 0) {
+                showToast('Please add products to the sale.');
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            let customerId = null;
+            
+            if (paymentMethod === 'credit') {
+                customerId = document.getElementById('customerSelect').value;
+                if (!customerId) {
+                    showToast('Customer is required for credit sales.');
+                    return;
+                }
+            }
+            
+            let totalSale = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+            
+            currentSaleItems.forEach(item => {
+                totalSale += item.quantity * item.sellingPrice;
+                totalCost += item.quantity * item.purchasePrice;
+                totalProfit += item.quantity * (item.sellingPrice - item.purchasePrice);
+            });
+            
+            const saleData = {
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toISOString(),
+                items: currentSaleItems,
+                total: totalSale,
+                cost: totalCost,
+                profit: totalProfit,
+                paymentMethod: paymentMethod,
+                customerId: customerId,
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                const saleRef = await db.collection('sales').add(saleData);
+                
+                for (const item of currentSaleItems) {
+                    const productRef = db.collection('products').doc(item.productId);
+                    const productDoc = await productRef.get();
+                    const currentStock = productDoc.data().currentStock;
+                    const newStock = currentStock - item.quantity;
+                    
+                    await productRef.update({
+                        currentStock: newStock,
+                        status: newStock === 0 ? 'out' : (newStock <= productDoc.data().minStock ? 'low' : 'active')
+                    });
+                    
+                    await db.collection('stockMovements').add({
+                        productId: item.productId,
+                        type: 'sale',
+                        quantity: -item.quantity,
+                        referenceId: saleRef.id,
+                        date: new Date().toISOString().split('T')[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                if (paymentMethod === 'credit' && customerId) {
+                    const customerRef = db.collection('customers').doc(customerId);
+                    const customerDoc = await customerRef.get();
+                    const currentCredit = customerDoc.data().totalCredit || 0;
+                    
+                    await customerRef.update({
+                        totalCredit: currentCredit + totalSale,
+                        remainingCredit: (customerDoc.data().remainingCredit || 0) + totalSale
+                    });
+                    
+                    await db.collection('customerTransactions').add({
+                        customerId: customerId,
+                        type: 'credit',
+                        amount: totalSale,
+                        referenceId: saleRef.id,
+                        date: new Date().toISOString().split('T')[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                showReceipt(saleData, saleRef.id);
+                
+                currentSaleItems = [];
+                updateSaleDisplay();
+                loadProducts();
+                loadDashboardData();
+                
+                showToast('Sale Saved ✓');
+                
+            } catch (error) {
+                console.error('Error completing sale:', error);
+                showToast('Something went wrong. Please try again.');
+            }
+        }
+
+        function showReceipt(saleData, saleId) {
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            let itemsHTML = '';
+            saleData.items.forEach(item => {
+                itemsHTML += `
+                    <div class="receipt-item">
+                        <span>${item.name} × ${item.quantity}</span>
+                        <span>Rs. ${(item.quantity * item.sellingPrice).toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            const shopName = JSON.parse(localStorage.getItem('shopSettings') || '{}').shopName || 'My Shop';
+            
+            const receiptHTML = `
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h3>${shopName}</h3>
+                        <p>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+                        <p>Receipt #: ${saleId.substring(0, 8)}</p>
+                    </div>
+                    <div class="receipt-items">
+                        ${itemsHTML}
+                    </div>
+                    <div class="receipt-total">
+                        Total: Rs. ${saleData.total.toFixed(2)}
+                    </div>
+                    <p style="text-align: center; margin-top: 10px;">
+                        Payment: ${saleData.paymentMethod === 'cash' ? 'Cash' : 'Credit/Udhaar'}
+                    </p>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn" onclick="window.print()">🖨️ Print</button>
+                    <button class="btn" onclick="closeModal()">Close</button>
+                </div>
+            `;
+            
+            modalContent.innerHTML = receiptHTML;
+            modal.classList.add('active');
+        }
+
+        // Payment Method Change
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const customerGroup = document.getElementById('customerSelectGroup');
+            if (this.value === 'credit') {
+                customerGroup.style.display = 'block';
+                loadCustomersIntoSelect();
+            } else {
+                customerGroup.style.display = 'none';
+            }
+        });
+
+        async function loadCustomersIntoSelect() {
+            try {
+                const customersSnapshot = await db.collection('customers').get();
+                const select = document.getElementById('customerSelect');
+                
+                select.innerHTML = '<option value="">Select Customer</option>' +
+                    customersSnapshot.docs.map(doc => 
+                        `<option value="${doc.id}">${doc.data().name}</option>`
+                    ).join('');
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
+        }
+
+        // Purchases Functions
+        async function loadPurchases() {
+            try {
+                const purchasesSnapshot = await db.collection('purchases').orderBy('createdAt', 'desc').limit(50).get();
+                const tableBody = document.getElementById('purchasesTable');
+                
+                if (purchasesSnapshot.docs.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No purchases recorded</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                purchasesSnapshot.docs.forEach(doc => {
+                    const purchase = doc.data();
+                    html += `
+                        <tr>
+                            <td>${purchase.date || ''}</td>
+                            <td>${purchase.productName || ''}</td>
+                            <td>${purchase.quantity || 0}</td>
+                            <td>Rs. ${(purchase.pricePerUnit || 0).toFixed(2)}</td>
+                            <td>Rs. ${(purchase.total || 0).toFixed(2)}</td>
+                            <td>${purchase.supplier || ''}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableBody.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading purchases:', error);
+            }
+        }
+
+        document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('purchaseProduct').value;
+            const quantity = parseInt(document.getElementById('purchaseQuantity').value);
+            const pricePerUnit = parseFloat(document.getElementById('purchasePrice').value);
+            const supplier = document.getElementById('purchaseSupplier').value;
+            
+            if (!productId || !quantity || !pricePerUnit) {
+                showToast('Please fill in all required fields.');
+                return;
+            }
+            
+            const product = productsCache.find(p => p.id === productId);
+            if (!product) {
+                showToast('Product not found.');
+                return;
+            }
+            
+            const total = quantity * pricePerUnit;
+            
+            try {
+                await db.collection('purchases').add({
+                    productId: productId,
+                    productName: product.name,
+                    quantity: quantity,
+                    pricePerUnit: pricePerUnit,
+                    total: total,
+                    supplier: supplier || '',
+                    date: new Date().toISOString().split('T')[0],
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                const productRef = db.collection('products').doc(productId);
+                await productRef.update({
+                    currentStock: product.currentStock + quantity,
+                    purchasePrice: pricePerUnit,
+                    status: 'active',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await db.collection('stockMovements').add({
+                    productId: productId,
+                    type: 'purchase',
+                    quantity: quantity,
+                    date: new Date().toISOString().split('T')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('Purchase Added Successfully ✓');
+                this.reset();
+                loadPurchases();
+                loadProducts();
+                loadDashboardData();
+                
+            } catch (error) {
+                console.error('Error adding purchase:', error);
+                showToast('Error adding purchase. Please try again.');
+            }
+        });
+
+        // Stock Functions
+        async function loadStock() {
+            const tableBody = document.getElementById('stockTable');
+            
+            if (productsCache.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">No products in stock</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            productsCache.forEach(product => {
+                const potentialProfit = product.currentStock * (product.sellingPrice - product.purchasePrice);
+                const stockValue = product.currentStock * product.purchasePrice;
+                const status = product.currentStock === 0 ? '🔴 Out of Stock' : 
+                              (product.currentStock <= product.minStock ? '🟡 Low Stock' : '🟢 In Stock');
+                
+                html += `
+                    <tr>
+                        <td>${product.icon || '📦'} ${product.name}</td>
+                        <td>${product.currentStock}</td>
+                        <td>${product.unit}</td>
+                        <td>Rs. ${product.purchasePrice.toFixed(2)}</td>
+                        <td>Rs. ${product.sellingPrice.toFixed(2)}</td>
+                        <td>Rs. ${potentialProfit.toFixed(2)}</td>
+                        <td>Rs. ${stockValue.toFixed(2)}</td>
+                        <td>${status}</td>
+                        <td><button class="icon-btn" onclick="adjustStock('${product.id}')">⚙️</button></td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        function adjustStock(productId) {
+            const product = productsCache.find(p => p.id === productId);
+            if (!product) return;
+            
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Adjust Stock - ${product.name}</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="adjustStockForm">
+                    <div class="form-group">
+                        <label>Current Stock: ${product.currentStock} ${product.unit}</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Adjustment Type *</label>
+                        <select id="adjustmentType" required>
+                            <option value="add">Add Stock</option>
+                            <option value="remove">Remove Stock</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity *</label>
+                        <input type="number" id="adjustmentQuantity" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Reason *</label>
+                        <input type="text" id="adjustmentReason" required placeholder="e.g., -2 damaged, +5 stock correction">
+                    </div>
+                    <button type="submit" class="btn">Adjust Stock</button>
+                </form>
+            `;
+            
+            modal.classList.add('active');
+            
+            document.getElementById('adjustStockForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const type = document.getElementById('adjustmentType').value;
+                const quantity = parseInt(document.getElementById('adjustmentQuantity').value);
+                const reason = document.getElementById('adjustmentReason').value;
+                
+                const adjustment = type === 'add' ? quantity : -quantity;
+                const newStock = product.currentStock + adjustment;
+                
+                if (newStock < 0) {
+                    showToast('Stock cannot be negative.');
+                    return;
+                }
+                
+                try {
+                    await db.collection('products').doc(productId).update({
+                        currentStock: newStock,
+                        status: newStock === 0 ? 'out' : (newStock <= product.minStock ? 'low' : 'active')
+                    });
+                    
+                    await db.collection('stockMovements').add({
+                        productId: productId,
+                        type: type === 'add' ? 'adjustment_add' : 'adjustment_remove',
+                        quantity: adjustment,
+                        reason: reason,
+                        date: new Date().toISOString().split('T')[0],
+                        userId: currentUser.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    closeModal();
+                    showToast('Stock Adjusted Successfully ✓');
+                    loadProducts();
+                    loadStock();
+                    
+                } catch (error) {
+                    console.error('Error adjusting stock:', error);
+                    showToast('Error adjusting stock. Please try again.');
+                }
+            });
+        }
+
+        // Customers Functions
+        async function loadCustomers() {
+            try {
+                const customersSnapshot = await db.collection('customers').get();
+                customersCache = [];
+                
+                customersSnapshot.docs.forEach(doc => {
+                    customersCache.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                const tableBody = document.getElementById('customersTable');
+                
+                if (customersCache.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No customers<br>Add a customer when you need to track Udhaar.</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                customersCache.forEach(customer => {
+                    html += `
+                        <tr>
+                            <td>${customer.name || ''}</td>
+                            <td>${customer.phone || ''}</td>
+                            <td>Rs. ${(customer.totalCredit || 0).toFixed(2)}</td>
+                            <td>Rs. ${(customer.totalPaid || 0).toFixed(2)}</td>
+                            <td>Rs. ${(customer.remainingCredit || 0).toFixed(2)}</td>
+                            <td>
+                                <button class="icon-btn" onclick="viewCustomer('${customer.id}')">👁️</button>
+                                <button class="icon-btn" onclick="receivePayment('${customer.id}')">💰</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableBody.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                showToast('Error loading customers');
+            }
+        }
+
+        function showAddCustomer() {
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Add Customer</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="addCustomerForm">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="customerPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="customerAddress">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="customerNotes"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Add Customer</button>
+                </form>
+            `;
+            
+            modal.classList.add('active');
+            
+            document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const customerData = {
+                    name: document.getElementById('customerName').value,
+                    phone: document.getElementById('customerPhone').value || '',
+                    address: document.getElementById('customerAddress').value || '',
+                    notes: document.getElementById('customerNotes').value || '',
+                    totalCredit: 0,
+                    totalPaid: 0,
+                    remainingCredit: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdBy: currentUser.email
+                };
+                
+                try {
+                    await db.collection('customers').add(customerData);
+                    closeModal();
+                    showToast('Customer Added Successfully ✓');
+                    loadCustomers();
+                } catch (error) {
+                    console.error('Error adding customer:', error);
+                    showToast('Error adding customer. Please try again.');
+                }
+            });
+        }
+
+        async function receivePayment(customerId) {
+            if (!customerId) {
+                const modal = document.getElementById('modalOverlay');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalContent.innerHTML = `
+                    <div class="modal-header">
+                        <h2>Select Customer</h2>
+                        <button class="close-btn" onclick="closeModal()">&times;</button>
+                    </div>
+                    <select id="paymentCustomerSelect" style="width: 100%; padding: 12px; background: var(--bg-card-hover); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary);">
+                        <option value="">Select Customer</option>
+                        ${customersCache.map(c => `<option value="${c.id}">${c.name} - Rs. ${(c.remainingCredit || 0).toFixed(2)} due</option>`).join('')}
+                    </select>
+                    <button class="btn" style="margin-top: 10px;" onclick="selectCustomerForPayment()">Next</button>
+                `;
+                
+                modal.classList.add('active');
+                return;
+            }
+            
+            const customer = customersCache.find(c => c.id === customerId);
+            if (!customer || customer.remainingCredit <= 0) {
+                showToast('This customer has no outstanding Udhaar.');
+                return;
+            }
+            
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Receive Payment</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label>Customer: ${customer.name}</label>
+                </div>
+                <div class="form-group">
+                    <label>Current Balance: Rs. ${customer.remainingCredit.toFixed(2)}</label>
+                </div>
+                <div class="form-group">
+                    <label>Payment Amount *</label>
+                    <input type="number" id="paymentAmount" required min="1" max="${customer.remainingCredit}">
+                </div>
+                <button class="btn" onclick="processPayment('${customerId}')">Process Payment</button>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function selectCustomerForPayment() {
+            const customerId = document.getElementById('paymentCustomerSelect').value;
+            if (customerId) {
+                closeModal();
+                receivePayment(customerId);
+            }
+        }
+
+        async function processPayment(customerId) {
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const customer = customersCache.find(c => c.id === customerId);
+            
+            if (!amount || amount <= 0) {
+                showToast('Please enter a valid amount.');
+                return;
+            }
+            
+            if (amount > customer.remainingCredit) {
+                showToast('Payment amount cannot exceed the outstanding balance.');
+                return;
+            }
+            
+            try {
+                const customerRef = db.collection('customers').doc(customerId);
+                await customerRef.update({
+                    totalPaid: (customer.totalPaid || 0) + amount,
+                    remainingCredit: customer.remainingCredit - amount,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                await db.collection('customerTransactions').add({
+                    customerId: customerId,
+                    type: 'payment',
+                    amount: amount,
+                    date: new Date().toISOString().split('T')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                closeModal();
+                showToast('Payment Received Successfully ✓');
+                loadCustomers();
+                loadDashboardData();
+                
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                showToast('Error processing payment. Please try again.');
+            }
+        }
+
+        async function viewCustomer(customerId) {
+            const customer = customersCache.find(c => c.id === customerId);
+            if (!customer) return;
+            
+            try {
+                const transactionsSnapshot = await db.collection('customerTransactions')
+                    .where('customerId', '==', customerId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+                
+                const modal = document.getElementById('modalOverlay');
+                const modalContent = document.getElementById('modalContent');
+                
+                let transactionsHTML = '';
+                transactionsSnapshot.docs.forEach(doc => {
+                    const transaction = doc.data();
+                    transactionsHTML += `
+                        <tr>
+                            <td>${transaction.date || ''}</td>
+                            <td>${transaction.type === 'credit' ? 'Credit' : 'Payment'}</td>
+                            <td>Rs. ${transaction.amount.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                
+                modalContent.innerHTML = `
+                    <div class="modal-header">
+                        <h2>${customer.name}</h2>
+                        <button class="close-btn" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Credit</div>
+                            <div class="stat-value">Rs. ${(customer.totalCredit || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total Paid</div>
+                            <div class="stat-value">Rs. ${(customer.totalPaid || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Remaining</div>
+                            <div class="stat-value">Rs. ${(customer.remainingCredit || 0).toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <h3>Transaction History</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${transactionsHTML || '<tr><td colspan="3">No transactions</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+                
+            } catch (error) {
+                console.error('Error viewing customer:', error);
+                showToast('Error loading customer details.');
+            }
+        }
+
+        // Expenses Functions
+        async function loadExpenses() {
+            try {
+                const expensesSnapshot = await db.collection('expenses')
+                    .orderBy('createdAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                const tableBody = document.getElementById('expensesTable');
+                
+                if (expensesSnapshot.docs.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No expenses recorded</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                expensesSnapshot.docs.forEach(doc => {
+                    const expense = doc.data();
+                    html += `
+                        <tr>
+                            <td>${expense.date || ''}</td>
+                            <td>${expense.category || ''}</td>
+                            <td>Rs. ${(expense.amount || 0).toFixed(2)}</td>
+                            <td>${expense.note || ''}</td>
+                            <td>
+                                <button class="icon-btn" onclick="deleteExpense('${doc.id}')">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableBody.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+            }
+        }
+
+        function showAddExpense() {
+            const modal = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h2>Add Expense</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="addExpenseForm">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="expenseCategory" required>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shop Rent">Shop Rent</option>
+                            <option value="Packaging">Packaging</option>
+                            <option value="Tea/Food">Tea/Food</option>
+                            <option value="Repair">Repair</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount *</label>
+                        <input type="number" id="expenseAmount" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <input type="text" id="expenseNote">
+                    </div>
+                    <button type="submit" class="btn">Add Expense</button>
+                </form>
+            `;
+            
+            modal.classList.add('active');
+            
+            document.getElementById('addExpenseForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const expenseData = {
+                    category: document.getElementById('expenseCategory').value,
+                    amount: parseFloat(document.getElementById('expenseAmount').value),
+                    note: document.getElementById('expenseNote').value || '',
+                    date: new Date().toISOString().split('T')[0],
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                try {
+                    await db.collection('expenses').add(expenseData);
+                    closeModal();
+                    showToast('Expense Added Successfully ✓');
+                    loadExpenses();
+                    loadDashboardData();
+                } catch (error) {
+                    console.error('Error adding expense:', error);
+                    showToast('Error adding expense. Please try again.');
+                }
+            });
+        }
+
+        async function deleteExpense(expenseId) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                try {
+                    await db.collection('expenses').doc(expenseId).delete();
+                    showToast('Expense Deleted Successfully ✓');
+                    loadExpenses();
+                    loadDashboardData();
+                } catch (error) {
+                    console.error('Error deleting expense:', error);
+                    showToast('Error deleting expense. Please try again.');
+                }
+            }
+        }
+
+        // Reports Functions
+        async function loadReports() {
+            const filter = document.getElementById('reportFilter').value;
+            let startDate, endDate;
+            const today = new Date();
+            
+            switch(filter) {
+                case 'today':
+                    startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+                    break;
+                case 'yesterday':
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+                    endDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59);
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(weekStart.getDate() - 7);
+                    startDate = weekStart;
+                    endDate = today;
+                    break;
+                case 'month':
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    endDate = today;
+                    break;
+                default:
+                    startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    endDate = today;
+            }
+            
+            const startDateStr = startDate.toISOString().split('T')[0];
+            const endDateStr = endDate.toISOString().split('T')[0];
+            
+            try {
+                const salesSnapshot = await db.collection('sales')
+                    .where('date', '>=', startDateStr)
+                    .where('date', '<=', endDateStr)
+                    .get();
+                
+                let totalSales = 0;
+                let totalCost = 0;
+                let totalProfit = 0;
+                let cashSales = 0;
+                let creditSales = 0;
+                let productsSold = 0;
+                let totalOrders = salesSnapshot.docs.length;
+                
+                const productSales = {};
+                
+                salesSnapshot.docs.forEach(doc => {
+                    const sale = doc.data();
+                    totalSales += sale.total || 0;
+                    totalCost += sale.cost || 0;
+                    totalProfit += sale.profit || 0;
+                    
+                    if (sale.paymentMethod === 'cash') {
+                        cashSales += sale.total || 0;
+                    } else {
+                        creditSales += sale.total || 0;
+                    }
+                    
+                    if (sale.items) {
+                        sale.items.forEach(item => {
+                            productsSold += item.quantity || 0;
+                            
+                            if (!productSales[item.name]) {
+                                productSales[item.name] = {
+                                    name: item.name,
+                                    quantity: 0,
+                                    sales: 0,
+                                    cost: 0,
+                                    profit: 0
+                                };
+                            }
+                            
+                            productSales[item.name].quantity += item.quantity;
+                            productSales[item.name].sales += item.quantity * item.sellingPrice;
+                            productSales[item.name].cost += item.quantity * item.purchasePrice;
+                            productSales[item.name].profit += item.quantity * (item.sellingPrice - item.purchasePrice);
+                        });
+                    }
+                });
+                
+                const expensesSnapshot = await db.collection('expenses')
+                    .where('date', '>=', startDateStr)
+                    .where('date', '<=', endDateStr)
+                    .get();
+                
+                let totalExpenses = 0;
+                expensesSnapshot.docs.forEach(doc => {
+                    totalExpenses += doc.data().amount || 0;
+                });
+                
+                const netProfit = totalProfit - totalExpenses;
+                
+                const summaryHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Sales</div>
+                        <div class="stat-value">Rs. ${totalSales.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cost</div>
+                        <div class="stat-value">Rs. ${totalCost.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Gross Profit</div>
+                        <div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Expenses</div>
+                        <div class="stat-value">Rs. ${totalExpenses.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-label">Net Profit</div>
+                        <div class="stat-value">Rs. ${netProfit.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Products Sold</div>
+                        <div class="stat-value">${productsSold}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Orders</div>
+                        <div class="stat-value">${totalOrders}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cash Sales</div>
+                        <div class="stat-value">Rs. ${cashSales.toFixed(2)}</div>
+                    </div>
+                `;
+                
+                document.getElementById('reportSummary').innerHTML = summaryHTML;
+                
+                let productsHTML = '';
+                Object.values(productSales).forEach(product => {
+                    productsHTML += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${product.quantity}</td>
+                            <td>Rs. ${product.sales.toFixed(2)}</td>
+                            <td>Rs. ${product.cost.toFixed(2)}</td>
+                            <td>Rs. ${product.profit.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                
+                document.getElementById('productWiseProfit').innerHTML = productsHTML || 
+                    '<tr><td colspan="5" style="text-align: center;">No sales data available</td></tr>';
+                
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showToast('Error loading reports');
+            }
+        }
+
+        // Daily Closing Functions
+        async function loadClosingData() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            try {
+                const salesSnapshot = await db.collection('sales')
+                    .where('date', '==', today)
+                    .get();
+                
+                let totalSales = 0;
+                let cashSales = 0;
+                let creditSales = 0;
+                let productCost = 0;
+                let grossProfit = 0;
+                let productsSold = 0;
+                let totalOrders = salesSnapshot.docs.length;
+                
+                salesSnapshot.docs.forEach(doc => {
+                    const sale = doc.data();
+                    totalSales += sale.total || 0;
+                    productCost += sale.cost || 0;
+                    grossProfit += sale.profit || 0;
+                    
+                    if (sale.paymentMethod === 'cash') {
+                        cashSales += sale.total || 0;
+                    } else {
+                        creditSales += sale.total || 0;
+                    }
+                    
+                    if (sale.items) {
+                        sale.items.forEach(item => {
+                            productsSold += item.quantity || 0;
+                        });
+                    }
+                });
+                
+                const expensesSnapshot = await db.collection('expenses')
+                    .where('date', '==', today)
+                    .get();
+                
+                let totalExpenses = 0;
+                expensesSnapshot.docs.forEach(doc => {
+                    totalExpenses += doc.data().amount || 0;
+                });
+                
+                const purchasesSnapshot = await db.collection('purchases')
+                    .where('date', '==', today)
+                    .get();
+                
+                let totalPurchases = 0;
+                purchasesSnapshot.docs.forEach(doc => {
+                    totalPurchases += doc.data().total || 0;
+                });
+                
+                const netProfit = grossProfit - totalExpenses;
+                
+                window.currentClosingData = {
+                    date: today,
+                    totalSales,
+                    cashSales,
+                    creditSales,
+                    productCost,
+                    grossProfit,
+                    totalExpenses,
+                    netProfit,
+                    productsSold,
+                    totalOrders,
+                    totalPurchases
+                };
+                
+            } catch (error) {
+                console.error('Error loading closing data:', error);
+            }
+        }
+
+        function showClosingSummary() {
+            if (!window.currentClosingData) {
+                showToast('No data available for today.');
+                return;
+            }
+            
+            const data = window.currentClosingData;
+            const closingDetails = document.getElementById('closingDetails');
+            
+            closingDetails.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Date</div>
+                        <div class="stat-value">${data.date}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value">Rs. ${data.totalSales.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cash Sales</div>
+                        <div class="stat-value">Rs. ${data.cashSales.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Credit Sales</div>
+                        <div class="stat-value">Rs. ${data.creditSales.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Product Cost</div>
+                        <div class="stat-value">Rs. ${data.productCost.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-label">Gross Profit</div>
+                        <div class="stat-value">Rs. ${data.grossProfit.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-label">Expenses</div>
+                        <div class="stat-value">Rs. ${data.totalExpenses.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card accent">
+                        <div class="stat-label">Net Profit</div>
+                        <div class="stat-value">Rs. ${data.netProfit.toFixed(2)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Products Sold</div>
+                        <div class="stat-value">${data.productsSold}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">${data.totalOrders}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">New Stock Purchased</div>
+                        <div class="stat-value">Rs. ${data.totalPurchases.toFixed(2)}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('closingSummary').style.display = 'block';
+        }
+
+        async function confirmClosing() {
+            if (!window.currentClosingData) return;
+            
+            if (confirm('Are you sure you want to close today? This action cannot be undone easily.')) {
+                try {
+                    await db.collection('dailyClosings').add({
+                        ...window.currentClosingData,
+                        closedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        closedBy: currentUser.email
+                    });
+                    
+                    showToast('Daily Closing Saved Successfully ✓');
+                    document.getElementById('closingSummary').style.display = 'none';
+                    
+                } catch (error) {
+                    console.error('Error saving daily closing:', error);
+                    showToast('Error saving daily closing. Please try again.');
+                }
+            }
+        }
+
+        // Settings Functions
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('shopSettings') || '{}');
+            
+            document.getElementById('shopName').value = settings.shopName || '';
+            document.getElementById('ownerName').value = settings.ownerName || '';
+            document.getElementById('shopPhone').value = settings.shopPhone || '';
+            document.getElementById('whatsappNumber').value = settings.whatsappNumber || '';
+            document.getElementById('shopAddress').value = settings.shopAddress || '';
+            document.getElementById('currency').value = settings.currency || 'PKR / Rs.';
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const settings = {
+                shopName: document.getElementById('shopName').value,
+                ownerName: document.getElementById('ownerName').value,
+                shopPhone: document.getElementById('shopPhone').value,
+                whatsappNumber: document.getElementById('whatsappNumber').value,
+                shopAddress: document.getElementById('shopAddress').value,
+                currency: document.getElementById('currency').value
+            };
+            
+            localStorage.setItem('shopSettings', JSON.stringify(settings));
+            showToast('Settings Saved Successfully ✓');
+        });
+
+        // Theme Functions
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            isDarkMode = false;
+            document.body.classList.add('light-mode');
+        }
+
+        // Charts Functions
+        function initializeCharts() {
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            charts.sales = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            const profitCtx = document.getElementById('profitChart').getContext('2d');
+            charts.profit = new Chart(profitCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Profit',
+                        data: [],
+                        backgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function updateCharts() {
+            const days = [];
+            const salesData = [];
+            const profitData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                try {
+                    const salesSnapshot = await db.collection('sales')
+                        .where('date', '==', dateStr)
+                        .get();
+                    
+                    let dailySales = 0;
+                    let dailyProfit = 0;
+                    
+                    salesSnapshot.docs.forEach(doc => {
+                        const sale = doc.data();
+                        dailySales += sale.total || 0;
+                        dailyProfit += sale.profit || 0;
+                    });
+                    
+                    salesData.push(dailySales);
+                    profitData.push(dailyProfit);
+                    
+                } catch (error) {
+                    console.error('Error loading chart data:', error);
+                    salesData.push(0);
+                    profitData.push(0);
+                }
+            }
+            
+            if (charts.sales) {
+                charts.sales.data.labels = days;
+                charts.sales.data.datasets[0].data = salesData;
+                charts.sales.update();
+            }
+            
+            if (charts.profit) {
+                charts.profit.data.labels = days;
+                charts.profit.data.datasets[0].data = profitData;
+                charts.profit.update();
+            }
+        }
+
+        // Toast Function
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize demo data
+        async function initializeDemoData() {
+            try {
+                const productsSnapshot = await db.collection('products').limit(1).get();
+                
+                if (productsSnapshot.docs.length === 0) {
+                    const demoProducts = [
+                        {
+                            name: 'Eggs',
+                            icon: '🥚',
+                            category: 'Grocery',
+                            unit: 'Pack',
+                            packQuantity: 12,
+                            purchasePrice: 250,
+                            sellingPrice: 300,
+                            currentStock: 10,
+                            minStock: 3,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Biscuits',
+                            icon: '🍪',
+                            category: 'Grocery',
+                            unit: 'Box',
+                            packQuantity: 24,
+                            purchasePrice: 400,
+                            sellingPrice: 500,
+                            currentStock: 15,
+                            minStock: 5,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Milk',
+                            icon: '🥛',
+                            category: 'Dairy',
+                            unit: 'Liter',
+                            packQuantity: 1,
+                            purchasePrice: 150,
+                            sellingPrice: 180,
+                            currentStock: 20,
+                            minStock: 10,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Mobile Charger',
+                            icon: '🔌',
+                            category: 'Electronics',
+                            unit: 'Piece',
+                            packQuantity: 1,
+                            purchasePrice: 300,
+                            sellingPrice: 500,
+                            currentStock: 8,
+                            minStock: 2,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Earphones',
+                            icon: '🎧',
+                            category: 'Electronics',
+                            unit: 'Piece',
+                            packQuantity: 1,
+                            purchasePrice: 200,
+                            sellingPrice: 350,
+                            currentStock: 12,
+                            minStock: 3,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Mobile Cable',
+                            icon: '🔗',
+                            category: 'Electronics',
+                            unit: 'Piece',
+                            packQuantity: 1,
+                            purchasePrice: 100,
+                            sellingPrice: 200,
+                            currentStock: 25,
+                            minStock: 5,
+                            status: 'active'
+                        },
+                        {
+                            name: 'Bottled Water',
+                            icon: '💧',
+                            category: 'Beverages',
+                            unit: 'Bottle',
+                            packQuantity: 1,
+                            purchasePrice: 50,
+                            sellingPrice: 80,
+                            currentStock: 40,
+                            minStock: 10,
+                            status: 'active'
+                        }
+                    ];
+                    
+                    for (const product of demoProducts) {
+                        await db.collection('products').add({
+                            ...product,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            isDemo: true
+                        });
+                    }
+                    
+                    console.log('Demo products created successfully');
+                    loadProducts();
+                }
+            } catch (error) {
+                console.error('Error initializing demo data:', error);
+            }
+        }
+    </script>
+</body>
+</html>
