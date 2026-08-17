@@ -648,6 +648,27 @@
             margin-bottom: 8px;
         }
 
+        .pricing-panel {
+            background: linear-gradient(135deg, rgba(59,130,246,.10), rgba(16,185,129,.08));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin: 12px 0 18px;
+        }
+        .pricing-panel strong { color: var(--text-primary); }
+        .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .pricing-item { background: rgba(255,255,255,.04); border-radius:10px; padding:10px; }
+        .pricing-item span { display:block; color:var(--text-secondary); font-size:.75rem; }
+        .pricing-item b { display:block; margin-top:3px; font-size:1.05rem; }
+        .recommended-rate { color: var(--success) !important; }
+        .minimum-rate { color: var(--warning) !important; }
+        .bill-preview { max-height:60vh; overflow:auto; }
+        .bill-row { display:grid; grid-template-columns:1.7fr .55fr .75fr .85fr .75fr; gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); font-size:.85rem; }
+        .bill-row.head { color:var(--text-secondary); font-weight:700; position:sticky; top:0; background:var(--bg-card); }
+        .bill-summary { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+        .bill-summary .stat-card { flex:1; min-width:150px; }
+        @media (max-width: 600px) { .pricing-grid { grid-template-columns:1fr; } .bill-row { grid-template-columns:1.5fr .45fr .65fr .75fr .7fr; font-size:.75rem; } }
+
         .receipt-total {
             font-weight: bold;
             font-size: 1.2rem;
@@ -896,7 +917,10 @@
                         <h1>Products</h1>
                         <p class="date">Manage your products</p>
                     </div>
-                    <button class="btn" style="max-width: 150px;" onclick="showAddProduct()">+ Add Product</button>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+                        <button class="icon-btn" onclick="showBillImportPreview()">📥 Import Accessories Bill</button>
+                        <button class="btn" style="max-width: 150px;" onclick="showAddProduct()">+ Add Product</button>
+                    </div>
                 </div>
 
                 <div class="table-container">
@@ -910,6 +934,8 @@
                                 <th>Selling Price</th>
                                 <th>Stock</th>
                                 <th>Profit/Unit</th>
+                                <th>Suggested Sale</th>
+                                <th>Min. Sale</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -1677,6 +1703,111 @@
             }
         }
 
+        // Smart pricing: starting recommendation based on purchase cost.
+        // These are suggestions only; the owner can always change them.
+        function roundToFive(value) { return Math.max(5, Math.round(value / 5) * 5); }
+        function calculateRecommendedPrice(cost) {
+            cost = Number(cost) || 0;
+            if (!cost) return 0;
+            let margin = cost <= 100 ? 0.60 : cost <= 200 ? 0.50 : cost <= 300 ? 0.40 : cost <= 500 ? 0.30 : 0.25;
+            const absoluteFloor = cost + (cost <= 50 ? 15 : cost <= 100 ? 25 : 30);
+            return roundToFive(Math.max(cost * (1 + margin), absoluteFloor));
+        }
+        function calculateMinimumPrice(cost) {
+            cost = Number(cost) || 0;
+            if (!cost) return 0;
+            return roundToFive(Math.max(cost * 1.15, cost + 10));
+        }
+        function updatePriceSuggestion() {
+            const cost = parseFloat(document.getElementById('productPurchasePrice')?.value || 0);
+            const sale = document.getElementById('productSellingPrice');
+            const box = document.getElementById('productPricingPreview');
+            if (!sale || !box) return;
+            const suggested = calculateRecommendedPrice(cost);
+            const minimum = calculateMinimumPrice(cost);
+            if (!sale.dataset.manual && suggested) sale.value = suggested;
+            box.innerHTML = `<div class="pricing-grid">
+                <div class="pricing-item"><span>Asli Cost</span><b>Rs. ${cost.toFixed(0)}</b></div>
+                <div class="pricing-item"><span>Recommended Sale</span><b class="recommended-rate">Rs. ${suggested.toFixed(0)}</b></div>
+                <div class="pricing-item"><span>Minimum Sale</span><b class="minimum-rate">Rs. ${minimum.toFixed(0)}</b></div>
+            </div>`;
+        }
+
+        const ACCESSORIES_BILL_PRODUCTS = [
+            ['HEART PLASTING RING',4,70,'Accessories'],
+            ['XTEND XT722',1,460,'Chargers'], ['XTEND XT718',1,450,'Chargers'],
+            ['Z1188 CHARGAR',2,350,'Chargers'], ['XCEED B6 CABLE V8',3,90,'Cables'],
+            ['XCEED B6 CABLE TC',3,100,'Cables'], ['XCEED B6 CABLE IP',3,100,'Cables'],
+            ['BMZ BMO2 C TO C CABLE',1,340,'Cables'], ['BMZ BMO1 C TO IPHONE CABLE',1,400,'Cables'],
+            ['B5 XCEED TYPEC CABLE',1,180,'Cables'], ['XCEED CABLE B5 V8',1,170,'Cables'],
+            ['XCEED CABLE B5 IP',1,190,'Cables'], ['FINGER',15,15,'Accessories'],
+            ['XTEND A20 V8 CABLE',3,100,'Cables'], ['XTEND A20 TC CABLE',3,120,'Cables'],
+            ['XTEND A20 IP CABLE',3,120,'Cables'], ['XCEED B4 CABLE V8',2,150,'Cables'],
+            ['XCEED B4 CABLE TC',2,170,'Cables'], ['XCEED B4 CABLE IP',2,170,'Cables'],
+            ['XCEED CHARGER XC4 V8',2,420,'Chargers'], ['KS25 HF',3,110,'Handsfree'],
+            ['OR13 HF',2,150,'Handsfree'], ['OPPO HF',3,100,'Handsfree'],
+            ['XCEED X70 HF',2,250,'Handsfree'], ['XCEED HF X55',2,250,'Handsfree'],
+            ['35W PD',2,400,'Chargers'], ['OPPO ADAPTER 90W',2,260,'Chargers'],
+            ['100 ML CTC',1,100,'Accessories'], ['P8 CABLE',5,45,'Cables'],
+            ['EXPO BATTRY',3,110,'Batteries'], ['BMZ 10IN1 BATTRY',2,200,'Batteries'],
+            ['OG GLASS',22,60,'Glass'], ['PRO2 WHITE LOT',2,530,'Accessories']
+        ];
+
+        function showBillImportPreview() {
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            let qty = 0, total = 0;
+            const rows = ACCESSORIES_BILL_PRODUCTS.map(([name,q,cost,cat]) => {
+                qty += q; total += q * cost;
+                const rec = calculateRecommendedPrice(cost), min = calculateMinimumPrice(cost);
+                return `<div class="bill-row"><div><strong>${name}</strong><br><small>${cat}</small></div><div>${q}</div><div>Rs. ${cost}</div><div class="recommended-rate"><strong>Rs. ${rec}</strong></div><div class="minimum-rate">Rs. ${min}</div></div>`;
+            }).join('');
+            content.innerHTML = `<div class="modal-header"><h2>📥 Accessories Bill #8668/#8669</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+                <div class="bill-summary"><div class="stat-card"><div class="stat-label">Items</div><div class="stat-value">${qty}</div></div><div class="stat-card"><div class="stat-label">Bill Cost</div><div class="stat-value">Rs. ${total}</div></div><div class="stat-card success"><div class="stat-label">Pricing</div><div class="stat-value">Auto</div></div></div>
+                <p style="color:var(--text-secondary);margin-bottom:12px;">Purchase rates are taken from your bill. Suggested sale rates are starting recommendations; you can edit them later.</p>
+                <div class="bill-preview"><div class="bill-row head"><div>Product</div><div>Qty</div><div>Cost</div><div>Suggested</div><div>Min.</div></div>${rows}</div>
+                <button class="btn" style="margin-top:18px;" onclick="importAccessoriesBill()">✅ Import All Products</button>`;
+            modal.classList.add('active');
+        }
+
+        async function importAccessoriesBill() {
+            if (!currentUser) return;
+            const batch = db.batch();
+            const existingSnapshot = await db.collection('products').get();
+            const existing = {};
+            existingSnapshot.docs.forEach(d => existing[(d.data().name || '').trim().toLowerCase()] = {id:d.id, data:d.data()});
+            let added = 0, updated = 0;
+            ACCESSORIES_BILL_PRODUCTS.forEach(([name, qty, cost, category]) => {
+                const key = name.toLowerCase();
+                const found = existing[key];
+                const rec = calculateRecommendedPrice(cost), min = calculateMinimumPrice(cost);
+                if (found) {
+                    batch.update(db.collection('products').doc(found.id), {
+                        purchasePrice: cost, recommendedSellingPrice: rec, minimumSellingPrice: min,
+                        currentStock: Number(found.data.currentStock || 0) + qty,
+                        pricingSource: 'Bill #8668/#8669', updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    updated++;
+                } else {
+                    const ref = db.collection('products').doc();
+                    batch.set(ref, {
+                        name, icon:'📱', category, unit:'Piece', packQuantity:1,
+                        purchasePrice:cost, sellingPrice:rec, recommendedSellingPrice:rec,
+                        minimumSellingPrice:min, currentStock:qty, minStock:3, supplier:'Asif Mobile',
+                        status:'active', pricingSource:'Bill #8668/#8669', billDate:'2026-08-17',
+                        billInvoice:'8668/8669', createdAt:firebase.firestore.FieldValue.serverTimestamp(), createdBy:currentUser.email
+                    });
+                    added++;
+                }
+            });
+            try {
+                await batch.commit();
+                closeModal();
+                showToast(`Bill imported ✓ ${added} new, ${updated} updated`);
+                await loadProducts(); await loadStock(); await loadDashboardData();
+            } catch (error) { console.error(error); showToast('Bill import failed. Please try again.'); }
+        }
+
         // Products Functions
         async function loadProducts() {
             try {
@@ -1702,13 +1833,15 @@
             const tableBody = document.getElementById('productsTable');
             
             if (products.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">No products yet<br>Add your first product to start managing your shop.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 40px;">No products yet<br>Add your first product to start managing your shop.</td></tr>';
                 return;
             }
             
             let html = '';
             products.forEach(product => {
                 const profitPerUnit = (product.sellingPrice || 0) - (product.purchasePrice || 0);
+                const recommended = Number(product.recommendedSellingPrice || calculateRecommendedPrice(product.purchasePrice || 0));
+                const minimum = Number(product.minimumSellingPrice || calculateMinimumPrice(product.purchasePrice || 0));
                 const status = product.currentStock === 0 ? '🔴 Out of Stock' : 
                               (product.currentStock <= product.minStock ? '🟡 Low Stock' : '🟢 In Stock');
                 
@@ -1721,6 +1854,8 @@
                         <td>Rs. ${(product.sellingPrice || 0).toFixed(2)}</td>
                         <td>${product.currentStock || 0}</td>
                         <td>Rs. ${profitPerUnit.toFixed(2)}</td>
+                        <td class="recommended-rate"><strong>Rs. ${recommended.toFixed(0)}</strong></td>
+                        <td class="minimum-rate">Rs. ${minimum.toFixed(0)}</td>
                         <td>${status}</td>
                         <td>
                             <button class="icon-btn" onclick="editProduct('${product.id}')">✏️</button>
@@ -1779,9 +1914,10 @@
                         <input type="number" id="productPurchasePrice" required min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label>Selling Price *</label>
-                        <input type="number" id="productSellingPrice" required min="0" step="0.01">
+                        <label>Selling Price * <small style="color:var(--success);">(auto suggested)</small></label>
+                        <input type="number" id="productSellingPrice" required min="0" step="0.01" oninput="this.dataset.manual='1'">
                     </div>
+                    <div id="productPricingPreview" class="pricing-panel"><div class="pricing-grid"><div class="pricing-item"><span>Asli Cost</span><b>Rs. 0</b></div><div class="pricing-item"><span>Recommended Sale</span><b class="recommended-rate">Rs. 0</b></div><div class="pricing-item"><span>Minimum Sale</span><b class="minimum-rate">Rs. 0</b></div></div></div>
                     <div class="form-group">
                         <label>Current Stock *</label>
                         <input type="number" id="productCurrentStock" required min="0">
@@ -1815,6 +1951,8 @@
                 packQuantity: document.getElementById('productPackQuantity').value || null,
                 purchasePrice: parseFloat(document.getElementById('productPurchasePrice').value),
                 sellingPrice: parseFloat(document.getElementById('productSellingPrice').value),
+                recommendedSellingPrice: calculateRecommendedPrice(parseFloat(document.getElementById('productPurchasePrice').value)),
+                minimumSellingPrice: calculateMinimumPrice(parseFloat(document.getElementById('productPurchasePrice').value)),
                 currentStock: parseInt(document.getElementById('productCurrentStock').value),
                 minStock: parseInt(document.getElementById('productMinStock').value) || 5,
                 supplier: document.getElementById('productSupplier').value || '',
@@ -1865,7 +2003,8 @@
                     </div>
                     <div class="form-group">
                         <label>Selling Price *</label>
-                        <input type="number" id="editProductSellingPrice" value="${product.sellingPrice || 0}" required min="0" step="0.01">
+                        <input type="number" id="editProductSellingPrice" value="${product.sellingPrice || product.recommendedSellingPrice || 0}" required min="0" step="0.01">
+                        <small style="display:block;margin-top:6px;color:var(--text-secondary);">Suggested: <strong class="recommended-rate">Rs. ${Number(product.recommendedSellingPrice || calculateRecommendedPrice(product.purchasePrice || 0)).toFixed(0)}</strong> · Minimum: <strong class="minimum-rate">Rs. ${Number(product.minimumSellingPrice || calculateMinimumPrice(product.purchasePrice || 0)).toFixed(0)}</strong></small>
                     </div>
                     <div class="form-group">
                         <label>Minimum Stock Level</label>
@@ -1890,6 +2029,8 @@
                 category: document.getElementById('editProductCategory').value || 'General',
                 purchasePrice: parseFloat(document.getElementById('editProductPurchasePrice').value),
                 sellingPrice: parseFloat(document.getElementById('editProductSellingPrice').value),
+                recommendedSellingPrice: calculateRecommendedPrice(parseFloat(document.getElementById('editProductPurchasePrice').value)),
+                minimumSellingPrice: calculateMinimumPrice(parseFloat(document.getElementById('editProductPurchasePrice').value)),
                 minStock: parseInt(document.getElementById('editProductMinStock').value) || 5,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
@@ -2288,6 +2429,8 @@
                 await productRef.update({
                     currentStock: product.currentStock + quantity,
                     purchasePrice: pricePerUnit,
+                    recommendedSellingPrice: calculateRecommendedPrice(pricePerUnit),
+                    minimumSellingPrice: calculateMinimumPrice(pricePerUnit),
                     status: 'active',
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
@@ -3177,37 +3320,9 @@
             }, 3000);
         }
 
-        // Initialize demo data
-        async function initializeDemoData() {
-            try {
-                const productsSnapshot = await db.collection('products').limit(1).get();
-                
-                if (productsSnapshot.docs.length === 0) {
-                    const demoProducts = [
-                        { name: 'Eggs', icon: '🥚', category: 'Grocery', unit: 'Pack', packQuantity: 12, purchasePrice: 250, sellingPrice: 300, currentStock: 10, minStock: 3, status: 'active' },
-                        { name: 'Biscuits', icon: '🍪', category: 'Grocery', unit: 'Box', packQuantity: 24, purchasePrice: 400, sellingPrice: 500, currentStock: 15, minStock: 5, status: 'active' },
-                        { name: 'Milk', icon: '🥛', category: 'Dairy', unit: 'Liter', packQuantity: 1, purchasePrice: 150, sellingPrice: 180, currentStock: 20, minStock: 10, status: 'active' },
-                        { name: 'Mobile Charger', icon: '🔌', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 300, sellingPrice: 500, currentStock: 8, minStock: 2, status: 'active' },
-                        { name: 'Earphones', icon: '🎧', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 200, sellingPrice: 350, currentStock: 12, minStock: 3, status: 'active' },
-                        { name: 'Mobile Cable', icon: '🔗', category: 'Electronics', unit: 'Piece', packQuantity: 1, purchasePrice: 100, sellingPrice: 200, currentStock: 25, minStock: 5, status: 'active' },
-                        { name: 'Bottled Water', icon: '💧', category: 'Beverages', unit: 'Bottle', packQuantity: 1, purchasePrice: 50, sellingPrice: 80, currentStock: 40, minStock: 10, status: 'active' }
-                    ];
-                    
-                    for (const product of demoProducts) {
-                        await db.collection('products').add({
-                            ...product,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            isDemo: true
-                        });
-                    }
-                    
-                    console.log('Demo products created successfully');
-                    loadProducts();
-                }
-            } catch (error) {
-                console.error('Error initializing demo data:', error);
-            }
-        }
-    </script>
+        // Demo data intentionally disabled: use the real Accessories Bill import instead.
+        async function initializeDemoData() { return; }
+
+</script>
 </body>
 </html>
