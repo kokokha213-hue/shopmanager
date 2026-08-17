@@ -1319,7 +1319,23 @@
                 loadExpenses(),
                 loadPurchases()
             ]);
+
+            // First-time setup: if the Products collection is empty, automatically
+            // add the accessories from bills #8668 and #8669. This means the owner
+            // does not have to open the import button manually on a fresh shop.
+            await ensureAccessoriesBillImported();
             initializeDemoData();
+        }
+
+        async function ensureAccessoriesBillImported() {
+            if (!currentUser) return;
+            try {
+                const snapshot = await db.collection('products').limit(1).get();
+                if (!snapshot.empty) return;
+                await importAccessoriesBill(true);
+            } catch (error) {
+                console.error('Automatic accessories import skipped:', error);
+            }
         }
 
         // Navigation
@@ -1770,7 +1786,7 @@
             modal.classList.add('active');
         }
 
-        async function importAccessoriesBill() {
+        async function importAccessoriesBill(silent = false) {
             if (!currentUser) return;
             const batch = db.batch();
             const existingSnapshot = await db.collection('products').get();
@@ -1802,10 +1818,14 @@
             });
             try {
                 await batch.commit();
-                closeModal();
-                showToast(`Bill imported ✓ ${added} new, ${updated} updated`);
+                if (!silent) closeModal();
+                showToast(silent ? `Accessories added ✓ ${added} products from your bill` : `Bill imported ✓ ${added} new, ${updated} updated`);
                 await loadProducts(); await loadStock(); await loadDashboardData();
-            } catch (error) { console.error(error); showToast('Bill import failed. Please try again.'); }
+            } catch (error) {
+                console.error(error);
+                if (!silent) showToast('Bill import failed. Please try again.');
+                throw error;
+            }
         }
 
         // Products Functions
