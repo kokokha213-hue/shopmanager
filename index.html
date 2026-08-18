@@ -42,7 +42,6 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             --sidebar-width: 280px;
-            --header-height: 70px;
         }
 
         .light-mode {
@@ -59,11 +58,7 @@
             --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: var(--font);
@@ -131,11 +126,7 @@
             margin-bottom: 32px;
         }
 
-        .login-logo .shop-icon {
-            font-size: 3rem;
-            margin-bottom: 8px;
-        }
-
+        .login-logo .shop-icon { font-size: 3rem; margin-bottom: 8px; }
         .login-logo h1 {
             font-size: 1.8rem;
             font-weight: 700;
@@ -144,17 +135,9 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 4px;
         }
+        .login-logo p { color: var(--text-secondary); font-size: 0.9rem; -webkit-text-fill-color: var(--text-secondary); }
 
-        .login-logo p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            -webkit-text-fill-color: var(--text-secondary);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
+        .form-group { margin-bottom: 18px; }
         .form-group label {
             display: block;
             margin-bottom: 6px;
@@ -163,10 +146,7 @@
             font-weight: 500;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
+        .input-wrapper { position: relative; }
         .input-wrapper input, .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px 16px;
@@ -212,11 +192,7 @@
             overflow: hidden;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px var(--accent-glow);
-        }
-
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow); }
         .btn:active { transform: translateY(0); }
         .btn.loading { pointer-events: none; opacity: 0.7; }
 
@@ -242,19 +218,9 @@
             border: 1px solid var(--border);
             color: var(--text-secondary);
         }
+        .btn-outline:hover { background: var(--bg-card-hover); color: var(--text-primary); box-shadow: none; }
 
-        .btn-outline:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-            box-shadow: none;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            width: auto;
-        }
-
+        .btn-sm { padding: 8px 16px; font-size: 0.85rem; width: auto; }
         .btn-success { background: linear-gradient(135deg, var(--success), #059669); }
         .btn-warning { background: linear-gradient(135deg, var(--warning), #d97706); }
         .btn-danger { background: linear-gradient(135deg, var(--danger), #dc2626); }
@@ -293,10 +259,7 @@
         }
 
         /* APP LAYOUT */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
+        .app-container { display: flex; min-height: 100vh; }
 
         /* SIDEBAR */
         .sidebar {
@@ -325,33 +288,17 @@
             margin-bottom: 16px;
         }
 
-        .sidebar-header .shop-icon {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
+        .sidebar-header .shop-icon { font-size: 2rem; display: block; margin-bottom: 4px; }
         .sidebar-header h2 {
             font-size: 1.3rem;
             font-weight: 700;
             background: linear-gradient(135deg, var(--accent-light), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            -webkit-text-fill-color: transparent;
         }
+        .sidebar-header small { color: var(--text-muted); font-size: 0.75rem; display: block; -webkit-text-fill-color: var(--text-muted); }
 
-        .sidebar-header small {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            display: block;
-            -webkit-text-fill-color: var(--text-muted);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            overflow-y: auto;
-        }
-
+        .sidebar-nav { flex: 1; overflow-y: auto; }
         .sidebar-nav-item {
             display: flex;
             align-items: center;
@@ -366,17 +313,8 @@
             gap: 10px;
         }
 
-        .sidebar-nav-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
-
-        .sidebar-nav-item.active {
-            background: var(--accent-glow);
-            color: var(--accent-light);
-            font-weight: 600;
-        }
-
+        .sidebar-nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .sidebar-nav-item.active { background: var(--accent-glow); color: var(--accent-light); font-weight: 600; }
         .sidebar-nav-item .icon { font-size: 1.1rem; }
         .sidebar-nav-item .badge {
             margin-left: auto;
@@ -387,11 +325,7 @@
             border-radius: 10px;
         }
 
-        .sidebar-footer {
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-            margin-top: 8px;
-        }
+        .sidebar-footer { padding-top: 12px; border-top: 1px solid var(--border); margin-top: 8px; }
 
         /* MAIN CONTENT */
         .main-content {
@@ -417,21 +351,10 @@
             gap: 12px;
         }
 
-        .top-header .header-left h1 {
-            font-size: 1.3rem;
-            margin-bottom: 2px;
-        }
+        .top-header .header-left h1 { font-size: 1.3rem; margin-bottom: 2px; }
+        .top-header .header-left .date { color: var(--text-secondary); font-size: 0.85rem; }
 
-        .top-header .header-left .date {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .icon-btn {
             background: var(--bg-card);
@@ -447,10 +370,7 @@
             gap: 6px;
         }
 
-        .icon-btn:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
+        .icon-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
 
         /* PAGES */
         .page { display: none; animation: fadeIn 0.3s ease-out; }
@@ -464,48 +384,26 @@
         /* STATS GRID */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 16px 18px;
+            padding: 14px 16px;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
-            background: var(--bg-card-hover);
-        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); background: var(--bg-card-hover); }
 
-        .stat-card .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .stat-card .stat-value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .stat-card .stat-icon {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            font-size: 1.8rem;
-            opacity: 0.2;
-        }
+        .stat-card .stat-label { color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .stat-card .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        .stat-card .stat-icon { position: absolute; top: 14px; right: 14px; font-size: 1.6rem; opacity: 0.2; }
 
         .stat-card.accent { border-left: 3px solid var(--accent); }
         .stat-card.success { border-left: 3px solid var(--success); }
@@ -517,7 +415,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 10px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .quick-action-btn {
@@ -532,25 +430,15 @@
             color: var(--text-secondary);
         }
 
-        .quick-action-btn:hover {
-            background: var(--accent-glow);
-            color: var(--accent-light);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .quick-action-btn .qa-icon {
-            font-size: 1.8rem;
-            display: block;
-            margin-bottom: 4px;
-        }
+        .quick-action-btn:hover { background: var(--accent-glow); color: var(--accent-light); transform: translateY(-2px); box-shadow: var(--shadow); }
+        .quick-action-btn .qa-icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
 
         /* CHARTS */
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .chart-card {
@@ -558,26 +446,13 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 16px;
-            height: 320px;
+            height: 280px;
             overflow: hidden;
         }
 
-        .chart-card h3 {
-            margin-bottom: 12px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .chart-container {
-            position: relative;
-            height: calc(100% - 40px);
-            width: 100%;
-        }
-
-        .chart-container canvas {
-            max-height: 100% !important;
-            max-width: 100% !important;
-        }
+        .chart-card h3 { margin-bottom: 12px; color: var(--text-secondary); font-size: 0.9rem; }
+        .chart-container { position: relative; height: calc(100% - 40px); width: 100%; }
+        .chart-container canvas { max-height: 100% !important; max-width: 100% !important; }
 
         /* TABLES */
         .table-container {
@@ -590,7 +465,7 @@
         }
 
         .table-container .table-header {
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -599,9 +474,7 @@
             gap: 8px;
         }
 
-        .table-container .table-header h3 {
-            font-size: 1rem;
-        }
+        .table-container .table-header h3 { font-size: 1rem; }
 
         .table {
             width: 100%;
@@ -632,11 +505,36 @@
         .table tr:hover { background: var(--bg-card-hover); }
         .table tr:last-child td { border-bottom: none; }
 
-        .table .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
+        .table .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+
+        /* SALE HISTORY CARDS */
+        .sale-history-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            transition: var(--transition);
         }
+
+        .sale-history-card:hover { background: var(--bg-card-hover); }
+
+        .sale-history-card .sale-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sale-history-card .sale-id { font-weight: 700; color: var(--accent-light); }
+        .sale-history-card .sale-date { color: var(--text-secondary); font-size: 0.85rem; }
+        .sale-history-card .sale-items { color: var(--text-secondary); font-size: 0.9rem; }
+        .sale-history-card .sale-total { font-weight: 700; font-size: 1.1rem; }
+        .sale-history-card .sale-payment { font-size: 0.85rem; }
+
+        .sale-history-card .sale-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
         /* MODAL */
         .modal-overlay {
@@ -661,7 +559,7 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 24px;
-            max-width: 640px;
+            max-width: 720px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -683,9 +581,7 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .modal-header h2 {
-            font-size: 1.2rem;
-        }
+        .modal-header h2 { font-size: 1.2rem; }
 
         .close-btn {
             background: none;
@@ -698,10 +594,7 @@
             transition: var(--transition);
         }
 
-        .close-btn:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
+        .close-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
 
         .modal-body { padding: 4px 0; }
 
@@ -748,10 +641,7 @@
             z-index: 100;
         }
 
-        .mobile-nav-items {
-            display: flex;
-            justify-content: space-around;
-        }
+        .mobile-nav-items { display: flex; justify-content: space-around; }
 
         .mobile-nav-item {
             display: flex;
@@ -797,53 +687,17 @@
             padding: 2px 0;
         }
 
-        .receipt-total {
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-align: right;
-        }
-
-        /* IMPORT PREVIEW */
-        .import-preview {
-            background: var(--bg-card-hover);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            margin: 12px 0;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .import-preview table { width: 100%; font-size: 0.85rem; }
-        .import-preview th { font-size: 0.7rem; padding: 6px 8px; }
-        .import-preview td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
-
-        .import-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin: 12px 0;
-        }
-
-        .import-summary-item {
-            background: var(--bg-card);
-            padding: 10px;
-            border-radius: var(--radius-xs);
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .import-summary-item .label { font-size: 0.7rem; color: var(--text-secondary); }
-        .import-summary-item .value { font-size: 1.2rem; font-weight: 700; }
+        .receipt-total { font-weight: bold; font-size: 1.1rem; text-align: right; }
 
         /* SEARCH */
         .search-container {
             position: relative;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .search-container input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
@@ -866,7 +720,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            max-height: 300px;
+            max-height: 260px;
             overflow-y: auto;
             z-index: 50;
             display: none;
@@ -904,32 +758,28 @@
         .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
         .badge-info { background: rgba(59, 130, 246, 0.2); color: var(--accent-light); }
 
-        /* TABS */
-        .tabs {
+        /* FILTERS */
+        .filter-bar {
             display: flex;
-            gap: 4px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-            padding-bottom: 4px;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
         }
 
-        .tab {
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-secondary);
+        .filter-bar select, .filter-bar input {
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            color: var(--text-primary);
             font-size: 0.85rem;
-            white-space: nowrap;
-            border: 1px solid transparent;
+            outline: none;
         }
 
-        .tab:hover { background: var(--bg-card-hover); }
-        .tab.active {
-            background: var(--accent-glow);
-            color: var(--accent-light);
+        .filter-bar select:focus, .filter-bar input:focus {
             border-color: var(--accent);
-            font-weight: 500;
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         /* RESPONSIVE */
@@ -944,18 +794,18 @@
             .mobile-nav { display: block; }
 
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
                 gap: 8px;
             }
 
-            .stat-card .stat-value { font-size: 1.2rem; }
-            .stat-card { padding: 12px 14px; }
+            .stat-card .stat-value { font-size: 1.1rem; }
+            .stat-card { padding: 10px 12px; }
 
             .charts-grid { grid-template-columns: 1fr; }
-            .chart-card { height: 260px; }
+            .chart-card { height: 240px; }
 
             .quick-actions {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
                 gap: 6px;
             }
 
@@ -974,37 +824,40 @@
             .header-actions .icon-btn { padding: 6px 10px; font-size: 0.75rem; }
 
             .table { font-size: 0.8rem; }
-            .table th, .table td { padding: 6px 10px; }
+            .table th, .table td { padding: 6px 8px; }
 
             .modal { padding: 16px; margin: 10px; }
 
             .login-box { padding: 24px 20px; }
 
-            .import-summary { grid-template-columns: repeat(2, 1fr); }
+            .sale-history-card { padding: 12px; }
+            .sale-history-card .sale-header { flex-direction: column; align-items: flex-start; }
 
-            .receipt { max-width: 100%; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-bar select, .filter-bar input { width: 100%; }
         }
 
         @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-            }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .stat-card .stat-value { font-size: 0.95rem; }
+            .stat-card .stat-label { font-size: 0.6rem; }
+            .stat-card .stat-icon { font-size: 1rem; top: 8px; right: 8px; }
 
-            .stat-card .stat-value { font-size: 1rem; }
-            .stat-card .stat-label { font-size: 0.65rem; }
-            .stat-card .stat-icon { font-size: 1.2rem; top: 8px; right: 8px; }
+            .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+            .quick-action-btn { padding: 8px 4px; font-size: 0.65rem; }
+            .quick-action-btn .qa-icon { font-size: 1.1rem; }
 
-            .quick-actions {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 4px;
-            }
+            .mobile-nav-item { font-size: 0.55rem; }
+            .mobile-nav-item .mni-icon { font-size: 1.1rem; }
+        }
 
-            .quick-action-btn { padding: 8px 4px; font-size: 0.7rem; }
-            .quick-action-btn .qa-icon { font-size: 1.2rem; }
-
-            .mobile-nav-item { font-size: 0.6rem; }
-            .mobile-nav-item .mni-icon { font-size: 1.2rem; }
+        /* Print Styles */
+        @media print {
+            .sidebar, .mobile-nav, .top-header .header-actions, .no-print { display: none !important; }
+            .main-content { margin: 0 !important; padding: 10px !important; }
+            .receipt { box-shadow: none !important; border: 1px solid #ddd !important; }
+            .table-container { border: 1px solid #ddd !important; }
+            .stat-card { border: 1px solid #ddd !important; }
         }
 
         /* Loading Skeleton */
@@ -1018,26 +871,6 @@
         @keyframes skeleton {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
-        }
-
-        /* Print Styles */
-        @media print {
-            .sidebar, .mobile-nav, .top-header .header-actions, .no-print {
-                display: none !important;
-            }
-
-            .main-content {
-                margin: 0 !important;
-                padding: 10px !important;
-            }
-
-            .receipt {
-                box-shadow: none !important;
-                border: 1px solid #ddd !important;
-            }
-
-            .table-container { border: 1px solid #ddd !important; }
-            .stat-card { border: 1px solid #ddd !important; }
         }
     </style>
 </head>
@@ -1085,6 +918,9 @@
                 </a>
                 <a class="sidebar-nav-item" onclick="showPage('sale')">
                     <span class="icon">🛒</span> New Sale
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('salesHistory')">
+                    <span class="icon">📜</span> Sales History
                 </a>
                 <a class="sidebar-nav-item" onclick="showPage('products')">
                     <span class="icon">📦</span> Products
@@ -1146,6 +982,9 @@
                     <div class="quick-action-btn" onclick="showPage('sale')">
                         <span class="qa-icon">➕</span> New Sale
                     </div>
+                    <div class="quick-action-btn" onclick="showPage('salesHistory')">
+                        <span class="qa-icon">📜</span> Sales History
+                    </div>
                     <div class="quick-action-btn" onclick="showPage('products')">
                         <span class="qa-icon">📦</span> Add Product
                     </div>
@@ -1164,9 +1003,6 @@
                     <div class="quick-action-btn" onclick="showPage('closing')">
                         <span class="qa-icon">🌙</span> Daily Closing
                     </div>
-                    <div class="quick-action-btn" onclick="showPage('import')">
-                        <span class="qa-icon">📥</span> Import Products
-                    </div>
                 </div>
 
                 <div class="charts-grid">
@@ -1180,7 +1016,16 @@
                     </div>
                 </div>
 
-                <div class="chart-card" style="height: auto; min-height: 180px;">
+                <!-- RECENT SALES ON DASHBOARD -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>📜 Recent Sales</h3>
+                        <button class="icon-btn" onclick="showPage('salesHistory')">View All →</button>
+                    </div>
+                    <div id="recentSalesContainer"></div>
+                </div>
+
+                <div class="chart-card" style="height: auto; min-height: 150px;">
                     <h3>⚠️ Low Stock Alerts</h3>
                     <div id="lowStockAlerts"></div>
                 </div>
@@ -1219,27 +1064,71 @@
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-top: 12px;">
-                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1; min-width: 130px; margin-bottom: 0;">
                         <label>Payment Method</label>
                         <select id="paymentMethod" onchange="toggleCustomerSelect()">
                             <option value="cash">💵 Cash</option>
-                            <option value="credit">📋 Udhaar / Credit</option>
+                            <option value="credit">📋 Udhaar</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0; display: none;" id="customerSelectGroup">
+                    <div class="form-group" style="flex: 1; min-width: 130px; margin-bottom: 0; display: none;" id="customerSelectGroup">
                         <label>Customer</label>
                         <select id="customerSelect"><option value="">Select Customer</option></select>
                     </div>
-                    <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;" id="discountGroup">
+                    <div class="form-group" style="flex: 1; min-width: 130px; margin-bottom: 0;">
                         <label>Discount (Rs.)</label>
                         <input type="number" id="saleDiscount" value="0" min="0" oninput="updateSaleDisplay()">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 auto; margin-bottom: 0;">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-success" style="width: auto; padding: 10px 24px;" onclick="completeSale()">💾 Save</button>
                     </div>
                 </div>
 
                 <div style="margin-top: 16px; text-align: right;">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Subtotal: <span id="saleSubtotal">Rs. 0</span>
+                        <span id="saleDiscountDisplay" style="display: none; color: var(--danger);"> | Discount: -Rs. <span id="saleDiscountAmount">0</span></span>
+                    </div>
                     <h2>Total: <span id="saleTotal">Rs. 0</span></h2>
-                    <button class="btn" style="max-width: 220px; margin-top: 8px;" onclick="completeSale()">💾 Save Sale</button>
                 </div>
+            </div>
+
+            <!-- ===== SALES HISTORY ===== -->
+            <div id="salesHistoryPage" class="page">
+                <div class="top-header">
+                    <div class="header-left">
+                        <h1>📜 Sales History</h1>
+                        <p class="date">View and manage all sales</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" onclick="refreshSalesHistory()">🔄</button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <select id="historyFilter" onchange="loadSalesHistory()">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                    <select id="paymentFilter" onchange="loadSalesHistory()">
+                        <option value="all">All Payments</option>
+                        <option value="cash">💵 Cash</option>
+                        <option value="credit">📋 Udhaar</option>
+                    </select>
+                    <div style="flex: 1; min-width: 150px;">
+                        <input type="text" id="historySearch" placeholder="🔍 Search sales..." oninput="loadSalesHistory()" style="width:100%;padding:8px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text-primary);outline:none;">
+                    </div>
+                </div>
+
+                <div id="salesHistoryContainer"></div>
+
+                <!-- Pagination -->
+                <div style="display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;" id="historyPagination"></div>
             </div>
 
             <!-- ===== PRODUCTS ===== -->
@@ -1290,27 +1179,33 @@
                 <div class="table-container">
                     <div style="padding: 16px;">
                         <h3>Add New Purchase</h3>
-                        <form id="purchaseForm" style="margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>Product *</label>
-                                <select id="purchaseProduct" required><option value="">Select Product</option></select>
+                        <div style="margin-top: 12px;">
+                            <div class="search-container" style="margin-bottom: 8px;">
+                                <input type="text" id="purchaseSearch" placeholder="🔍 Search existing product by name or model..." oninput="debouncedPurchaseSearch()">
+                                <div class="search-results" id="purchaseSearchResults"></div>
                             </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>Quantity *</label>
-                                <input type="number" id="purchaseQuantity" required min="1">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>Price/Unit *</label>
-                                <input type="number" id="purchasePrice" required min="0" step="0.01">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label>Supplier</label>
-                                <input type="text" id="purchaseSupplier">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0; display: flex; align-items: end;">
-                                <button type="submit" class="btn btn-success btn-sm">➕ Add Purchase</button>
-                            </div>
-                        </form>
+                            <form id="purchaseForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Product *</label>
+                                    <select id="purchaseProduct" required><option value="">Select Product</option></select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Quantity *</label>
+                                    <input type="number" id="purchaseQuantity" required min="1">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Price/Unit *</label>
+                                    <input type="number" id="purchasePrice" required min="0" step="0.01">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label>Supplier</label>
+                                    <input type="text" id="purchaseSupplier">
+                                </div>
+                                <div style="display: flex; align-items: end; gap: 8px;">
+                                    <button type="submit" class="btn btn-success btn-sm">➕ Add Purchase</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -1396,7 +1291,7 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="max-width: 300px;">
+                <div class="form-group" style="max-width: 280px;">
                     <label>Filter</label>
                     <select id="reportFilter" onchange="loadReports()">
                         <option value="today">Today</option>
@@ -1513,7 +1408,7 @@
                             <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 8px 0;">
                                 Add one product at a time.
                             </p>
-                            <form id="manualProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+                            <form id="manualProductForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px;">
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label>Product Name *</label>
                                     <input type="text" id="manualName" required>
@@ -1591,7 +1486,7 @@
 
                 <div class="table-container">
                     <div style="padding: 16px;">
-                        <form id="settingsForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                        <form id="settingsForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label>Shop Name</label>
                                 <input type="text" id="shopName">
@@ -1639,11 +1534,11 @@
                 <div class="mobile-nav-item" onclick="showPage('sale')">
                     <span class="mni-icon">🛒</span> Sale
                 </div>
+                <div class="mobile-nav-item" onclick="showPage('salesHistory')">
+                    <span class="mni-icon">📜</span> History
+                </div>
                 <div class="mobile-nav-item" onclick="showPage('stock')">
                     <span class="mni-icon">📦</span> Stock
-                </div>
-                <div class="mobile-nav-item" onclick="showPage('customers')">
-                    <span class="mni-icon">👥</span> Customers
                 </div>
                 <div class="mobile-nav-item" onclick="showMoreMenu()">
                     <span class="mni-icon">☰</span> More
@@ -1686,13 +1581,16 @@
         let currentSaleItems = [];
         let productsCache = [];
         let customersCache = [];
+        let salesCache = [];
         let isDarkMode = true;
         let salesChartInstance = null;
         let profitChartInstance = null;
         let chartsInitialized = false;
         let searchTimeout = null;
         let researchTimeout = null;
-        let isAdminMode = false;
+        let purchaseSearchTimeout = null;
+        let isEditingSale = null;
+        let originalSaleData = null;
 
         // ============================================================
         // INITIALIZATION
@@ -1777,6 +1675,7 @@
                     loadDashboardData(),
                     loadExpenses(),
                     loadPurchases(),
+                    loadSalesHistory(),
                     loadSettings()
                 ]);
                 updateProductSelects();
@@ -1805,10 +1704,9 @@
             document.querySelectorAll('.sidebar-nav-item').forEach(item => item.classList.remove('active'));
             document.querySelectorAll('.mobile-nav-item').forEach(item => item.classList.remove('active'));
             
-            // Highlight matching nav item
             document.querySelectorAll('.sidebar-nav-item').forEach(item => {
-                if (item.textContent.trim().toLowerCase().includes(pageName.toLowerCase()) ||
-                    item.getAttribute('onclick')?.includes(pageName)) {
+                const onclick = item.getAttribute('onclick') || '';
+                if (onclick.includes(pageName)) {
                     item.classList.add('active');
                 }
             });
@@ -1816,6 +1714,7 @@
             // Load page data
             switch(pageName) {
                 case 'dashboard': loadDashboardData(); break;
+                case 'salesHistory': loadSalesHistory(); break;
                 case 'products': loadProducts(); break;
                 case 'purchases': loadPurchases(); break;
                 case 'stock': loadStock(); break;
@@ -1891,13 +1790,15 @@
                 const salesSnap = await db.collection('sales').where('date', '==', today).get();
                 let totalSales = 0, totalProfit = 0, cashSales = 0, creditSales = 0;
                 let productsSold = 0, totalOrders = salesSnap.docs.length;
+                let totalDiscount = 0;
                 
                 salesSnap.docs.forEach(doc => {
                     const s = doc.data();
-                    totalSales += s.total || 0;
+                    totalSales += s.finalTotal || s.total || 0;
                     totalProfit += s.profit || 0;
-                    if (s.paymentMethod === 'cash') cashSales += s.total || 0;
-                    else creditSales += s.total || 0;
+                    totalDiscount += s.discount || 0;
+                    if (s.paymentMethod === 'cash') cashSales += s.finalTotal || s.total || 0;
+                    else creditSales += s.finalTotal || s.total || 0;
                     if (s.items) s.items.forEach(i => { productsSold += i.quantity || 0; });
                 });
                 
@@ -1925,6 +1826,11 @@
                         <div class="stat-value">Rs. ${totalSales.toFixed(2)}</div>
                         <div class="stat-icon">💰</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Today's Discount</div>
+                        <div class="stat-value">Rs. ${totalDiscount.toFixed(2)}</div>
+                        <div class="stat-icon">🏷️</div>
+                    </div>
                     <div class="stat-card success">
                         <div class="stat-label">Today's Profit</div>
                         <div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div>
@@ -1941,14 +1847,14 @@
                         <div class="stat-icon">🎯</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Products Sold</div>
-                        <div class="stat-value">${productsSold}</div>
-                        <div class="stat-icon">📦</div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-label">Orders</div>
                         <div class="stat-value">${totalOrders}</div>
                         <div class="stat-icon">🛒</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Products Sold</div>
+                        <div class="stat-value">${productsSold}</div>
+                        <div class="stat-icon">📦</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Cash Sales</div>
@@ -1971,6 +1877,7 @@
                 
                 loadLowStockAlerts();
                 await updateCharts();
+                await loadRecentSales();
                 
             } catch (error) {
                 console.error('Dashboard error:', error);
@@ -1983,6 +1890,56 @@
             loadLowStockAlerts();
         }
 
+        // ============================================================
+        // RECENT SALES ON DASHBOARD
+        // ============================================================
+        async function loadRecentSales() {
+            const container = document.getElementById('recentSalesContainer');
+            
+            try {
+                const snap = await db.collection('sales')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                if (snap.docs.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No sales recorded yet.</div>';
+                    return;
+                }
+                
+                let html = '';
+                snap.docs.forEach(doc => {
+                    const s = doc.data();
+                    const date = s.date || '';
+                    const time = s.time ? new Date(s.time).toLocaleTimeString() : '';
+                    const items = s.items || [];
+                    const itemNames = items.map(i => `${i.name || 'Unknown'} ×${i.quantity || 0}`).join(', ');
+                    
+                    html += `
+                        <div class="sale-history-card">
+                            <div class="sale-header">
+                                <span class="sale-id">#${doc.id.substring(0, 8).toUpperCase()}</span>
+                                <span class="sale-date">${date} ${time ? '— ' + time : ''}</span>
+                            </div>
+                            <div class="sale-items">${itemNames || 'No items'}</div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:4px;">
+                                <span class="sale-total">Rs. ${(s.finalTotal || s.total || 0).toFixed(2)}</span>
+                                <span class="sale-payment">${s.paymentMethod === 'cash' ? '💵 Cash' : '📋 Udhaar'} ${s.customerName ? '| ' + s.customerName : ''}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Recent sales error:', error);
+                container.innerHTML = '<div class="empty-state">Error loading recent sales.</div>';
+            }
+        }
+
+        // ============================================================
+        // LOW STOCK ALERTS
+        // ============================================================
         async function loadLowStockAlerts() {
             const container = document.getElementById('lowStockAlerts');
             const lowStock = productsCache.filter(p => p.currentStock <= (p.minStock || 5));
@@ -2083,7 +2040,7 @@
                     let ds = 0, dp = 0;
                     snap.docs.forEach(doc => {
                         const s = doc.data();
-                        ds += s.total || 0;
+                        ds += s.finalTotal || s.total || 0;
                         dp += s.profit || 0;
                     });
                     salesData.push(ds);
@@ -2256,7 +2213,6 @@
                 createdBy: currentUser?.email || 'unknown'
             };
             
-            // Check for duplicates
             const existing = productsCache.find(p => 
                 p.name?.toLowerCase() === data.name?.toLowerCase() &&
                 p.model?.toLowerCase() === data.model?.toLowerCase()
@@ -2385,8 +2341,62 @@
         }
 
         // ============================================================
-        // PURCHASES
+        // PURCHASES WITH SEARCH
         // ============================================================
+        function debouncedPurchaseSearch() {
+            clearTimeout(purchaseSearchTimeout);
+            purchaseSearchTimeout = setTimeout(() => performPurchaseSearch(), 300);
+        }
+
+        function performPurchaseSearch() {
+            const term = document.getElementById('purchaseSearch').value.toLowerCase();
+            const resultsDiv = document.getElementById('purchaseSearchResults');
+            
+            if (term.length < 2) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+            
+            const filtered = productsCache.filter(p => 
+                p.name?.toLowerCase().includes(term) ||
+                p.model?.toLowerCase().includes(term) ||
+                p.category?.toLowerCase().includes(term)
+            );
+            
+            if (filtered.length === 0) {
+                resultsDiv.innerHTML = '<div class="search-result-item">No matching products found</div>';
+                resultsDiv.classList.add('show');
+                return;
+            }
+            
+            let html = '';
+            filtered.slice(0, 10).forEach(p => {
+                html += `
+                    <div class="search-result-item" onclick="selectPurchaseProduct('${p.id}')">
+                        <div>
+                            <span class="name">${p.icon || '📦'} ${p.name}</span>
+                            <span class="stock">${p.model || ''} | Stock: ${p.currentStock || 0}</span>
+                        </div>
+                        <span style="font-size:0.8rem;color:var(--text-muted);">Purchase: Rs.${(p.purchasePrice||0).toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.add('show');
+        }
+
+        function selectPurchaseProduct(productId) {
+            const p = productsCache.find(p => p.id === productId);
+            if (!p) return;
+            
+            document.getElementById('purchaseSearch').value = p.name;
+            document.getElementById('purchaseSearchResults').classList.remove('show');
+            document.getElementById('purchaseProduct').value = p.id;
+            
+            // Show current info
+            showToast(`Selected: ${p.name} | Current Stock: ${p.currentStock} ${p.unit || 'pcs'}`, 'info');
+        }
+
         document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const productId = document.getElementById('purchaseProduct').value;
@@ -2417,14 +2427,12 @@
                 
                 await db.collection('purchases').add(purchaseData);
                 
-                // Update product stock
                 await db.collection('products').doc(productId).update({
                     currentStock: (product.currentStock || 0) + quantity,
                     purchasePrice: price,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Record stock movement
                 await db.collection('stockMovements').add({
                     productId: productId,
                     productName: product.name,
@@ -2436,6 +2444,7 @@
                 });
                 
                 document.getElementById('purchaseForm').reset();
+                document.getElementById('purchaseSearch').value = '';
                 showToast(`✅ Added ${quantity} ${product.unit || 'pcs'} of ${product.name}`);
                 loadPurchases();
                 loadProducts();
@@ -2738,7 +2747,6 @@
 
         async function receivePayment(customerId) {
             if (!customerId) {
-                // Show customer selection
                 const modal = document.getElementById('modalOverlay');
                 const content = document.getElementById('modalContent');
                 content.innerHTML = `
@@ -3001,19 +3009,21 @@
 
         function updateSaleDisplay() {
             const tbody = document.getElementById('saleItems');
-            let total = 0;
+            let subtotal = 0;
             const discount = parseFloat(document.getElementById('saleDiscount').value) || 0;
             
             if (currentSaleItems.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No items added</td></tr>';
+                document.getElementById('saleSubtotal').textContent = 'Rs. 0';
                 document.getElementById('saleTotal').textContent = 'Rs. 0';
+                document.getElementById('saleDiscountDisplay').style.display = 'none';
                 return;
             }
             
             let html = '';
             currentSaleItems.forEach((item, index) => {
                 const itemTotal = item.quantity * item.sellingPrice;
-                total += itemTotal;
+                subtotal += itemTotal;
                 
                 html += `
                     <tr>
@@ -3031,8 +3041,17 @@
             });
             
             tbody.innerHTML = html;
-            const finalTotal = Math.max(0, total - discount);
+            
+            const finalTotal = Math.max(0, subtotal - discount);
+            document.getElementById('saleSubtotal').textContent = 'Rs. ' + subtotal.toFixed(2);
             document.getElementById('saleTotal').textContent = 'Rs. ' + finalTotal.toFixed(2);
+            
+            if (discount > 0) {
+                document.getElementById('saleDiscountDisplay').style.display = 'inline';
+                document.getElementById('saleDiscountAmount').textContent = discount.toFixed(2);
+            } else {
+                document.getElementById('saleDiscountDisplay').style.display = 'none';
+            }
         }
 
         function updateSaleQty(index, value) {
@@ -3069,6 +3088,7 @@
             
             const paymentMethod = document.getElementById('paymentMethod').value;
             let customerId = null;
+            let customerName = null;
             
             if (paymentMethod === 'credit') {
                 customerId = document.getElementById('customerSelect').value;
@@ -3076,17 +3096,19 @@
                     showToast('Select a customer for Udhaar', 'warning');
                     return;
                 }
+                const customer = customersCache.find(c => c.id === customerId);
+                customerName = customer?.name || 'Unknown';
             }
             
             const discount = parseFloat(document.getElementById('saleDiscount').value) || 0;
-            let totalSale = 0, totalCost = 0;
+            let subtotal = 0, totalCost = 0;
             
             currentSaleItems.forEach(item => {
-                totalSale += item.quantity * item.sellingPrice;
+                subtotal += item.quantity * item.sellingPrice;
                 totalCost += item.quantity * item.purchasePrice;
             });
             
-            const finalTotal = Math.max(0, totalSale - discount);
+            const finalTotal = Math.max(0, subtotal - discount);
             const profit = finalTotal - totalCost;
             
             // Check stock
@@ -3101,17 +3123,20 @@
             const saleData = {
                 date: new Date().toISOString().split('T')[0],
                 time: new Date().toISOString(),
-                items: currentSaleItems,
-                total: finalTotal,
-                subtotal: totalSale,
+                items: currentSaleItems.map(i => ({...i})),
+                subtotal: subtotal,
                 discount: discount,
+                finalTotal: finalTotal,
+                total: finalTotal, // For backward compatibility
                 cost: totalCost,
                 profit: profit,
                 paymentMethod: paymentMethod,
                 customerId: customerId,
+                customerName: customerName,
                 userId: currentUser?.uid || 'unknown',
                 userEmail: currentUser?.email || 'unknown',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
             try {
@@ -3168,6 +3193,7 @@
                 document.getElementById('saleDiscount').value = 0;
                 loadProducts();
                 loadDashboardData();
+                loadSalesHistory();
                 
                 showToast('✅ Sale completed!');
                 
@@ -3196,14 +3222,14 @@
                 <div class="receipt" id="receiptContent">
                     <div class="receipt-header">
                         <h3>${settings.shopName || 'My Shop'}</h3>
-                        <p>${saleData.date || ''} ${new Date(saleData.time).toLocaleTimeString() || ''}</p>
+                        <p>${saleData.date || ''} ${saleData.time ? new Date(saleData.time).toLocaleTimeString() : ''}</p>
                         <p>Receipt #: ${saleId.substring(0, 8).toUpperCase()}</p>
                     </div>
                     <div class="receipt-items">${itemsHTML}</div>
                     ${saleData.discount > 0 ? `<div class="receipt-item"><span>Discount</span><span>- Rs. ${saleData.discount.toFixed(2)}</span></div>` : ''}
-                    <div class="receipt-total">Total: Rs. ${saleData.total.toFixed(2)}</div>
+                    <div class="receipt-total">Total: Rs. ${saleData.finalTotal.toFixed(2)}</div>
                     <div class="receipt-item"><span>Payment</span><span>${saleData.paymentMethod === 'cash' ? '💵 Cash' : '📋 Udhaar'}</span></div>
-                    ${saleData.customerId ? `<div class="receipt-item"><span>Customer</span><span>${customersCache.find(c => c.id === saleData.customerId)?.name || ''}</span></div>` : ''}
+                    ${saleData.customerName ? `<div class="receipt-item"><span>Customer</span><span>${saleData.customerName}</span></div>` : ''}
                     <p style="text-align:center;margin-top:12px;font-size:0.8rem;color:#999;">Thank you for your business!</p>
                 </div>
                 <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
@@ -3212,6 +3238,608 @@
                 </div>
             `;
             modal.classList.add('active');
+        }
+
+        // ============================================================
+        // SALES HISTORY
+        // ============================================================
+        let currentHistoryPage = 1;
+        const HISTORY_LIMIT = 20;
+
+        async function loadSalesHistory(page = 1) {
+            currentHistoryPage = page;
+            const container = document.getElementById('salesHistoryContainer');
+            const filter = document.getElementById('historyFilter').value;
+            const paymentFilter = document.getElementById('paymentFilter').value;
+            const searchTerm = document.getElementById('historySearch').value.toLowerCase();
+            
+            container.innerHTML = '<div class="empty-state">Loading...</div>';
+            
+            try {
+                let query = db.collection('sales').orderBy('createdAt', 'desc');
+                
+                // Date filter
+                const today = new Date();
+                let startDate = null;
+                
+                switch(filter) {
+                    case 'today':
+                        startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        break;
+                    case 'yesterday':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+                        break;
+                    case 'week':
+                        const weekStart = new Date(today);
+                        weekStart.setDate(weekStart.getDate() - 7);
+                        startDate = weekStart;
+                        break;
+                    case 'month':
+                        startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                        break;
+                    default:
+                        startDate = null;
+                }
+                
+                if (startDate) {
+                    const startStr = startDate.toISOString().split('T')[0];
+                    query = query.where('date', '>=', startStr);
+                }
+                
+                // Payment filter
+                if (paymentFilter !== 'all') {
+                    query = query.where('paymentMethod', '==', paymentFilter);
+                }
+                
+                const snap = await query.limit(HISTORY_LIMIT * page).get();
+                
+                let sales = [];
+                snap.docs.forEach(doc => {
+                    const data = doc.data();
+                    // Apply search filter client-side
+                    let matchesSearch = true;
+                    if (searchTerm) {
+                        const itemsMatch = data.items?.some(i => 
+                            i.name?.toLowerCase().includes(searchTerm) ||
+                            (i.model && i.model.toLowerCase().includes(searchTerm))
+                        );
+                        const idMatch = doc.id.toLowerCase().includes(searchTerm);
+                        const customerMatch = data.customerName?.toLowerCase().includes(searchTerm);
+                        matchesSearch = itemsMatch || idMatch || customerMatch;
+                    }
+                    
+                    if (matchesSearch) {
+                        sales.push({ id: doc.id, ...data });
+                    }
+                });
+                
+                // Pagination
+                const total = sales.length;
+                const start = (page - 1) * HISTORY_LIMIT;
+                const end = start + HISTORY_LIMIT;
+                const pageSales = sales.slice(start, end);
+                
+                if (pageSales.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No sales found</div>';
+                    return;
+                }
+                
+                let html = '';
+                pageSales.forEach(s => {
+                    const date = s.date || '';
+                    const time = s.time ? new Date(s.time).toLocaleTimeString() : '';
+                    const items = s.items || [];
+                    const itemNames = items.map(i => `${i.icon || ''} ${i.name} ×${i.quantity || 0}`).join('<br>');
+                    const finalTotal = s.finalTotal || s.total || 0;
+                    
+                    html += `
+                        <div class="sale-history-card">
+                            <div class="sale-header">
+                                <span class="sale-id">#${s.id.substring(0, 8).toUpperCase()}</span>
+                                <span class="sale-date">${date} ${time ? '— ' + time : ''}</span>
+                            </div>
+                            <div class="sale-items">${itemNames}</div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:4px;">
+                                <div>
+                                    <span class="sale-total">Rs. ${finalTotal.toFixed(2)}</span>
+                                    ${s.discount > 0 ? `<span style="font-size:0.8rem;color:var(--text-muted);"> (Disc: -Rs.${s.discount.toFixed(2)})</span>` : ''}
+                                    <span style="font-size:0.8rem;color:var(--text-muted);margin-left:8px;">Profit: Rs.${(s.profit || 0).toFixed(2)}</span>
+                                </div>
+                                <span class="sale-payment">${s.paymentMethod === 'cash' ? '💵 Cash' : '📋 Udhaar'} ${s.customerName ? '| ' + s.customerName : ''}</span>
+                            </div>
+                            <div class="sale-actions">
+                                <button class="icon-btn" onclick="editSale('${s.id}')">✏️ Edit</button>
+                                <button class="icon-btn" onclick="voidSale('${s.id}')">🗑️ Void</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Pagination controls
+                const pagination = document.getElementById('historyPagination');
+                const totalPages = Math.ceil(total / HISTORY_LIMIT);
+                if (totalPages > 1) {
+                    let paginationHTML = '';
+                    for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                        paginationHTML += `
+                            <button class="btn btn-sm ${i === page ? 'btn' : 'btn-outline'}" 
+                                    onclick="loadSalesHistory(${i})" style="width:auto;padding:6px 14px;">
+                                ${i}
+                            </button>
+                        `;
+                    }
+                    if (totalPages > 5) {
+                        paginationHTML += `<span style="color:var(--text-muted);">...</span>`;
+                        paginationHTML += `
+                            <button class="btn btn-sm btn-outline" 
+                                    onclick="loadSalesHistory(${totalPages})" style="width:auto;padding:6px 14px;">
+                                ${totalPages}
+                            </button>
+                        `;
+                    }
+                    pagination.innerHTML = paginationHTML;
+                } else {
+                    pagination.innerHTML = '';
+                }
+                
+            } catch (error) {
+                console.error('Sales history error:', error);
+                container.innerHTML = '<div class="empty-state">Error loading sales history</div>';
+            }
+        }
+
+        function refreshSalesHistory() {
+            loadSalesHistory(currentHistoryPage);
+            showToast('Refreshed');
+        }
+
+        // ============================================================
+        // EDIT SALE
+        // ============================================================
+        async function editSale(saleId) {
+            try {
+                const doc = await db.collection('sales').doc(saleId).get();
+                if (!doc.exists) {
+                    showToast('Sale not found', 'error');
+                    return;
+                }
+                
+                const sale = doc.data();
+                originalSaleData = { id: saleId, ...sale };
+                isEditingSale = saleId;
+                
+                const modal = document.getElementById('modalOverlay');
+                const content = document.getElementById('modalContent');
+                
+                // Build items HTML
+                let itemsHTML = '';
+                const items = sale.items || [];
+                items.forEach((item, index) => {
+                    const p = productsCache.find(p => p.id === item.productId);
+                    const maxStock = p ? p.currentStock + item.quantity : 999;
+                    
+                    itemsHTML += `
+                        <div class="sale-edit-item" style="display:grid;grid-template-columns:1fr 80px 60px 40px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
+                            <span>${item.icon || '📦'} ${item.name}</span>
+                            <input type="number" class="edit-qty" value="${item.quantity}" min="1" max="${maxStock}" 
+                                   style="width:60px;padding:4px 8px;background:var(--bg-card-hover);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);">
+                            <span style="font-size:0.85rem;">Rs.${item.sellingPrice.toFixed(2)}</span>
+                            <button class="icon-btn" onclick="removeEditItem(this)" style="padding:2px 6px;">❌</button>
+                        </div>
+                    `;
+                });
+                
+                content.innerHTML = `
+                    <div class="modal-header">
+                        <h2>✏️ Edit Sale #${saleId.substring(0, 8).toUpperCase()}</h2>
+                        <button class="close-btn" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--text-secondary);font-size:0.9rem;">
+                            <span>Date: ${sale.date || ''}</span>
+                            <span>Time: ${sale.time ? new Date(sale.time).toLocaleTimeString() : ''}</span>
+                            <span>Payment: ${sale.paymentMethod === 'cash' ? '💵 Cash' : '📋 Udhaar'}</span>
+                            ${sale.customerName ? `<span>Customer: ${sale.customerName}</span>` : ''}
+                        </div>
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <label style="font-weight:500;">Items</label>
+                        <div id="editItemsContainer">${itemsHTML}</div>
+                        <div style="margin-top:8px;">
+                            <button class="btn btn-sm btn-outline" onclick="addEditItem()" style="width:auto;">➕ Add Product</button>
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Payment Method</label>
+                            <select id="editPaymentMethod">
+                                <option value="cash" ${sale.paymentMethod === 'cash' ? 'selected' : ''}>💵 Cash</option>
+                                <option value="credit" ${sale.paymentMethod === 'credit' ? 'selected' : ''}>📋 Udhaar</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Discount (Rs.)</label>
+                            <input type="number" id="editDiscount" value="${sale.discount || 0}" min="0" step="0.01" oninput="updateEditTotals()">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Customer</label>
+                            <select id="editCustomer">
+                                <option value="">None</option>
+                                ${customersCache.map(c => 
+                                    `<option value="${c.id}" ${c.id === sale.customerId ? 'selected' : ''}>${c.name}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div style="text-align:center;padding:8px;background:var(--bg-card-hover);border-radius:var(--radius-xs);">
+                            <div style="font-size:0.75rem;color:var(--text-secondary);">Subtotal</div>
+                            <div id="editSubtotal" style="font-weight:700;">Rs. ${(sale.subtotal || 0).toFixed(2)}</div>
+                        </div>
+                        <div style="text-align:center;padding:8px;background:var(--bg-card-hover);border-radius:var(--radius-xs);border:2px solid var(--accent);">
+                            <div style="font-size:0.75rem;color:var(--text-secondary);">Final Total</div>
+                            <div id="editFinalTotal" style="font-weight:700;color:var(--accent-light);">Rs. ${(sale.finalTotal || sale.total || 0).toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:16px;">
+                        <button class="btn btn-success" onclick="saveEditedSale()">💾 Save Changes</button>
+                        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    </div>
+                    <div id="editWarning" style="display:none;margin-top:8px;padding:8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-xs);color:var(--danger);font-size:0.9rem;"></div>
+                `;
+                
+                modal.classList.add('active');
+                
+            } catch (error) {
+                console.error('Edit sale error:', error);
+                showToast('Error loading sale for editing', 'error');
+            }
+        }
+
+        function addEditItem() {
+            const container = document.getElementById('editItemsContainer');
+            const selectHTML = `
+                <select class="edit-product-select" style="width:100%;padding:4px 8px;background:var(--bg-card-hover);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);">
+                    <option value="">Select Product</option>
+                    ${productsCache.map(p => 
+                        `<option value="${p.id}" data-price="${p.sellingPrice || 0}">${p.icon || '📦'} ${p.name} (Rs.${(p.sellingPrice || 0).toFixed(2)})</option>`
+                    ).join('')}
+                </select>
+            `;
+            
+            const div = document.createElement('div');
+            div.className = 'sale-edit-item';
+            div.style.cssText = 'display:grid;grid-template-columns:2fr 80px 60px 40px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);';
+            div.innerHTML = `
+                ${selectHTML}
+                <input type="number" class="edit-qty" value="1" min="1" style="width:60px;padding:4px 8px;background:var(--bg-card-hover);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);">
+                <span style="font-size:0.85rem;">Rs.0.00</span>
+                <button class="icon-btn" onclick="removeEditItem(this)" style="padding:2px 6px;">❌</button>
+            `;
+            
+            // Update price on select change
+            const select = div.querySelector('.edit-product-select');
+            select.addEventListener('change', function() {
+                const price = parseFloat(this.options[this.selectedIndex]?.dataset?.price || 0);
+                const priceSpan = this.closest('.sale-edit-item').querySelector('span');
+                priceSpan.textContent = 'Rs.' + price.toFixed(2);
+                updateEditTotals();
+            });
+            
+            container.appendChild(div);
+            updateEditTotals();
+        }
+
+        function removeEditItem(btn) {
+            const item = btn.closest('.sale-edit-item');
+            if (document.querySelectorAll('.sale-edit-item').length <= 1) {
+                showToast('Cannot remove last item', 'warning');
+                return;
+            }
+            item.remove();
+            updateEditTotals();
+        }
+
+        function updateEditTotals() {
+            let subtotal = 0;
+            const items = document.querySelectorAll('.sale-edit-item');
+            
+            items.forEach(item => {
+                const select = item.querySelector('.edit-product-select');
+                const qty = parseInt(item.querySelector('.edit-qty').value) || 0;
+                const price = parseFloat(select?.options[select.selectedIndex]?.dataset?.price || 0);
+                const priceSpan = item.querySelector('span');
+                if (priceSpan && select?.value) {
+                    priceSpan.textContent = 'Rs.' + (price * qty).toFixed(2);
+                }
+                subtotal += price * qty;
+            });
+            
+            const discount = parseFloat(document.getElementById('editDiscount').value) || 0;
+            const finalTotal = Math.max(0, subtotal - discount);
+            
+            document.getElementById('editSubtotal').textContent = 'Rs. ' + subtotal.toFixed(2);
+            document.getElementById('editFinalTotal').textContent = 'Rs. ' + finalTotal.toFixed(2);
+            
+            // Check if any item has no product selected
+            let hasEmpty = false;
+            items.forEach(item => {
+                const select = item.querySelector('.edit-product-select');
+                if (!select?.value) hasEmpty = true;
+            });
+            
+            const warning = document.getElementById('editWarning');
+            if (hasEmpty) {
+                warning.style.display = 'block';
+                warning.textContent = '⚠️ Please select a product for all items.';
+            } else {
+                warning.style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // SAVE EDITED SALE
+        // ============================================================
+        async function saveEditedSale() {
+            if (!isEditingSale) {
+                showToast('No sale being edited', 'error');
+                return;
+            }
+            
+            const warning = document.getElementById('editWarning');
+            if (warning.style.display === 'block') {
+                showToast('Please fix all items before saving', 'warning');
+                return;
+            }
+            
+            const newItems = [];
+            const itemElements = document.querySelectorAll('.sale-edit-item');
+            let hasError = false;
+            
+            itemElements.forEach(el => {
+                const select = el.querySelector('.edit-product-select');
+                const qty = parseInt(el.querySelector('.edit-qty').value) || 0;
+                const productId = select?.value;
+                
+                if (!productId) {
+                    hasError = true;
+                    return;
+                }
+                
+                const product = productsCache.find(p => p.id === productId);
+                if (!product) {
+                    hasError = true;
+                    return;
+                }
+                
+                newItems.push({
+                    productId: product.id,
+                    name: product.name,
+                    icon: product.icon || '📦',
+                    quantity: qty,
+                    sellingPrice: product.sellingPrice || 0,
+                    purchasePrice: product.purchasePrice || 0,
+                    unit: product.unit || 'pcs'
+                });
+            });
+            
+            if (hasError || newItems.length === 0) {
+                showToast('Invalid items in sale', 'error');
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('editPaymentMethod').value;
+            const discount = parseFloat(document.getElementById('editDiscount').value) || 0;
+            const customerId = document.getElementById('editCustomer').value || null;
+            const customerName = customerId ? customersCache.find(c => c.id === customerId)?.name : null;
+            
+            let subtotal = 0, totalCost = 0;
+            newItems.forEach(item => {
+                subtotal += item.quantity * item.sellingPrice;
+                totalCost += item.quantity * item.purchasePrice;
+            });
+            
+            const finalTotal = Math.max(0, subtotal - discount);
+            const profit = finalTotal - totalCost;
+            
+            // Check stock availability (excluding original items that will be restored)
+            const originalItems = originalSaleData.items || [];
+            
+            for (const item of newItems) {
+                const p = productsCache.find(p => p.id === item.productId);
+                if (!p) continue;
+                
+                // Calculate stock change: new qty - original qty
+                const originalItem = originalItems.find(i => i.productId === item.productId);
+                const originalQty = originalItem?.quantity || 0;
+                const stockChange = item.quantity - originalQty;
+                
+                // Check if we have enough stock for increase
+                if (stockChange > 0 && p.currentStock < stockChange) {
+                    showToast(`Not enough stock for ${item.name}. Available: ${p.currentStock}`, 'warning');
+                    return;
+                }
+            }
+            
+            if (!confirm('Save these changes? This will update stock and profit calculations.')) return;
+            
+            try {
+                // 1. Restore original stock
+                for (const item of originalItems) {
+                    const p = productsCache.find(p => p.id === item.productId);
+                    if (p) {
+                        await db.collection('products').doc(item.productId).update({
+                            currentStock: p.currentStock + item.quantity,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // 2. Apply new stock deductions
+                for (const item of newItems) {
+                    const p = productsCache.find(p => p.id === item.productId);
+                    if (p) {
+                        await db.collection('products').doc(item.productId).update({
+                            currentStock: p.currentStock - item.quantity,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // 3. Handle customer credit changes
+                const oldCustomerId = originalSaleData.customerId;
+                const oldFinalTotal = originalSaleData.finalTotal || originalSaleData.total || 0;
+                
+                // If customer changed or amount changed, update credits
+                if (oldCustomerId && oldCustomerId !== customerId) {
+                    // Remove from old customer
+                    const oldCust = customersCache.find(c => c.id === oldCustomerId);
+                    if (oldCust) {
+                        await db.collection('customers').doc(oldCustomerId).update({
+                            totalCredit: Math.max(0, (oldCust.totalCredit || 0) - oldFinalTotal),
+                            remainingCredit: Math.max(0, (oldCust.remainingCredit || 0) - oldFinalTotal),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                if (customerId && paymentMethod === 'credit') {
+                    const newCust = customersCache.find(c => c.id === customerId);
+                    if (newCust) {
+                        // Check if this customer already had this sale
+                        if (oldCustomerId === customerId) {
+                            // Same customer, adjust difference
+                            const diff = finalTotal - oldFinalTotal;
+                            await db.collection('customers').doc(customerId).update({
+                                totalCredit: Math.max(0, (newCust.totalCredit || 0) + diff),
+                                remainingCredit: Math.max(0, (newCust.remainingCredit || 0) + diff),
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        } else {
+                            // New customer, add full amount
+                            await db.collection('customers').doc(customerId).update({
+                                totalCredit: (newCust.totalCredit || 0) + finalTotal,
+                                remainingCredit: (newCust.remainingCredit || 0) + finalTotal,
+                                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        }
+                    }
+                }
+                
+                // 4. Update the sale record
+                const updateData = {
+                    items: newItems,
+                    subtotal: subtotal,
+                    discount: discount,
+                    finalTotal: finalTotal,
+                    total: finalTotal,
+                    cost: totalCost,
+                    profit: profit,
+                    paymentMethod: paymentMethod,
+                    customerId: customerId,
+                    customerName: customerName,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('sales').doc(isEditingSale).update(updateData);
+                
+                // 5. Log stock movements
+                await db.collection('stockMovements').add({
+                    type: 'sale_edit',
+                    description: `Edited sale ${isEditingSale}`,
+                    date: new Date().toISOString().split('T')[0],
+                    userId: currentUser?.uid || 'unknown',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                closeModal();
+                showToast('✅ Sale updated successfully!');
+                
+                // Refresh all data
+                await loadProducts();
+                await loadDashboardData();
+                await loadSalesHistory(currentHistoryPage);
+                
+                isEditingSale = null;
+                originalSaleData = null;
+                
+            } catch (error) {
+                console.error('Save edited sale error:', error);
+                showToast('Error saving changes', 'error');
+            }
+        }
+
+        // ============================================================
+        // VOID SALE
+        // ============================================================
+        async function voidSale(saleId) {
+            if (!confirm('⚠️ Are you sure you want to void this sale?\n\nThis will restore stock and remove the sale from totals.')) return;
+            
+            if (!confirm('⚠️ This action cannot be undone. Continue?')) return;
+            
+            try {
+                const doc = await db.collection('sales').doc(saleId).get();
+                if (!doc.exists) {
+                    showToast('Sale not found', 'error');
+                    return;
+                }
+                
+                const sale = doc.data();
+                const items = sale.items || [];
+                const finalTotal = sale.finalTotal || sale.total || 0;
+                
+                // Restore stock
+                for (const item of items) {
+                    const p = productsCache.find(p => p.id === item.productId);
+                    if (p) {
+                        await db.collection('products').doc(item.productId).update({
+                            currentStock: p.currentStock + item.quantity,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // Remove customer credit
+                if (sale.customerId && sale.paymentMethod === 'credit') {
+                    const c = customersCache.find(c => c.id === sale.customerId);
+                    if (c) {
+                        await db.collection('customers').doc(sale.customerId).update({
+                            totalCredit: Math.max(0, (c.totalCredit || 0) - finalTotal),
+                            remainingCredit: Math.max(0, (c.remainingCredit || 0) - finalTotal),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                
+                // Mark as voided
+                await db.collection('sales').doc(saleId).update({
+                    status: 'voided',
+                    voidedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    voidedBy: currentUser?.email || 'unknown'
+                });
+                
+                await db.collection('stockMovements').add({
+                    type: 'sale_void',
+                    referenceId: saleId,
+                    description: `Voided sale ${saleId}`,
+                    date: new Date().toISOString().split('T')[0],
+                    userId: currentUser?.uid || 'unknown',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('✅ Sale voided. Stock restored.');
+                loadProducts();
+                loadDashboardData();
+                loadSalesHistory(currentHistoryPage);
+                
+            } catch (error) {
+                console.error('Void sale error:', error);
+                showToast('Error voiding sale', 'error');
+            }
         }
 
         // ============================================================
@@ -3266,15 +3894,18 @@
                 
                 let totalSales = 0, totalCost = 0, totalProfit = 0;
                 let cashSales = 0, creditSales = 0, productsSold = 0;
+                let totalDiscount = 0;
                 const productMap = {};
                 
                 snap.docs.forEach(doc => {
                     const s = doc.data();
-                    totalSales += s.total || 0;
+                    const finalTotal = s.finalTotal || s.total || 0;
+                    totalSales += finalTotal;
                     totalCost += s.cost || 0;
                     totalProfit += s.profit || 0;
-                    if (s.paymentMethod === 'cash') cashSales += s.total || 0;
-                    else creditSales += s.total || 0;
+                    totalDiscount += s.discount || 0;
+                    if (s.paymentMethod === 'cash') cashSales += finalTotal;
+                    else creditSales += finalTotal;
                     
                     if (s.items) {
                         s.items.forEach(item => {
@@ -3290,7 +3921,6 @@
                     }
                 });
                 
-                // Expenses
                 const expSnap = await db.collection('expenses')
                     .where('date', '>=', startStr)
                     .where('date', '<=', endStr)
@@ -3302,6 +3932,7 @@
                 
                 document.getElementById('reportSummary').innerHTML = `
                     <div class="stat-card"><div class="stat-label">Sales</div><div class="stat-value">Rs. ${totalSales.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Discount</div><div class="stat-value">Rs. ${totalDiscount.toFixed(2)}</div></div>
                     <div class="stat-card"><div class="stat-label">Cost</div><div class="stat-value">Rs. ${totalCost.toFixed(2)}</div></div>
                     <div class="stat-card success"><div class="stat-label">Gross Profit</div><div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div></div>
                     <div class="stat-card warning"><div class="stat-label">Expenses</div><div class="stat-value">Rs. ${totalExpenses.toFixed(2)}</div></div>
@@ -3309,6 +3940,7 @@
                     <div class="stat-card"><div class="stat-label">Products Sold</div><div class="stat-value">${productsSold}</div></div>
                     <div class="stat-card"><div class="stat-label">Orders</div><div class="stat-value">${snap.docs.length}</div></div>
                     <div class="stat-card"><div class="stat-label">Cash Sales</div><div class="stat-value">Rs. ${cashSales.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Udhaar Sales</div><div class="stat-value">Rs. ${creditSales.toFixed(2)}</div></div>
                 `;
                 
                 let html = '';
@@ -3339,14 +3971,17 @@
             try {
                 const salesSnap = await db.collection('sales').where('date', '==', today).get();
                 let totalSales = 0, cashSales = 0, creditSales = 0, productCost = 0, grossProfit = 0, productsSold = 0;
+                let totalDiscount = 0;
                 
                 salesSnap.docs.forEach(doc => {
                     const s = doc.data();
-                    totalSales += s.total || 0;
+                    const finalTotal = s.finalTotal || s.total || 0;
+                    totalSales += finalTotal;
                     productCost += s.cost || 0;
                     grossProfit += s.profit || 0;
-                    if (s.paymentMethod === 'cash') cashSales += s.total || 0;
-                    else creditSales += s.total || 0;
+                    totalDiscount += s.discount || 0;
+                    if (s.paymentMethod === 'cash') cashSales += finalTotal;
+                    else creditSales += finalTotal;
                     if (s.items) s.items.forEach(i => { productsSold += i.quantity || 0; });
                 });
                 
@@ -3361,7 +3996,8 @@
                 window.currentClosingData = {
                     date: today,
                     totalSales, cashSales, creditSales, productCost, grossProfit,
-                    totalExpenses, netProfit: grossProfit - totalExpenses,
+                    totalExpenses, totalDiscount,
+                    netProfit: grossProfit - totalExpenses,
                     productsSold, totalOrders: salesSnap.docs.length, totalPurchases
                 };
                 
@@ -3375,11 +4011,12 @@
             if (!data) { showToast('No data available', 'warning'); return; }
             
             document.getElementById('closingDetails').innerHTML = `
-                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
-                    <div class="stat-card"><div class="stat-label">Date</div><div class="stat-value">${data.date}</div></div>
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                    <div class="stat-card"><div class="stat-label">Date</div><div class="stat-value" style="font-size:1rem;">${data.date}</div></div>
                     <div class="stat-card"><div class="stat-label">Total Sales</div><div class="stat-value">Rs. ${data.totalSales.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Discount</div><div class="stat-value">Rs. ${data.totalDiscount.toFixed(2)}</div></div>
                     <div class="stat-card"><div class="stat-label">Cash Sales</div><div class="stat-value">Rs. ${data.cashSales.toFixed(2)}</div></div>
-                    <div class="stat-card"><div class="stat-label">Credit Sales</div><div class="stat-value">Rs. ${data.creditSales.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Udhaar Sales</div><div class="stat-value">Rs. ${data.creditSales.toFixed(2)}</div></div>
                     <div class="stat-card"><div class="stat-label">Product Cost</div><div class="stat-value">Rs. ${data.productCost.toFixed(2)}</div></div>
                     <div class="stat-card success"><div class="stat-label">Gross Profit</div><div class="stat-value">Rs. ${data.grossProfit.toFixed(2)}</div></div>
                     <div class="stat-card warning"><div class="stat-label">Expenses</div><div class="stat-value">Rs. ${data.totalExpenses.toFixed(2)}</div></div>
@@ -3411,7 +4048,7 @@
         }
 
         // ============================================================
-        // IMPORT CENTER
+        // IMPORT CENTER (Preserved from original)
         // ============================================================
         function switchImportTab(tab) {
             document.querySelectorAll('.import-tab').forEach(t => t.style.display = 'none');
@@ -3423,7 +4060,7 @@
             });
         }
 
-        // --- INITIAL IMPORT ---
+        // Initial Products for import
         const initialProducts = [
             { name: "Heart Plasting Ring", category: "Mobile Accessory", unit: "Piece", packQuantity: 1, purchasePrice: 70, sellingPrice: 100, stock: 4, minStock: 2, supplier: "Asif Mobile" },
             { name: "XTEND XT722", category: "Charger", unit: "Piece", packQuantity: 1, purchasePrice: 460, sellingPrice: 650, stock: 1, minStock: 1, supplier: "Asif Mobile" },
@@ -3558,7 +4195,7 @@
             return icons[category] || '📦';
         }
 
-        // --- CSV IMPORT ---
+        // CSV Import
         async function importCSV() {
             const file = document.getElementById('csvFileInput').files[0];
             if (!file) { showToast('Please select a CSV file', 'warning'); return; }
@@ -3606,7 +4243,7 @@
             reader.readAsText(file);
         }
 
-        // --- JSON IMPORT ---
+        // JSON Import
         async function importJSON() {
             const input = document.getElementById('jsonInput').value;
             if (!input) { showToast('Please paste JSON data', 'warning'); return; }
@@ -3677,7 +4314,7 @@
             loadDashboardData();
         }
 
-        // --- MANUAL ADD ---
+        // Manual Add
         document.getElementById('manualProductForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -3774,7 +4411,7 @@
             
             document.getElementById('researchDetailContent').innerHTML = `
                 <h2>${p.icon || '📦'} ${p.name}</h2>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;">
                     <div class="stat-card"><div class="stat-label">Model</div><div class="stat-value" style="font-size:1rem;">${p.model || '—'}</div></div>
                     <div class="stat-card"><div class="stat-label">Category</div><div class="stat-value" style="font-size:1rem;">${p.category || 'General'}</div></div>
                     <div class="stat-card"><div class="stat-label">Purchase Cost</div><div class="stat-value">Rs. ${(p.purchasePrice || 0).toFixed(2)}</div></div>
@@ -3854,22 +4491,9 @@
         // CHECK FOR INITIAL IMPORT
         // ============================================================
         function checkForInitialImport() {
-            // If no products exist, show a hint
             if (productsCache.length === 0) {
                 showToast('📥 No products found. Use Import Center to add your stock.', 'warning');
             }
-        }
-
-        // ============================================================
-        // GLOBAL SEARCH (accessible anywhere)
-        // ============================================================
-        function globalSearch(term) {
-            // This can be used by other parts of the app
-            const results = productsCache.filter(p => 
-                p.name?.toLowerCase().includes(term.toLowerCase()) ||
-                p.model?.toLowerCase().includes(term.toLowerCase())
-            );
-            return results;
         }
 
         // ============================================================
