@@ -873,6 +873,19 @@
             100% { background-position: -200% 0; }
         }
     </style>
+
+<style id="smart-shop-pro-enhancements">
+.pro-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.pro-kpi{padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--bg-card);box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.pro-kpi .k{font-size:.78rem;color:var(--text-secondary)} .pro-kpi .v{font-size:1.35rem;font-weight:800;margin-top:6px}
+.pro-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.pro-toolbar input,.pro-toolbar select{padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg-card-hover);color:var(--text-primary)}
+.pro-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;font-size:.75rem;border:1px solid var(--border)}
+.pro-section{margin-top:18px}.pro-empty{text-align:center;padding:28px;color:var(--text-secondary)}
+.pro-danger{color:var(--danger)} .pro-success{color:var(--success)}
+@media(max-width:700px){.pro-kpi-grid{grid-template-columns:repeat(2,1fr)}.pro-toolbar>*{width:100%}}
+</style>
+
 </head>
 <body>
     <!-- ============ LOGIN SCREEN ============ -->
@@ -914,7 +927,8 @@
             </div>
             <div class="sidebar-nav">
                 <a class="sidebar-nav-item active" onclick="showPage('dashboard')">
-                    <span class="icon">🏠</span> Dashboard
+                    <span class="icon">🏠</span>
+<div class="nav-item" onclick="showPage('pro')"><span>🚀</span><span>Pro</span></div> Dashboard
                 </a>
                 <a class="sidebar-nav-item" onclick="showPage('sale')">
                     <span class="icon">🛒</span> New Sale
@@ -1575,7 +1589,98 @@
         </div>
     </div>
 
-    <!-- Modal Container -->
+    
+<!-- ============================================================
+     SMART SHOP MANAGER PRO - ENHANCEMENTS
+     ============================================================ -->
+<div class="page" id="proPage" style="display:none;">
+  <div class="page-header">
+    <div>
+      <h1>🚀 Smart Shop Manager Pro</h1>
+      <p>Advanced reports, stock tools, customer balances and data utilities</p>
+    </div>
+  </div>
+
+  <div class="pro-kpi-grid">
+    <div class="pro-kpi"><div class="k">📦 Inventory Items</div><div class="v" id="proInventoryItems">0</div></div>
+    <div class="pro-kpi"><div class="k">💰 Inventory Value</div><div class="v" id="proInventoryValue">Rs. 0</div></div>
+    <div class="pro-kpi"><div class="k">⚠️ Low Stock</div><div class="v" id="proLowStock">0</div></div>
+    <div class="pro-kpi"><div class="k">📒 Total Due</div><div class="v" id="proTotalDue">Rs. 0</div></div>
+    <div class="pro-kpi"><div class="k">💳 Total Received</div><div class="v" id="proTotalReceived">Rs. 0</div></div>
+  </div>
+
+  <div class="card pro-section">
+    <div class="card-header"><h2>📊 Reports & Filters</h2></div>
+    <div class="pro-toolbar">
+      <select id="proReportRange" onchange="proRefreshReport()">
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="week">This Week</option>
+        <option value="month" selected>This Month</option>
+        <option value="all">All Time</option>
+      </select>
+      <button class="btn btn-outline" onclick="proRefreshReport()">🔄 Refresh</button>
+      <button class="btn btn-success" onclick="proExportCSV()">📥 Export CSV</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+    <div id="proReportSummary" class="pro-kpi-grid"></div>
+  </div>
+
+  <div class="card pro-section">
+    <div class="card-header"><h2>📦 Stock Control</h2></div>
+    <div class="pro-toolbar">
+      <input id="proStockSearch" placeholder="Search product..." oninput="proRenderStock()">
+      <select id="proStockFilter" onchange="proRenderStock()">
+        <option value="all">All Stock</option>
+        <option value="low">Low Stock</option>
+        <option value="out">Out of Stock</option>
+      </select>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead><tr><th>Product</th><th>Stock</th><th>Purchase</th><th>Stock Value</th><th>Quick Change</th></tr></thead>
+        <tbody id="proStockTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card pro-section">
+    <div class="card-header"><h2>💳 Received Payments</h2></div>
+    <div class="pro-toolbar">
+      <input id="proPaymentSearch" placeholder="Search customer..." oninput="proRenderPayments()">
+      <button class="btn btn-outline" onclick="proLoadPayments()">🔄 Refresh</button>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead><tr><th>Date</th><th>Customer</th><th>Amount</th><th>Action</th></tr></thead>
+        <tbody id="proPaymentsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card pro-section">
+    <div class="card-header"><h2>👥 Customers Due</h2></div>
+    <div class="table-container">
+      <table class="table">
+        <thead><tr><th>Customer</th><th>Total Credit</th><th>Paid</th><th>Remaining</th><th>Action</th></tr></thead>
+        <tbody id="proCustomersTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card pro-section">
+    <div class="card-header"><h2>🛡️ Data Utilities</h2></div>
+    <div class="pro-toolbar">
+      <button class="btn btn-outline" onclick="proBackupJSON()">💾 Backup Data</button>
+      <button class="btn btn-outline" onclick="proRefreshAll()">🔄 Refresh All</button>
+    </div>
+    <p style="color:var(--text-secondary);font-size:.85rem">
+      Backup downloads the currently loaded products and customers as JSON. Keep a copy before major changes.
+    </p>
+  </div>
+</div>
+
+<!-- Modal Container -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modalContent"></div>
     </div>
@@ -4605,5 +4710,185 @@
             }
         });
     </script>
+
+<script id="smart-shop-pro-js">
+(function(){
+  window.proPayments = [];
+
+  function money(n){ return 'Rs. ' + Number(n||0).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function startDate(range){
+    const d=new Date(); d.setHours(0,0,0,0);
+    if(range==='today') return d;
+    if(range==='yesterday'){d.setDate(d.getDate()-1);return d;}
+    if(range==='week'){d.setDate(d.getDate()-((d.getDay()+6)%7));return d;}
+    if(range==='month'){d.setDate(1);return d;}
+    return null;
+  }
+  function saleDate(s){
+    const x=s.date || s.time;
+    const d=x ? new Date(x) : null;
+    return d && !isNaN(d) ? d : null;
+  }
+
+  window.proRefreshAll = async function(){
+    try{
+      if(typeof loadProducts==='function') await loadProducts();
+      if(typeof loadCustomers==='function') await loadCustomers();
+      if(typeof loadDashboardData==='function') await loadDashboardData();
+      await proLoadPayments();
+      proRenderStock(); proRenderCustomers(); proRefreshKPIs(); proRefreshReport();
+    }catch(e){ console.error('PRO refresh:',e); }
+  };
+
+  window.proRefreshKPIs = function(){
+    const ps=window.productsCache||[];
+    const cs=window.customersCache||[];
+    const inventoryValue=ps.reduce((a,p)=>a+(Number(p.currentStock)||0)*(Number(p.purchasePrice)||0),0);
+    const low=ps.filter(p=>(Number(p.currentStock)||0)<=Number(p.minStock??5)).length;
+    const due=cs.reduce((a,c)=>a+(Number(c.remainingCredit)||0),0);
+    const received=cs.reduce((a,c)=>a+(Number(c.totalPaid)||0),0);
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    set('proInventoryItems',ps.length); set('proInventoryValue',money(inventoryValue));
+    set('proLowStock',low); set('proTotalDue',money(due)); set('proTotalReceived',money(received));
+  };
+
+  window.proRenderStock = function(){
+    const tb=document.getElementById('proStockTable'); if(!tb)return;
+    const q=(document.getElementById('proStockSearch')?.value||'').toLowerCase();
+    const f=document.getElementById('proStockFilter')?.value||'all';
+    let arr=(window.productsCache||[]).filter(p=>{
+      const stock=Number(p.currentStock)||0;
+      const match=(p.name||'').toLowerCase().includes(q)||(p.model||'').toLowerCase().includes(q);
+      return match && (f==='all'||(f==='low'&&stock<=Number(p.minStock??5)&&stock>0)||(f==='out'&&stock<=0));
+    });
+    if(!arr.length){tb.innerHTML='<tr><td colspan="5" class="pro-empty">No products found</td></tr>';return;}
+    tb.innerHTML=arr.map(p=>{
+      const id=esc(p.id), stock=Number(p.currentStock)||0, val=stock*(Number(p.purchasePrice)||0);
+      return `<tr><td>${esc(p.icon||'📦')} ${esc(p.name)}</td><td><strong>${stock}</strong> ${esc(p.unit||'pcs')}</td>
+      <td>${money(p.purchasePrice)}</td><td>${money(val)}</td><td>
+      <button class="btn btn-sm" onclick="proAdjustStock('${id}',1)">+1</button>
+      <button class="btn btn-sm btn-outline" onclick="proAdjustStock('${id}',-1)">−1</button>
+      <button class="btn btn-sm btn-outline" onclick="proSetStock('${id}')">Set</button></td></tr>`;
+    }).join('');
+  };
+
+  window.proAdjustStock=async function(id,delta){
+    const p=(window.productsCache||[]).find(x=>x.id===id); if(!p)return;
+    const next=Math.max(0,(Number(p.currentStock)||0)+delta);
+    await proWriteStock(id,next,delta,'Quick stock adjustment');
+  };
+  window.proSetStock=async function(id){
+    const p=(window.productsCache||[]).find(x=>x.id===id); if(!p)return;
+    const raw=prompt(`Set stock for ${p.name}:`,Number(p.currentStock)||0);
+    if(raw===null)return; const next=parseInt(raw,10);
+    if(!Number.isFinite(next)||next<0){showToast('Invalid stock','warning');return;}
+    await proWriteStock(id,next,next-(Number(p.currentStock)||0),'Manual stock correction');
+  };
+  async function proWriteStock(id,next,delta,reason){
+    try{
+      const ref=db.collection('products').doc(id);
+      await db.runTransaction(async tx=>{
+        const snap=await tx.get(ref);
+        if(!snap.exists) throw new Error('Product not found');
+        const old=Number(snap.data().currentStock)||0;
+        const n=Math.max(0,Number(next)||0);
+        tx.update(ref,{currentStock:n,status:n===0?'out':(n<=Number(snap.data().minStock??5)?'low':'active'),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.set(db.collection('stockMovements').doc(),{productId:id,productName:snap.data().name||'',type:'adjustment',quantity:n-old,previousStock:old,newStock:n,reason,userId:currentUser?.uid||'unknown',date:new Date().toISOString().split('T')[0],createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      });
+      showToast('✅ Stock updated');
+      await proRefreshAll();
+    }catch(e){console.error(e);showToast('Stock update failed','error');}
+  }
+
+  window.proLoadPayments=async function(){
+    try{
+      const snap=await db.collection('customerTransactions').where('type','==','payment').get();
+      window.proPayments=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+      proRenderPayments();
+    }catch(e){console.error('Payments:',e);showToast('Could not load payments','error');}
+  };
+  window.proRenderPayments=function(){
+    const tb=document.getElementById('proPaymentsTable'); if(!tb)return;
+    const q=(document.getElementById('proPaymentSearch')?.value||'').toLowerCase();
+    const cs=window.customersCache||[];
+    const arr=window.proPayments.filter(t=>{
+      const c=cs.find(x=>x.id===t.customerId); return (c?.name||'').toLowerCase().includes(q);
+    });
+    if(!arr.length){tb.innerHTML='<tr><td colspan="4" class="pro-empty">No received payments</td></tr>';return;}
+    tb.innerHTML=arr.map(t=>{
+      const c=cs.find(x=>x.id===t.customerId);
+      return `<tr><td>${esc(t.date||'')}</td><td>${esc(c?.name||'Unknown')}</td><td><strong>${money(t.amount)}</strong></td>
+      <td><button class="btn btn-sm" onclick="proDeletePayment('${esc(t.id)}')">🗑️ Delete</button></td></tr>`;
+    }).join('');
+  };
+  window.proDeletePayment=async function(id){
+    if(!confirm('Delete this received payment? Customer balance will be restored.'))return;
+    try{
+      await db.runTransaction(async tx=>{
+        const tr=db.collection('customerTransactions').doc(id), snap=await tx.get(tr);
+        if(!snap.exists) throw new Error('Payment not found');
+        const t=snap.data(), cr=db.collection('customers').doc(t.customerId), cs=await tx.get(cr);
+        if(!cs.exists) throw new Error('Customer not found');
+        const c=cs.data(), amt=Number(t.amount)||0;
+        tx.update(cr,{totalPaid:Math.max(0,(Number(c.totalPaid)||0)-amt),remainingCredit:(Number(c.remainingCredit)||0)+amt,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.delete(tr);
+      });
+      showToast('✅ Payment deleted and balance restored');
+      await proRefreshAll();
+    }catch(e){console.error(e);showToast('Payment delete failed','error');}
+  };
+
+  window.proRenderCustomers=function(){
+    const tb=document.getElementById('proCustomersTable');if(!tb)return;
+    const arr=(window.customersCache||[]).filter(c=>(Number(c.remainingCredit)||0)>0);
+    if(!arr.length){tb.innerHTML='<tr><td colspan="5" class="pro-empty">No customers with outstanding balance</td></tr>';return;}
+    tb.innerHTML=arr.map(c=>`<tr><td>${esc(c.name)}<br><small>${esc(c.phone||'')}</small></td>
+    <td>${money(c.totalCredit)}</td><td>${money(c.totalPaid)}</td><td><strong>${money(c.remainingCredit)}</strong></td>
+    <td><button class="btn btn-sm btn-success" onclick="receivePayment('${esc(c.id)}')">💰 Receive</button></td></tr>`).join('');
+  };
+
+  window.proRefreshReport=async function(){
+    const box=document.getElementById('proReportSummary');if(!box)return;
+    const range=document.getElementById('proReportRange')?.value||'month', from=startDate(range), now=new Date();
+    let sales=[];
+    try{const snap=await db.collection('sales').get(); sales=snap.docs.map(d=>d.data());}catch(e){console.error(e);}
+    const filtered=sales.filter(s=>{const d=saleDate(s);return !from|| (d&&d>=from&&d<=now);});
+    const total=filtered.reduce((a,s)=>a+Number(s.finalTotal??s.total??0),0);
+    const profit=filtered.reduce((a,s)=>a+Number(s.profit||0),0);
+    const discount=filtered.reduce((a,s)=>a+Number(s.discount||0),0);
+    const cash=filtered.filter(s=>s.paymentMethod==='cash').reduce((a,s)=>a+Number(s.finalTotal??s.total??0),0);
+    const credit=filtered.filter(s=>s.paymentMethod==='credit').reduce((a,s)=>a+Number(s.finalTotal??s.total??0),0);
+    const items=filtered.reduce((a,s)=>a+(s.items||[]).reduce((b,i)=>b+(Number(i.quantity)||0),0),0);
+    box.innerHTML=[
+      ['💵 Sales',money(total)],['💰 Profit',money(profit)],['🏷️ Discount',money(discount)],
+      ['💵 Cash',money(cash)],['📒 Udhaar',money(credit)],['📦 Items Sold',items],['🧾 Orders',filtered.length]
+    ].map(x=>`<div class="pro-kpi"><div class="k">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+  };
+
+  window.proBackupJSON=function(){
+    const data={exportedAt:new Date().toISOString(),products:window.productsCache||[],customers:window.customersCache||[],receivedPayments:window.proPayments||[]};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='smart-shop-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);
+  };
+
+  window.proExportCSV=async function(){
+    try{
+      const snap=await db.collection('sales').get(), rows=[['Date','Customer','Payment Method','Total','Discount','Profit']];
+      snap.docs.forEach(d=>{const s=d.data();rows.push([s.date||'',s.customerName||'',s.paymentMethod||'',s.finalTotal??s.total??0,s.discount||0,s.profit||0]);});
+      const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='smart-shop-sales.csv';a.click();URL.revokeObjectURL(a.href);
+    }catch(e){console.error(e);showToast('CSV export failed','error');}
+  };
+
+  const oldShowPage=window.showPage;
+  window.showPage=function(pageName){
+    if(typeof oldShowPage==='function') oldShowPage(pageName);
+    if(pageName==='pro'){setTimeout(()=>{proRefreshAll();},50);}
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{proRefreshKPIs();proRenderStock();proRenderCustomers();},500));
+})();
+</script>
+
 </body>
 </html>
