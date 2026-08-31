@@ -934,6 +934,9 @@
                 <a class="sidebar-nav-item" onclick="showPage('customers')">
                     <span class="icon">👥</span> Customers
                 </a>
+                <a class="sidebar-nav-item" onclick="showPage('receivedPayments')">
+                    <span class="icon">💰</span> Received Payments
+                </a>
                 <a class="sidebar-nav-item" onclick="showPage('expenses')">
                     <span class="icon">💸</span> Expenses
                 </a>
@@ -1253,13 +1256,38 @@
                         <h1>👥 Customers</h1>
                         <p class="date">Manage customers and Udhaar</p>
                     </div>
-                    <button class="icon-btn" onclick="showAddCustomer()">➕ Add Customer</button>
+                    <div class="header-actions">
+                        <button class="icon-btn" onclick="showAddCustomer()">➕ Add Customer</button>
+                        <button class="icon-btn" onclick="showPage('receivedPayments')">💰 Received Payments</button>
+                    </div>
                 </div>
 
                 <div class="table-container">
                     <table class="table">
                         <thead><tr><th>Name</th><th>Phone</th><th>Total Credit</th><th>Paid</th><th>Remaining</th><th>Actions</th></tr></thead>
                         <tbody id="customersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ===== RECEIVED PAYMENTS ===== -->
+            <div id="receivedPaymentsPage" class="page">
+                <div class="top-header">
+                    <div class="header-left">
+                        <h1>💰 Received Payments</h1>
+                        <p class="date">Only received customer payments are shown here</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" onclick="loadReceivedPayments()">🔄 Refresh</button>
+                        <button class="icon-btn" onclick="receivePayment()">💰 Receive Payment</button>
+                    </div>
+                </div>
+                <div class="stats-grid" id="receivedPaymentStats"></div>
+                <div class="table-container">
+                    <div class="table-header"><h3>Payment History</h3></div>
+                    <table class="table">
+                        <thead><tr><th>Date</th><th>Customer</th><th>Phone</th><th>Amount</th><th>Action</th></tr></thead>
+                        <tbody id="receivedPaymentsTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -1672,6 +1700,7 @@
                 await Promise.all([
                     loadProducts(),
                     loadCustomers(),
+                    loadReceivedPayments(),
                     loadDashboardData(),
                     loadExpenses(),
                     loadPurchases(),
@@ -1724,6 +1753,7 @@
                 case 'closing': loadClosingData(); break;
                 case 'settings': loadSettings(); break;
             }
+            if (pageName === 'receivedPayments') loadReceivedPayments();
         }
 
         function showMoreMenu() {
@@ -2272,6 +2302,10 @@
                         <input type="number" id="editSellingPrice" value="${p.sellingPrice || 0}" required min="0" step="0.01">
                     </div>
                     <div class="form-group" style="margin-bottom: 0;">
+                        <label>Current Stock *</label>
+                        <input type="number" id="editCurrentStock" value="${Number(p.currentStock || 0)}" required min="0" step="1">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
                         <label>Min Stock</label>
                         <input type="number" id="editMinStock" value="${p.minStock || 5}" min="0">
                     </div>
@@ -2294,26 +2328,58 @@
         }
 
         async function updateProduct(productId) {
+            const name = document.getElementById('editName').value.trim();
+            const currentStock = parseInt(document.getElementById('editCurrentStock').value, 10);
+            const purchasePrice = parseFloat(document.getElementById('editPurchasePrice').value);
+            const sellingPrice = parseFloat(document.getElementById('editSellingPrice').value);
+            const minStock = parseInt(document.getElementById('editMinStock').value, 10);
+
+            if (!name || !Number.isFinite(currentStock) || currentStock < 0 ||
+                !Number.isFinite(purchasePrice) || purchasePrice < 0 ||
+                !Number.isFinite(sellingPrice) || sellingPrice < 0 ||
+                !Number.isFinite(minStock) || minStock < 0) {
+                showToast('Please enter valid product values', 'warning');
+                return;
+            }
+
             const data = {
-                name: document.getElementById('editName').value.trim(),
+                name,
                 icon: document.getElementById('editIcon').value || '📦',
                 category: document.getElementById('editCategory').value || 'General',
                 model: document.getElementById('editModel').value || '',
-                purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value) || 0,
-                sellingPrice: parseFloat(document.getElementById('editSellingPrice').value) || 0,
-                minStock: parseInt(document.getElementById('editMinStock').value) || 5,
+                purchasePrice,
+                sellingPrice,
+                currentStock,
+                minStock,
                 supplier: document.getElementById('editSupplier').value || '',
+                status: currentStock === 0 ? 'out' : (currentStock <= minStock ? 'low' : 'active'),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
+
             try {
+                const oldProduct = productsCache.find(p => p.id === productId);
+                const oldStock = Number(oldProduct?.currentStock || 0);
                 await db.collection('products').doc(productId).update(data);
+
+                if (oldStock !== currentStock) {
+                    await db.collection('stockMovements').add({
+                        productId, productName: name, type: 'manual_edit',
+                        quantity: currentStock - oldStock,
+                        reason: 'Stock changed from Edit Product',
+                        date: new Date().toISOString().split('T')[0],
+                        userId: currentUser?.uid || 'unknown',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
                 closeModal();
-                showToast('✅ Product updated!');
-                loadProducts();
+                showToast('✅ Product and stock updated!');
+                await loadProducts();
+                await loadStock();
+                await loadDashboardData();
             } catch (error) {
                 console.error('Error updating product:', error);
-                showToast('Error updating product', 'error');
+                showToast('Error updating product: ' + (error.message || 'Unknown error'), 'error');
             }
         }
 
@@ -2524,78 +2590,55 @@
         function adjustStock(productId) {
             const p = productsCache.find(p => p.id === productId);
             if (!p) return;
-            
             const modal = document.getElementById('modalOverlay');
             const content = document.getElementById('modalContent');
-            
             content.innerHTML = `
-                <div class="modal-header">
-                    <h2>⚙️ Adjust Stock - ${p.name}</h2>
-                    <button class="close-btn" onclick="closeModal()">&times;</button>
-                </div>
+                <div class="modal-header"><h2>⚙️ Adjust Stock - ${p.name}</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
                 <form id="adjustStockForm">
-                    <div class="form-group">
-                        <label>Current Stock: <strong>${p.currentStock} ${p.unit || 'pcs'}</strong></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Adjustment Type</label>
-                        <select id="adjustType" required>
-                            <option value="add">➕ Add Stock</option>
-                            <option value="remove">➖ Remove Stock</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity *</label>
-                        <input type="number" id="adjustQty" required min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Reason</label>
-                        <input type="text" id="adjustReason" placeholder="e.g., New stock, damaged, correction">
-                    </div>
+                    <div class="form-group"><label>Current Stock: <strong>${Number(p.currentStock || 0)} ${p.unit || 'pcs'}</strong></label></div>
+                    <div class="form-group"><label>Adjustment Type</label><select id="adjustType" required><option value="add">➕ Add Stock</option><option value="remove">➖ Remove Stock</option></select></div>
+                    <div class="form-group"><label>Quantity *</label><input type="number" id="adjustQty" required min="1" step="1"></div>
+                    <div class="form-group"><label>Reason</label><input type="text" id="adjustReason" placeholder="e.g., New stock, damaged, correction"></div>
                     <button type="submit" class="btn btn-success">💾 Apply Adjustment</button>
-                </form>
-            `;
+                </form>`;
             modal.classList.add('active');
-            
             document.getElementById('adjustStockForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const type = document.getElementById('adjustType').value;
-                const qty = parseInt(document.getElementById('adjustQty').value);
-                const reason = document.getElementById('adjustReason').value || 'Manual adjustment';
-                const adjustment = type === 'add' ? qty : -qty;
-                const newStock = p.currentStock + adjustment;
-                
-                if (newStock < 0) {
-                    showToast('Stock cannot be negative', 'warning');
-                    return;
-                }
-                
+                const qty = parseInt(document.getElementById('adjustQty').value, 10);
+                const reason = document.getElementById('adjustReason').value.trim() || 'Manual adjustment';
+                if (!Number.isFinite(qty) || qty < 1) { showToast('Enter a valid quantity', 'warning'); return; }
                 try {
-                    await db.collection('products').doc(productId).update({
-                        currentStock: newStock,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    const productRef = db.collection('products').doc(productId);
+                    let actualChange = 0;
+                    await db.runTransaction(async transaction => {
+                        const snap = await transaction.get(productRef);
+                        if (!snap.exists) throw new Error('Product no longer exists');
+                        const currentStock = Number(snap.data().currentStock || 0);
+                        actualChange = type === 'add' ? qty : -qty;
+                        const newStock = currentStock + actualChange;
+                        if (newStock < 0) throw new Error('Stock cannot be negative');
+                        const minStock = Number(snap.data().minStock || 5);
+                        transaction.update(productRef, {
+                            currentStock: newStock,
+                            status: newStock === 0 ? 'out' : (newStock <= minStock ? 'low' : 'active'),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
                     });
-                    
                     await db.collection('stockMovements').add({
-                        productId: productId,
-                        productName: p.name,
+                        productId, productName: p.name,
                         type: type === 'add' ? 'adjustment_add' : 'adjustment_remove',
-                        quantity: adjustment,
-                        reason: reason,
+                        quantity: actualChange, reason,
                         date: new Date().toISOString().split('T')[0],
                         userId: currentUser?.uid || 'unknown',
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    
                     closeModal();
-                    showToast(`✅ Stock adjusted: ${adjustment > 0 ? '+' : ''}${adjustment} ${p.unit || 'pcs'}`);
-                    loadProducts();
-                    loadStock();
-                    loadDashboardData();
-                    
+                    showToast(`✅ Stock updated: ${actualChange > 0 ? '+' : ''}${actualChange} ${p.unit || 'pcs'}`);
+                    await loadProducts(); await loadStock(); await loadDashboardData();
                 } catch (error) {
                     console.error('Stock adjustment error:', error);
-                    showToast('Error adjusting stock', 'error');
+                    showToast(error.message || 'Error adjusting stock', 'error');
                 }
             });
         }
@@ -2694,54 +2737,39 @@
 
         async function viewCustomer(customerId) {
             const c = customersCache.find(c => c.id === customerId);
-            if (!c) return;
-            
+            if (!c) { showToast('Customer not found', 'error'); return; }
             try {
+                // Avoid Firestore where+orderBy composite index requirement.
                 const snap = await db.collection('customerTransactions')
-                    .where('customerId', '==', customerId)
-                    .orderBy('createdAt', 'desc')
-                    .limit(20)
-                    .get();
-                
+                    .where('customerId', '==', customerId).limit(100).get();
+                const transactions = snap.docs.map(doc => ({id: doc.id, ...doc.data()})).sort((a,b) => {
+                    const at = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.date || 0).getTime();
+                    const bt = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.date || 0).getTime();
+                    return bt - at;
+                });
                 const modal = document.getElementById('modalOverlay');
                 const content = document.getElementById('modalContent');
-                
                 let txHTML = '';
-                snap.docs.forEach(doc => {
-                    const t = doc.data();
-                    txHTML += `
-                        <tr>
-                            <td>${t.date || ''}</td>
-                            <td><span class="badge ${t.type === 'credit' ? 'badge-warning' : 'badge-success'}">${t.type === 'credit' ? 'Credit' : 'Payment'}</span></td>
-                            <td>Rs. ${(t.amount || 0).toFixed(2)}</td>
-                        </tr>
-                    `;
+                transactions.forEach(t => {
+                    const isCredit = t.type === 'credit';
+                    txHTML += `<tr><td>${t.date || ''}</td><td><span class="badge ${isCredit ? 'badge-warning' : 'badge-success'}">${isCredit ? 'Credit' : 'Payment Received'}</span></td><td>Rs. ${Number(t.amount || 0).toFixed(2)}</td></tr>`;
                 });
-                
                 content.innerHTML = `
-                    <div class="modal-header">
-                        <h2>👤 ${c.name}</h2>
-                        <button class="close-btn" onclick="closeModal()">&times;</button>
-                    </div>
+                    <div class="modal-header"><h2>👤 ${c.name}</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
                     <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-                        <div class="stat-card"><div class="stat-label">Total Credit</div><div class="stat-value">Rs. ${(c.totalCredit || 0).toFixed(2)}</div></div>
-                        <div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-value">Rs. ${(c.totalPaid || 0).toFixed(2)}</div></div>
-                        <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-value">Rs. ${(c.remainingCredit || 0).toFixed(2)}</div></div>
+                        <div class="stat-card"><div class="stat-label">Total Credit</div><div class="stat-value">Rs. ${Number(c.totalCredit || 0).toFixed(2)}</div></div>
+                        <div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-value">Rs. ${Number(c.totalPaid || 0).toFixed(2)}</div></div>
+                        <div class="stat-card"><div class="stat-label">Remaining</div><div class="stat-value">Rs. ${Number(c.remainingCredit || 0).toFixed(2)}</div></div>
                     </div>
-                    <h3>Transaction History</h3>
-                    <div class="table-container">
-                        <table class="table">
-                            <thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead>
-                            <tbody>${txHTML || '<tr><td colspan="3" class="empty-state">No transactions</td></tr>'}</tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-success btn-sm" onclick="closeModal(); receivePayment('${customerId}')">💰 Receive Payment</button>
-                `;
+                    <h3>Transaction History</h3><div class="table-container"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead><tbody>${txHTML || '<tr><td colspan="3" class="empty-state">No transactions</td></tr>'}</tbody></table></div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="btn btn-success btn-sm" onclick="closeModal(); receivePayment('${customerId}')">💰 Receive Payment</button>
+                        <button class="btn btn-outline btn-sm" onclick="closeModal(); showPage('receivedPayments')">💰 Received Payments</button>
+                    </div>`;
                 modal.classList.add('active');
-                
             } catch (error) {
                 console.error('Error viewing customer:', error);
-                showToast('Error loading customer details', 'error');
+                showToast('Error loading customer details: ' + (error.message || 'Unknown error'), 'error');
             }
         }
 
@@ -2796,37 +2824,99 @@
         }
 
         async function processPayment(customerId) {
-            const amount = parseFloat(document.getElementById('paymentAmount').value);
-            const c = customersCache.find(c => c.id === customerId);
-            if (!amount || amount <= 0 || amount > (c?.remainingCredit || 0)) {
-                showToast('Invalid amount', 'warning');
-                return;
-            }
-            
+            const amount = parseFloat(document.getElementById('paymentAmount')?.value);
+            if (!Number.isFinite(amount) || amount <= 0) { showToast('Enter a valid payment amount', 'warning'); return; }
+            const customerRef = db.collection('customers').doc(customerId);
+            const paymentRef = db.collection('customerTransactions').doc();
             try {
-                await db.collection('customers').doc(customerId).update({
-                    totalPaid: (c.totalPaid || 0) + amount,
-                    remainingCredit: (c.remainingCredit || 0) - amount,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                let customerName = 'Unknown';
+                await db.runTransaction(async transaction => {
+                    const snap = await transaction.get(customerRef);
+                    if (!snap.exists) throw new Error('Customer not found');
+                    const c = snap.data();
+                    const remaining = Number(c.remainingCredit || 0);
+                    if (amount > remaining) throw new Error(`Payment cannot exceed remaining balance of Rs. ${remaining.toFixed(2)}`);
+                    customerName = c.name || 'Unknown';
+                    transaction.update(customerRef, {
+                        totalPaid: Number(c.totalPaid || 0) + amount,
+                        remainingCredit: Math.max(0, remaining - amount),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    transaction.set(paymentRef, {
+                        customerId, customerName, customerPhone: c.phone || '', type: 'payment', amount,
+                        date: new Date().toISOString().split('T')[0], userId: currentUser?.uid || 'unknown',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 });
-                
-                await db.collection('customerTransactions').add({
-                    customerId: customerId,
-                    type: 'payment',
-                    amount: amount,
-                    date: new Date().toISOString().split('T')[0],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
                 closeModal();
-                showToast(`✅ Received Rs. ${amount.toFixed(2)} from ${c.name}`);
-                loadCustomers();
-                loadDashboardData();
-                
+                showToast(`✅ Received Rs. ${amount.toFixed(2)} from ${customerName}`);
+                await loadCustomers(); await loadReceivedPayments(); await loadDashboardData();
+            } catch (error) { console.error('Payment error:', error); showToast(error.message || 'Error processing payment', 'error'); }
+        }
+
+        // ============================================================
+        // RECEIVED PAYMENTS
+        // ============================================================
+        async function loadReceivedPayments() {
+            const table = document.getElementById('receivedPaymentsTable');
+            const stats = document.getElementById('receivedPaymentStats');
+            if (!table) return;
+            table.innerHTML = '<tr><td colspan="5" class="empty-state">Loading received payments...</td></tr>';
+            try {
+                const snap = await db.collection('customerTransactions').where('type', '==', 'payment').limit(200).get();
+                const payments = snap.docs.map(doc => ({id: doc.id, ...doc.data()})).sort((a,b) => {
+                    const at = a.createdAt?.toMillis ? a.createdAt.toMillis() : new Date(a.date || 0).getTime();
+                    const bt = b.createdAt?.toMillis ? b.createdAt.toMillis() : new Date(b.date || 0).getTime();
+                    return bt - at;
+                });
+                const totalReceived = payments.reduce((sum,p) => sum + Number(p.amount || 0), 0);
+                const today = new Date().toISOString().split('T')[0];
+                const todayReceived = payments.filter(p => p.date === today).reduce((sum,p) => sum + Number(p.amount || 0), 0);
+                if (stats) stats.innerHTML = `
+                    <div class="stat-card success"><div class="stat-label">Total Received</div><div class="stat-value">Rs. ${totalReceived.toFixed(2)}</div></div>
+                    <div class="stat-card accent"><div class="stat-label">Today Received</div><div class="stat-value">Rs. ${todayReceived.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Payments</div><div class="stat-value">${payments.length}</div></div>`;
+                if (!payments.length) { table.innerHTML = '<tr><td colspan="5" class="empty-state">No received payments yet</td></tr>'; return; }
+                table.innerHTML = payments.map(p => `<tr>
+                    <td>${p.date || ''}</td><td><strong>${p.customerName || getCustomerName(p.customerId)}</strong></td>
+                    <td>${p.customerPhone || getCustomerPhone(p.customerId)}</td>
+                    <td><strong>Rs. ${Number(p.amount || 0).toFixed(2)}</strong></td>
+                    <td><button class="icon-btn btn-danger" onclick="deleteReceivedPayment('${p.id}', ${Number(p.amount || 0)})">🗑️ Delete</button></td></tr>`).join('');
             } catch (error) {
-                console.error('Payment error:', error);
-                showToast('Error processing payment', 'error');
+                console.error('Error loading received payments:', error);
+                table.innerHTML = `<tr><td colspan="5" class="empty-state">Error loading received payments: ${error.message || 'Unknown error'}</td></tr>`;
             }
+        }
+
+        function getCustomerName(customerId) { return customersCache.find(c => c.id === customerId)?.name || 'Unknown'; }
+        function getCustomerPhone(customerId) { return customersCache.find(c => c.id === customerId)?.phone || ''; }
+
+        async function deleteReceivedPayment(paymentId, amountFromRow) {
+            if (!confirm(`Delete this received payment of Rs. ${Number(amountFromRow || 0).toFixed(2)}?\n\nThe customer's Paid amount will decrease and Remaining balance will increase.`)) return;
+            const paymentRef = db.collection('customerTransactions').doc(paymentId);
+            try {
+                await db.runTransaction(async transaction => {
+                    const paymentSnap = await transaction.get(paymentRef);
+                    if (!paymentSnap.exists) throw new Error('Payment record not found');
+                    const payment = paymentSnap.data();
+                    if (payment.type !== 'payment') throw new Error('This is not a received payment record');
+                    const customerId = payment.customerId;
+                    const amount = Number(payment.amount || 0);
+                    if (!customerId || amount <= 0) throw new Error('Invalid payment record');
+                    const customerRef = db.collection('customers').doc(customerId);
+                    const customerSnap = await transaction.get(customerRef);
+                    if (!customerSnap.exists) throw new Error('Customer not found');
+                    const c = customerSnap.data();
+                    transaction.update(customerRef, {
+                        totalPaid: Math.max(0, Number(c.totalPaid || 0) - amount),
+                        remainingCredit: Number(c.remainingCredit || 0) + amount,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    transaction.delete(paymentRef);
+                });
+                showToast('✅ Received payment deleted and customer balance restored');
+                await loadCustomers(); await loadReceivedPayments(); await loadDashboardData();
+            } catch (error) { console.error('Delete received payment error:', error); showToast(error.message || 'Error deleting received payment', 'error'); }
         }
 
         // ============================================================
