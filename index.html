@@ -1272,6 +1272,7 @@
                     </div>
                     <div class="header-actions">
                         <button class="icon-btn" onclick="showAddCustomer()">➕ Add Customer</button>
+                        <button class="icon-btn" onclick="showStandaloneUdhaar()">📒 Add Udhaar</button>
                         <button class="icon-btn" onclick="showPage('receivedPayments')">💰 Received Payments</button>
                     </div>
                 </div>
@@ -2777,6 +2778,8 @@
                             <td>
                                 <button class="icon-btn" onclick="viewCustomer('${c.id}')">👁️</button>
                                 <button class="icon-btn" onclick="receivePayment('${c.id}')">💰</button>
+                                <button class="icon-btn" onclick="showStandaloneUdhaar('${c.id}')">📒</button>
+                                <button class="icon-btn btn-danger" onclick="deleteCustomer('${c.id}')">🗑️</button>
                             </td>
                         </tr>
                     `;
@@ -2838,6 +2841,90 @@
                     showToast('Error adding customer', 'error');
                 }
             });
+        }
+
+        // Standalone Udhaar: add a debt without creating a product sale.
+        async function showStandaloneUdhaar(customerId = '') {
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            const options = customersCache.map(c => `<option value="${c.id}" ${c.id===customerId?'selected':''}>${c.name} ${c.phone ? '- '+c.phone : ''}</option>`).join('');
+            content.innerHTML = `
+                <div class="modal-header"><h2>📒 Add Separate Udhaar</h2><button class="close-btn" onclick="closeModal()">&times;</button></div>
+                <p style="color:var(--text-secondary);font-size:.85rem;margin-bottom:14px;">This adds Udhaar directly to the customer. No product or stock will be changed.</p>
+                <div class="form-group"><label>Customer *</label><select id="standaloneUdhaarCustomer" style="width:100%;padding:12px;background:var(--bg-card-hover);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);"><option value="">Select Customer</option>${options}</select></div>
+                <div class="form-group"><label>Amount *</label><input type="number" id="standaloneUdhaarAmount" min="0.01" step="0.01" placeholder="Enter Udhaar amount"></div>
+                <div class="form-group"><label>Note / Reason</label><input type="text" id="standaloneUdhaarNote" placeholder="e.g. Previous balance, cash loan, etc."></div>
+                <button class="btn btn-success" onclick="processStandaloneUdhaar()">💾 Save Udhaar</button>`;
+            modal.classList.add('active');
+        }
+
+        async function processStandaloneUdhaar() {
+            const customerId = document.getElementById('standaloneUdhaarCustomer')?.value;
+            const amount = parseFloat(document.getElementById('standaloneUdhaarAmount')?.value);
+            const note = document.getElementById('standaloneUdhaarNote')?.value.trim() || 'Separate Udhaar';
+            if (!customerId) { showToast('Please select a customer', 'warning'); return; }
+            if (!Number.isFinite(amount) || amount <= 0) { showToast('Enter a valid amount', 'warning'); return; }
+            try {
+                const customerRef = db.collection('customers').doc(customerId);
+                const txRef = db.collection('customerTransactions').doc();
+                await db.runTransaction(async transaction => {
+                    const snap = await transaction.get(customerRef);
+                    if (!snap.exists) throw new Error('Customer not found');
+                    const c = snap.data();
+                    transaction.update(customerRef, {
+                        totalCredit: Number(c.totalCredit || 0) + amount,
+                        remainingCredit: Number(c.remainingCredit || 0) + amount,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    transaction.set(txRef, {
+                        customerId, customerName: c.name || 'Unknown', customerPhone: c.phone || '',
+                        type: 'credit', amount, source: 'standalone_udhaar', note,
+                        date: new Date().toISOString().split('T')[0],
+                        userId: currentUser?.uid || 'unknown',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                closeModal();
+                showToast(`✅ Udhaar of Rs. ${amount.toFixed(2)} added`);
+                await loadCustomers();
+                if (typeof loadDashboardData === 'function') await loadDashboardData();
+                if (typeof loadReceivedPayments === 'function') await loadReceivedPayments();
+                if (typeof proRefreshAll === 'function') await proRefreshAll();
+            } catch (error) {
+                console.error('Standalone Udhaar error:', error);
+                showToast(error.message || 'Error adding Udhaar', 'error');
+            }
+        }
+
+        async function deleteCustomer(customerId) {
+            const c = customersCache.find(x => x.id === customerId);
+            if (!c) { showToast('Customer not found', 'error'); return; }
+            const due = Number(c.remainingCredit || 0);
+            const msg = `Delete customer "${c.name}"?\n\nThis will delete the customer and their customer Udhaar/payment transaction history. Existing sales records will NOT be deleted.\n${due > 0 ? `\n⚠️ Outstanding balance: Rs. ${due.toFixed(2)}` : ''}`;
+            if (!confirm(msg)) return;
+            try {
+                const customerRef = db.collection('customers').doc(customerId);
+                const txSnap = await db.collection('customerTransactions').where('customerId', '==', customerId).get();
+                let batch = db.batch(), count = 0;
+                txSnap.docs.forEach(doc => { batch.delete(doc.ref); count++; if (count === 450) { /* handled below */ } });
+                // Firestore batch limit safety: delete in chunks.
+                if (count > 0) {
+                    const docs = txSnap.docs;
+                    for (let i = 0; i < docs.length; i += 450) {
+                        const b = db.batch();
+                        docs.slice(i, i + 450).forEach(d => b.delete(d.ref));
+                        await b.commit();
+                    }
+                }
+                await customerRef.delete();
+                showToast(`✅ ${c.name} deleted`);
+                await loadCustomers();
+                if (typeof loadDashboardData === 'function') await loadDashboardData();
+                if (typeof proRefreshAll === 'function') await proRefreshAll();
+            } catch (error) {
+                console.error('Delete customer error:', error);
+                showToast(error.message || 'Error deleting customer', 'error');
+            }
         }
 
         async function viewCustomer(customerId) {
