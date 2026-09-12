@@ -934,11 +934,13 @@
             </div>
             <div class="sidebar-nav">
                 <a class="sidebar-nav-item active" onclick="showPage('dashboard')">
-                    <span class="icon">🏠</span>
-<div class="nav-item" onclick="showPage('pro')"><span>🚀</span><span>Pro</span></div> Dashboard
+                    <span class="icon">🏠</span> Dashboard
+                </a>
+                <a class="sidebar-nav-item" onclick="showPage('pro')">
+                    <span class="icon">🚀</span> Pro
+                </a>
                 <a class="sidebar-nav-item" onclick="showPage('payment')">
                     <span class="icon">💳</span> Payment & Transactions
-                </a>
                 </a>
                 <a class="sidebar-nav-item" onclick="showPage('sale')">
                     <span class="icon">🛒</span> New Sale
@@ -1581,6 +1583,77 @@
             </div>
         </div>
 
+
+        <!-- ============================================================
+             PAYMENT & TRANSACTION MANAGEMENT
+             ============================================================ -->
+        <div class="page ptm-page" id="paymentPage" style="display:none;">
+          <div class="page-header">
+            <div>
+              <h1>💳 Payment & Transaction Management</h1>
+              <p>Record, calculate, copy and print EasyPaisa, JazzCash, GPay and bank transactions</p>
+            </div>
+          </div>
+        
+          <div class="ptm-kpis">
+            <div class="ptm-kpi"><div class="k">🧾 Total Transactions</div><div class="v" id="ptmTotalTransactions">0</div></div>
+            <div class="ptm-kpi"><div class="k">💰 Total Payments</div><div class="v" id="ptmTotalPayments">Rs. 0.00</div></div>
+            <div class="ptm-kpi"><div class="k">🧮 Total Tax/Fee</div><div class="v" id="ptmTotalFees">Rs. 0.00</div></div>
+            <div class="ptm-kpi"><div class="k">📅 Today's Payments</div><div class="v" id="ptmTodayPayments">Rs. 0.00</div></div>
+            <div class="ptm-kpi"><div class="k">📌 Today's Transactions</div><div class="v" id="ptmTodayTransactions">0</div></div>
+          </div>
+        
+          <div class="ptm-grid">
+            <div class="card ptm-card">
+              <div class="card-header"><h2 id="ptmFormTitle">👤 Customer Details</h2></div>
+              <div class="ptm-form-grid">
+                <div class="ptm-field"><label>Customer Name *</label><input id="ptmCustomerName" type="text" placeholder="Customer name"></div>
+                <div class="ptm-field"><label>Account Number</label><input id="ptmAccountNumber" type="text" placeholder="Account / wallet number"></div>
+                <div class="ptm-field"><label>Mobile Number (optional)</label><input id="ptmMobile" type="tel" placeholder="03XXXXXXXXX"></div>
+                <div class="ptm-field"><label>Date</label><input id="ptmDate" type="date"></div>
+                <div class="ptm-field"><label>Time</label><input id="ptmTime" type="time"></div>
+                <div class="ptm-field full"><label>Notes</label><textarea id="ptmNotes" placeholder="Additional notes..."></textarea></div>
+              </div>
+            </div>
+        
+            <div class="card ptm-card">
+              <div class="card-header"><h2>💳 Payment Method</h2></div>
+              <div class="ptm-form-grid">
+                <div class="ptm-field"><label>Payment Method</label><select id="ptmPaymentMethod"><option>EasyPaisa</option><option>JazzCash</option><option>GPay</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select></div>
+                <div class="ptm-field"><label>Tax/Fee Rate (%)</label><input id="ptmTaxRate" type="number" min="0" step="0.01" value="2" oninput="ptmRecalculate()"><small style="color:var(--text-secondary)">Default: Rs. 20 per Rs. 1,000 = 2%</small></div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="card ptm-card">
+            <div class="card-header"><h2>💸 Transaction Details</h2><div class="ptm-actions"><button class="btn btn-outline" type="button" onclick="ptmAddPayment()">＋ Add Payment</button></div></div>
+            <div id="ptmPayments" class="ptm-payments"></div>
+            <div class="ptm-total-box">
+              <div class="ptm-total-item"><span>Total Payment</span><strong id="ptmTotalPaymentForm">Rs. 0.00</strong></div>
+              <div class="ptm-total-item"><span>Tax/Fee</span><strong id="ptmTaxForm">Rs. 0.00</strong></div>
+              <div class="ptm-total-item"><span>Grand Total</span><strong id="ptmGrandForm">Rs. 0.00</strong></div>
+            </div>
+            <div class="ptm-actions" style="margin-top:14px">
+              <button class="btn btn-success" type="button" onclick="ptmSaveRecord()" id="ptmSaveBtn">💾 Save Record</button>
+              <button class="btn btn-outline" type="button" onclick="ptmResetForm()">↺ Clear</button>
+            </div>
+          </div>
+        
+          <div class="card ptm-card">
+            <div class="card-header"><h2>🧾 Saved Payment Records</h2></div>
+            <div class="ptm-toolbar" style="margin-bottom:12px">
+              <input id="ptmSearch" type="search" placeholder="Search customer, account number or transaction ID..." oninput="ptmRenderRecords()">
+              <button class="btn btn-outline" type="button" onclick="ptmRenderRecords()">🔄 Refresh</button>
+            </div>
+            <div class="ptm-table-wrap">
+              <table class="ptm-table"><thead><tr><th>Date</th><th>Customer</th><th>Method</th><th>Payments</th><th>Total</th><th>Tax/Fee</th><th>Grand Total</th><th>Actions</th></tr></thead><tbody id="ptmRecordsBody"></tbody></table>
+            </div>
+          </div>
+        
+          <div class="card ptm-card ptm-print-area" id="ptmReceiptSection" style="display:none">
+            <div class="ptm-receipt-wrap"><div class="ptm-receipt" id="ptmReceipt"></div></div>
+          </div>
+        </div>
         <!-- Mobile Navigation -->
         <div class="mobile-nav">
             <div class="mobile-nav-items">
@@ -1694,77 +1767,6 @@
   </div>
 </div>
 
-
-<!-- ============================================================
-     PAYMENT & TRANSACTION MANAGEMENT
-     ============================================================ -->
-<div class="page ptm-page" id="paymentPage" style="display:none;">
-  <div class="page-header">
-    <div>
-      <h1>💳 Payment & Transaction Management</h1>
-      <p>Record, calculate, copy and print EasyPaisa, JazzCash, GPay and bank transactions</p>
-    </div>
-  </div>
-
-  <div class="ptm-kpis">
-    <div class="ptm-kpi"><div class="k">🧾 Total Transactions</div><div class="v" id="ptmTotalTransactions">0</div></div>
-    <div class="ptm-kpi"><div class="k">💰 Total Payments</div><div class="v" id="ptmTotalPayments">Rs. 0.00</div></div>
-    <div class="ptm-kpi"><div class="k">🧮 Total Tax/Fee</div><div class="v" id="ptmTotalFees">Rs. 0.00</div></div>
-    <div class="ptm-kpi"><div class="k">📅 Today's Payments</div><div class="v" id="ptmTodayPayments">Rs. 0.00</div></div>
-    <div class="ptm-kpi"><div class="k">📌 Today's Transactions</div><div class="v" id="ptmTodayTransactions">0</div></div>
-  </div>
-
-  <div class="ptm-grid">
-    <div class="card ptm-card">
-      <div class="card-header"><h2 id="ptmFormTitle">👤 Customer Details</h2></div>
-      <div class="ptm-form-grid">
-        <div class="ptm-field"><label>Customer Name *</label><input id="ptmCustomerName" type="text" placeholder="Customer name"></div>
-        <div class="ptm-field"><label>Account Number</label><input id="ptmAccountNumber" type="text" placeholder="Account / wallet number"></div>
-        <div class="ptm-field"><label>Mobile Number (optional)</label><input id="ptmMobile" type="tel" placeholder="03XXXXXXXXX"></div>
-        <div class="ptm-field"><label>Date</label><input id="ptmDate" type="date"></div>
-        <div class="ptm-field"><label>Time</label><input id="ptmTime" type="time"></div>
-        <div class="ptm-field full"><label>Notes</label><textarea id="ptmNotes" placeholder="Additional notes..."></textarea></div>
-      </div>
-    </div>
-
-    <div class="card ptm-card">
-      <div class="card-header"><h2>💳 Payment Method</h2></div>
-      <div class="ptm-form-grid">
-        <div class="ptm-field"><label>Payment Method</label><select id="ptmPaymentMethod"><option>EasyPaisa</option><option>JazzCash</option><option>GPay</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select></div>
-        <div class="ptm-field"><label>Tax/Fee Rate (%)</label><input id="ptmTaxRate" type="number" min="0" step="0.01" value="2" oninput="ptmRecalculate()"><small style="color:var(--text-secondary)">Default: Rs. 20 per Rs. 1,000 = 2%</small></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card ptm-card">
-    <div class="card-header"><h2>💸 Transaction Details</h2><div class="ptm-actions"><button class="btn btn-outline" type="button" onclick="ptmAddPayment()">＋ Add Payment</button></div></div>
-    <div id="ptmPayments" class="ptm-payments"></div>
-    <div class="ptm-total-box">
-      <div class="ptm-total-item"><span>Total Payment</span><strong id="ptmTotalPaymentForm">Rs. 0.00</strong></div>
-      <div class="ptm-total-item"><span>Tax/Fee</span><strong id="ptmTaxForm">Rs. 0.00</strong></div>
-      <div class="ptm-total-item"><span>Grand Total</span><strong id="ptmGrandForm">Rs. 0.00</strong></div>
-    </div>
-    <div class="ptm-actions" style="margin-top:14px">
-      <button class="btn btn-success" type="button" onclick="ptmSaveRecord()" id="ptmSaveBtn">💾 Save Record</button>
-      <button class="btn btn-outline" type="button" onclick="ptmResetForm()">↺ Clear</button>
-    </div>
-  </div>
-
-  <div class="card ptm-card">
-    <div class="card-header"><h2>🧾 Saved Payment Records</h2></div>
-    <div class="ptm-toolbar" style="margin-bottom:12px">
-      <input id="ptmSearch" type="search" placeholder="Search customer, account number or transaction ID..." oninput="ptmRenderRecords()">
-      <button class="btn btn-outline" type="button" onclick="ptmRenderRecords()">🔄 Refresh</button>
-    </div>
-    <div class="ptm-table-wrap">
-      <table class="ptm-table"><thead><tr><th>Date</th><th>Customer</th><th>Method</th><th>Payments</th><th>Total</th><th>Tax/Fee</th><th>Grand Total</th><th>Actions</th></tr></thead><tbody id="ptmRecordsBody"></tbody></table>
-    </div>
-  </div>
-
-  <div class="card ptm-card ptm-print-area" id="ptmReceiptSection" style="display:none">
-    <div class="ptm-receipt-wrap"><div class="ptm-receipt" id="ptmReceipt"></div></div>
-  </div>
-</div>
 
 <!-- Modal Container -->
     <div class="modal-overlay" id="modalOverlay">
