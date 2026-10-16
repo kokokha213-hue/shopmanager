@@ -359,6 +359,73 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* BIG STOCK SUMMARY BOX */
+        .big-stock-summary {
+            background: linear-gradient(135deg, rgba(34,197,94,.18), rgba(59,130,246,.10));
+            border: 1px solid rgba(34,197,94,.35);
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,.2), 0 0 30px rgba(34,197,94,.08);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .big-stock-summary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(34,197,94,.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        .bss-left { flex: 1; min-width: 240px; position: relative; z-index: 1; }
+        .bss-label {
+            font-size: .85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .bss-amount {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--accent-light);
+            text-shadow: 0 0 30px rgba(34,197,94,.4);
+        }
+        .bss-subtitle {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        .bss-stats {
+            font-size: .9rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+        .bss-stats strong { font-size: 1.1rem; }
+        .bss-stats .bss-products { color: #f59e0b; }
+        .bss-stats .bss-items { color: #3b82f6; }
+
+        .bss-icon {
+            font-size: 4.5rem;
+            opacity: .25;
+            filter: drop-shadow(0 0 20px rgba(34,197,94,.5));
+            position: relative;
+            z-index: 1;
+        }
+
         /* STATS GRID */
         .stats-grid {
             display: grid;
@@ -387,10 +454,8 @@
         .stat-card.success { border-left: 3px solid var(--success); }
         .stat-card.warning { border-left: 3px solid var(--warning); }
         .stat-card.danger { border-left: 3px solid var(--danger); }
-        .stat-card.info { border-left: 3px solid #3b82f6; }
-        .stat-card.purple { border-left: 3px solid #a855f7; }
 
-        /* INVENTORY SUMMARY BAR */
+        /* INVENTORY SUMMARY BAR (for products/stock pages) */
         .inventory-summary-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -818,6 +883,10 @@
 
             .mobile-nav { display: block; }
 
+            .big-stock-summary { padding: 18px 20px; gap: 14px; }
+            .bss-amount { font-size: 2rem; }
+            .bss-icon { font-size: 3rem; }
+
             .stats-grid {
                 grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
                 gap: 8px;
@@ -876,6 +945,12 @@
 
             .mobile-nav-item { font-size: 0.55rem; }
             .mobile-nav-item .mni-icon { font-size: 1.1rem; }
+
+            .bss-amount { font-size: 1.7rem; }
+            .bss-label { font-size: 0.7rem; }
+            .bss-subtitle { font-size: 0.85rem; }
+            .bss-stats { font-size: 0.75rem; }
+            .bss-stats strong { font-size: 0.9rem; }
 
             .inv-sum-item .inv-value { font-size: 0.9rem; }
         }
@@ -1029,25 +1104,21 @@
                     </div>
                 </div>
 
-                <!-- INVENTORY SUMMARY BAR - NEW -->
-                <div class="inventory-summary-bar" id="inventorySummaryBar">
-                    <div class="inv-sum-item items">
-                        <div class="inv-label">📦 Total Items</div>
-                        <div class="inv-value" id="invTotalItems">0</div>
+                <!-- ============ BIG TOTAL STOCK VALUE BOX ============ -->
+                <div class="big-stock-summary" id="bigStockSummary">
+                    <div class="bss-left">
+                        <div class="bss-label">📦 AAP KE PAAS IS WAQT</div>
+                        <div class="bss-amount" id="bigTotalAmount">Rs. 0</div>
+                        <div class="bss-subtitle">ka maal para hai</div>
+                        <div class="bss-stats">
+                            <strong class="bss-products" id="bigTotalProducts">0</strong> Products
+                            &nbsp;•&nbsp;
+                            <strong class="bss-items" id="bigTotalItems">0</strong> Items
+                        </div>
                     </div>
-                    <div class="inv-sum-item purchase">
-                        <div class="inv-label">💰 Total Purchase Cost</div>
-                        <div class="inv-value" id="invTotalPurchase">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item sell">
-                        <div class="inv-label">🏷️ Total Selling Value</div>
-                        <div class="inv-value" id="invTotalSelling">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item profit">
-                        <div class="inv-label">📈 Expected Profit</div>
-                        <div class="inv-value" id="invExpectedProfit">Rs. 0</div>
-                    </div>
+                    <div class="bss-icon">💰</div>
                 </div>
+                <!-- ============ END BIG BOX ============ -->
 
                 <div class="stats-grid" id="dashboardStats"></div>
 
@@ -1218,26 +1289,6 @@
                     </div>
                 </div>
 
-                <!-- PRODUCTS SUMMARY BAR - NEW -->
-                <div class="inventory-summary-bar" id="productsSummaryBar">
-                    <div class="inv-sum-item items">
-                        <div class="inv-label">📦 Total Products</div>
-                        <div class="inv-value" id="prodTotalCount">0</div>
-                    </div>
-                    <div class="inv-sum-item purchase">
-                        <div class="inv-label">💰 Total Purchase Cost</div>
-                        <div class="inv-value" id="prodTotalPurchase">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item sell">
-                        <div class="inv-label">🏷️ Total Selling Value</div>
-                        <div class="inv-value" id="prodTotalSelling">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item profit">
-                        <div class="inv-label">📈 Expected Profit</div>
-                        <div class="inv-value" id="prodExpectedProfit">Rs. 0</div>
-                    </div>
-                </div>
-
                 <div class="search-container">
                     <input type="text" id="productSearch" placeholder="🔍 Search products..." oninput="filterProducts()">
                 </div>
@@ -1252,8 +1303,6 @@
                                 <th>Purchase</th>
                                 <th>Sell</th>
                                 <th>Total Cost</th>
-                                <th>Total Sell</th>
-                                <th>Profit</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -1324,26 +1373,6 @@
                     </div>
                 </div>
 
-                <!-- STOCK SUMMARY BAR - NEW -->
-                <div class="inventory-summary-bar" id="stockSummaryBar">
-                    <div class="inv-sum-item items">
-                        <div class="inv-label">📦 Total Stock Items</div>
-                        <div class="inv-value" id="stockTotalItems">0</div>
-                    </div>
-                    <div class="inv-sum-item purchase">
-                        <div class="inv-label">💰 Total Stock Value (Cost)</div>
-                        <div class="inv-value" id="stockTotalValue">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item sell">
-                        <div class="inv-label">🏷️ Total Selling Value</div>
-                        <div class="inv-value" id="stockTotalSelling">Rs. 0</div>
-                    </div>
-                    <div class="inv-sum-item profit">
-                        <div class="inv-label">📈 Expected Profit</div>
-                        <div class="inv-value" id="stockExpectedProfit">Rs. 0</div>
-                    </div>
-                </div>
-
                 <div class="table-container">
                     <table class="table">
                         <thead>
@@ -1354,7 +1383,6 @@
                                 <th>Purchase</th>
                                 <th>Sell</th>
                                 <th>Stock Value</th>
-                                <th>Sell Value</th>
                                 <th>Status</th>
                                 <th>Adjust</th>
                             </tr>
@@ -1707,7 +1735,6 @@
   <div class="pro-kpi-grid">
     <div class="pro-kpi"><div class="k">📦 Inventory Items</div><div class="v" id="proInventoryItems">0</div></div>
     <div class="pro-kpi"><div class="k">💰 Inventory Value</div><div class="v" id="proInventoryValue">Rs. 0</div></div>
-    <div class="pro-kpi"><div class="k">🏷️ Selling Value</div><div class="v" id="proSellingValue">Rs. 0</div></div>
     <div class="pro-kpi"><div class="k">⚠️ Low Stock</div><div class="v" id="proLowStock">0</div></div>
     <div class="pro-kpi"><div class="k">📒 Total Due</div><div class="v" id="proTotalDue">Rs. 0</div></div>
     <div class="pro-kpi"><div class="k">💳 Total Received</div><div class="v" id="proTotalReceived">Rs. 0</div></div>
@@ -1742,7 +1769,7 @@
     </div>
     <div class="table-container">
       <table class="table">
-        <thead><tr><th>Product</th><th>Stock</th><th>Purchase</th><th>Stock Value</th><th>Sell Value</th><th>Quick Change</th></tr></thead>
+        <thead><tr><th>Product</th><th>Stock</th><th>Purchase</th><th>Stock Value</th><th>Quick Change</th></tr></thead>
         <tbody id="proStockTable"></tbody>
       </table>
     </div>
@@ -1831,50 +1858,37 @@
         let originalSaleData = null;
 
         // ============================================================
-        // INVENTORY SUMMARY - GLOBAL FUNCTION
+        // BIG STOCK SUMMARY - Total maal ka amount
         // ============================================================
         function refreshInventorySummaries() {
             const products = productsCache || [];
             let totalItems = 0;
             let totalPurchase = 0;
-            let totalSelling = 0;
 
             products.forEach(p => {
                 const stock = Number(p.currentStock) || 0;
                 const purchasePrice = Number(p.purchasePrice) || 0;
-                const sellingPrice = Number(p.sellingPrice) || 0;
                 totalItems += stock;
                 totalPurchase += stock * purchasePrice;
-                totalSelling += stock * sellingPrice;
             });
 
-            const expectedProfit = totalSelling - totalPurchase;
+            const fmt = (n) => 'Rs. ' + Number(n || 0).toLocaleString('en-PK', { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+            });
 
-            // Format helper
-            const fmt = (n) => 'Rs. ' + Number(n || 0).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const setEl = (id, val) => { 
+                const e = document.getElementById(id); 
+                if (e) e.textContent = val; 
+            };
 
-            // Dashboard
-            const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
-            setEl('invTotalItems', totalItems);
-            setEl('invTotalPurchase', fmt(totalPurchase));
-            setEl('invTotalSelling', fmt(totalSelling));
-            setEl('invExpectedProfit', fmt(expectedProfit));
-
-            // Products page
-            setEl('prodTotalCount', products.length);
-            setEl('prodTotalPurchase', fmt(totalPurchase));
-            setEl('prodTotalSelling', fmt(totalSelling));
-            setEl('prodExpectedProfit', fmt(expectedProfit));
-
-            // Stock page
-            setEl('stockTotalItems', totalItems);
-            setEl('stockTotalValue', fmt(totalPurchase));
-            setEl('stockTotalSelling', fmt(totalSelling));
-            setEl('stockExpectedProfit', fmt(expectedProfit));
+            // Dashboard big summary
+            setEl('bigTotalAmount', fmt(totalPurchase));
+            setEl('bigTotalProducts', products.length);
+            setEl('bigTotalItems', totalItems);
 
             // Pro page
             setEl('proInventoryValue', fmt(totalPurchase));
-            setEl('proSellingValue', fmt(totalSelling));
         }
 
         // ============================================================
@@ -2027,7 +2041,7 @@
                     <button class="close-btn" onclick="closeModal()">&times;</button>
                 </div>
                 <div style="display: grid; gap: 6px;">
-                     <button class="btn btn-outline" onclick="showPage('products'); closeModal();">📦 Products</button>
+                    <button class="btn btn-outline" onclick="showPage('products'); closeModal();">📦 Products</button>
                     <button class="btn btn-outline" onclick="showPage('purchases'); closeModal();">🚚 Purchases</button>
                     <button class="btn btn-outline" onclick="showPage('expenses'); closeModal();">💸 Expenses</button>
                     <button class="btn btn-outline" onclick="showPage('reports'); closeModal();">📈 Reports</button>
@@ -2077,7 +2091,6 @@
             const today = new Date().toISOString().split('T')[0];
             
             try {
-                // Sales
                 const salesSnap = await db.collection('sales').where('date', '==', today).get();
                 let totalSales = 0, totalProfit = 0, cashSales = 0, creditSales = 0;
                 let productsSold = 0, totalOrders = salesSnap.docs.length;
@@ -2093,17 +2106,14 @@
                     if (s.items) s.items.forEach(i => { productsSold += i.quantity || 0; });
                 });
                 
-                // Expenses
                 const expSnap = await db.collection('expenses').where('date', '==', today).get();
                 let totalExpenses = 0;
                 expSnap.docs.forEach(doc => { totalExpenses += doc.data().amount || 0; });
                 
-                // Customers - total Udhaar
                 const custSnap = await db.collection('customers').get();
                 let totalUdhaar = 0;
                 custSnap.docs.forEach(doc => { totalUdhaar += doc.data().remainingCredit || 0; });
                 
-                // Low stock count
                 let lowStockCount = 0;
                 productsCache.forEach(p => {
                     if (p.currentStock <= (p.minStock || 5)) lowStockCount++;
@@ -2166,9 +2176,7 @@
                 
                 document.getElementById('dashboardStats').innerHTML = statsHTML;
                 
-                // Refresh inventory summary
                 refreshInventorySummaries();
-                
                 loadLowStockAlerts();
                 await updateCharts();
                 await loadRecentSales();
@@ -2378,22 +2386,18 @@
             const table = document.getElementById('productsTable');
             const foot = document.getElementById('productsTableFoot');
             if (products.length === 0) {
-                table.innerHTML = `<tr><td colspan="10" class="empty-state">📭 No products yet<br><small>Add your first product to start.</small></td></tr>`;
+                table.innerHTML = `<tr><td colspan="8" class="empty-state">📭 No products yet<br><small>Add your first product to start.</small></td></tr>`;
                 if (foot) foot.innerHTML = '';
                 return;
             }
             
             let html = '';
-            let totalCost = 0, totalSell = 0, totalStock = 0;
+            let totalCost = 0, totalStock = 0;
             products.forEach(p => {
                 const stock = Number(p.currentStock) || 0;
                 const purchasePrice = Number(p.purchasePrice) || 0;
-                const sellingPrice = Number(p.sellingPrice) || 0;
                 const itemCost = stock * purchasePrice;
-                const itemSell = stock * sellingPrice;
-                const itemProfit = itemSell - itemCost;
                 totalCost += itemCost;
-                totalSell += itemSell;
                 totalStock += stock;
                 
                 const status = stock === 0 ? '<span class="badge badge-danger">Out</span>' :
@@ -2406,10 +2410,8 @@
                         <td>${p.category || 'General'}</td>
                         <td>${stock} ${p.unit || ''}</td>
                         <td>Rs. ${purchasePrice.toFixed(2)}</td>
-                        <td>Rs. ${sellingPrice.toFixed(2)}</td>
+                        <td>Rs. ${(Number(p.sellingPrice) || 0).toFixed(2)}</td>
                         <td style="color:var(--warning);font-weight:600;">Rs. ${itemCost.toFixed(2)}</td>
-                        <td style="color:#3b82f6;font-weight:600;">Rs. ${itemSell.toFixed(2)}</td>
-                        <td style="color:${itemProfit >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:600;">Rs. ${itemProfit.toFixed(2)}</td>
                         <td>${status}</td>
                         <td>
                             <button class="icon-btn" onclick="editProduct('${p.id}')">✏️</button>
@@ -2420,9 +2422,7 @@
             });
             table.innerHTML = html;
             
-            // Add total row
             if (foot) {
-                const totalProfit = totalSell - totalCost;
                 foot.innerHTML = `
                     <tr>
                         <td colspan="2">📊 TOTAL (${products.length} products)</td>
@@ -2430,8 +2430,6 @@
                         <td>—</td>
                         <td>—</td>
                         <td style="color:var(--warning);">Rs. ${totalCost.toFixed(2)}</td>
-                        <td style="color:#3b82f6;">Rs. ${totalSell.toFixed(2)}</td>
-                        <td style="color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">Rs. ${totalProfit.toFixed(2)}</td>
                         <td colspan="2">—</td>
                     </tr>
                 `;
@@ -2859,21 +2857,18 @@
             const table = document.getElementById('stockTable');
             const foot = document.getElementById('stockTableFoot');
             if (productsCache.length === 0) {
-                table.innerHTML = '<tr><td colspan="9" class="empty-state">No products in stock</td></tr>';
+                table.innerHTML = '<tr><td colspan="8" class="empty-state">No products in stock</td></tr>';
                 if (foot) foot.innerHTML = '';
                 return;
             }
             
             let html = '';
-            let totalStockVal = 0, totalSellVal = 0, totalStockQty = 0;
+            let totalStockVal = 0, totalStockQty = 0;
             productsCache.forEach(p => {
                 const stock = Number(p.currentStock) || 0;
                 const purchasePrice = Number(p.purchasePrice) || 0;
-                const sellingPrice = Number(p.sellingPrice) || 0;
                 const stockValue = stock * purchasePrice;
-                const sellValue = stock * sellingPrice;
                 totalStockVal += stockValue;
-                totalSellVal += sellValue;
                 totalStockQty += stock;
                 
                 const status = stock === 0 ? '<span class="badge badge-danger">Out</span>' :
@@ -2886,9 +2881,8 @@
                         <td><strong>${stock}</strong></td>
                         <td>${p.unit || 'pcs'}</td>
                         <td>Rs. ${purchasePrice.toFixed(2)}</td>
-                        <td>Rs. ${sellingPrice.toFixed(2)}</td>
+                        <td>Rs. ${(Number(p.sellingPrice) || 0).toFixed(2)}</td>
                         <td style="color:var(--warning);font-weight:600;">Rs. ${stockValue.toFixed(2)}</td>
-                        <td style="color:#3b82f6;font-weight:600;">Rs. ${sellValue.toFixed(2)}</td>
                         <td>${status}</td>
                         <td>
                             <button class="icon-btn" onclick="adjustStock('${p.id}')">⚙️</button>
@@ -2899,7 +2893,6 @@
             table.innerHTML = html;
             
             if (foot) {
-                const totalProfit = totalSellVal - totalStockVal;
                 foot.innerHTML = `
                     <tr>
                         <td>📊 TOTAL</td>
@@ -2908,8 +2901,7 @@
                         <td>—</td>
                         <td>—</td>
                         <td style="color:var(--warning);">Rs. ${totalStockVal.toFixed(2)}</td>
-                        <td style="color:#3b82f6;">Rs. ${totalSellVal.toFixed(2)}</td>
-                        <td colspan="2" style="color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">Profit: Rs. ${totalProfit.toFixed(2)}</td>
+                        <td colspan="2">—</td>
                     </tr>
                 `;
             }
@@ -4889,8 +4881,6 @@
             const profit = sp - pp;
             const profitMargin = pp > 0 ? ((profit / pp) * 100).toFixed(1) : 0;
             const totalCost = stock * pp;
-            const totalSell = stock * sp;
-            const totalProfit = totalSell - totalCost;
             
             document.getElementById('researchDetailContent').innerHTML = `
                 <h2>${p.icon || '📦'} ${p.name}</h2>
@@ -4904,8 +4894,6 @@
                     <div class="stat-card"><div class="stat-label">Current Stock</div><div class="stat-value">${stock} ${p.unit || 'pcs'}</div></div>
                     <div class="stat-card"><div class="stat-label">Supplier</div><div class="stat-value" style="font-size:1rem;">${p.supplier || '—'}</div></div>
                     <div class="stat-card warning"><div class="stat-label">Total Cost (Stock)</div><div class="stat-value">Rs. ${totalCost.toFixed(2)}</div></div>
-                    <div class="stat-card info"><div class="stat-label">Total Sell Value</div><div class="stat-value">Rs. ${totalSell.toFixed(2)}</div></div>
-                    <div class="stat-card ${totalProfit >= 0 ? 'success' : 'danger'}"><div class="stat-label">Expected Profit</div><div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div></div>
                 </div>
                 ${profit < 0 ? `<div class="warning-message" style="display:block;margin-top:12px;">🔴 LOSS WARNING: Selling below purchase cost!</div>` : 
                   profit < pp * 0.1 ? `<div class="warning-message" style="display:block;margin-top:12px;">⚠️ LOW PROFIT: Less than 10% margin</div>` : ''}
@@ -5026,18 +5014,16 @@
   window.proRefreshKPIs = function(){
     const ps=window.productsCache||[];
     const cs=window.customersCache||[];
-    let inventoryValue=0, sellingValue=0;
+    let inventoryValue=0;
     ps.forEach(p=>{
       const stock=Number(p.currentStock)||0;
       inventoryValue+=stock*(Number(p.purchasePrice)||0);
-      sellingValue+=stock*(Number(p.sellingPrice)||0);
     });
     const low=ps.filter(p=>(Number(p.currentStock)||0)<=Number(p.minStock??5)).length;
     const due=cs.reduce((a,c)=>a+(Number(c.remainingCredit)||0),0);
     const received=cs.reduce((a,c)=>a+(Number(c.totalPaid)||0),0);
     const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
     set('proInventoryItems',ps.length); set('proInventoryValue',money(inventoryValue));
-    set('proSellingValue',money(sellingValue));
     set('proLowStock',low); set('proTotalDue',money(due)); set('proTotalReceived',money(received));
   };
 
@@ -5050,13 +5036,11 @@
       const match=(p.name||'').toLowerCase().includes(q)||(p.model||'').toLowerCase().includes(q);
       return match && (f==='all'||(f==='low'&&stock<=Number(p.minStock??5)&&stock>0)||(f==='out'&&stock<=0));
     });
-    if(!arr.length){tb.innerHTML='<tr><td colspan="6" class="pro-empty">No products found</td></tr>';return;}
+    if(!arr.length){tb.innerHTML='<tr><td colspan="5" class="pro-empty">No products found</td></tr>';return;}
     tb.innerHTML=arr.map(p=>{
-      const id=esc(p.id), stock=Number(p.currentStock)||0;
-      const val=stock*(Number(p.purchasePrice)||0);
-      const sellVal=stock*(Number(p.sellingPrice)||0);
+      const id=esc(p.id), stock=Number(p.currentStock)||0, val=stock*(Number(p.purchasePrice)||0);
       return `<tr><td>${esc(p.icon||'📦')} ${esc(p.name)}</td><td><strong>${stock}</strong> ${esc(p.unit||'pcs')}</td>
-      <td>${money(p.purchasePrice)}</td><td>${money(val)}</td><td>${money(sellVal)}</td><td>
+      <td>${money(p.purchasePrice)}</td><td>${money(val)}</td><td>
       <button class="btn btn-sm" onclick="proAdjustStock('${id}',1)">+1</button>
       <button class="btn btn-sm btn-outline" onclick="proAdjustStock('${id}',-1)">−1</button>
       <button class="btn btn-sm btn-outline" onclick="proSetStock('${id}')">Set</button></td></tr>`;
@@ -5177,387 +5161,6 @@
     if(pageName==='pro'){setTimeout(()=>{proRefreshAll();},50);}
   };
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{proRefreshKPIs();proRenderStock();proRenderCustomers();},500));
-})();
-</script>
-
-
-<style id="premium-ui-upgrade">
-/* ===== PREMIUM UI UPGRADE ===== */
-:root{
-  --premium-green:#22c55e;
-  --premium-green-light:#86efac;
-  --premium-glow:rgba(34,197,94,.24);
-  --premium-glow-strong:rgba(34,197,94,.45);
-}
-body{
-  background:
-    radial-gradient(circle at 15% 10%, rgba(34,197,94,.055), transparent 28%),
-    radial-gradient(circle at 90% 85%, rgba(34,197,94,.045), transparent 30%),
-    var(--bg-dark);
-}
-body.premium-no-motion *,
-body.premium-no-motion *::before,
-body.premium-no-motion *::after{
-  animation:none!important;
-  transition:none!important;
-  scroll-behavior:auto!important;
-}
-.sidebar{
-  background:linear-gradient(180deg,rgba(19,26,42,.92),rgba(10,14,23,.94));
-  backdrop-filter:blur(18px);
-  box-shadow:12px 0 40px rgba(0,0,0,.18);
-}
-.sidebar-header{
-  position:relative;
-}
-.sidebar-header::after{
-  content:"";
-  position:absolute;
-  left:18%;
-  right:18%;
-  bottom:-1px;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--premium-green),transparent);
-  box-shadow:0 0 14px var(--premium-glow-strong);
-}
-.sidebar-nav-item{
-  position:relative;
-  overflow:hidden;
-}
-.sidebar-nav-item::after{
-  content:"";
-  position:absolute;
-  left:0;
-  top:18%;
-  bottom:18%;
-  width:3px;
-  border-radius:0 4px 4px 0;
-  background:var(--premium-green);
-  transform:scaleY(0);
-  transition:transform .28s ease;
-  box-shadow:0 0 12px var(--premium-green);
-}
-.sidebar-nav-item:hover .icon{
-  animation:premiumIconBounce .45s ease;
-}
-.sidebar-nav-item.active{
-  background:linear-gradient(90deg,rgba(34,197,94,.16),rgba(34,197,94,.035));
-  color:var(--premium-green-light);
-  box-shadow:inset 0 0 24px rgba(34,197,94,.035);
-}
-.sidebar-nav-item.active::after{transform:scaleY(1);}
-.sidebar-nav-item.active .icon{
-  filter:drop-shadow(0 0 7px rgba(34,197,94,.55));
-}
-@keyframes premiumIconBounce{
-  0%,100%{transform:translateY(0) rotate(0)}
-  45%{transform:translateY(-3px) rotate(-4deg)}
-  75%{transform:translateY(1px) rotate(3deg)}
-}
-.stat-card,.quick-action-btn,.chart-card,.table-container,.sale-history-card,.inventory-summary-bar{
-  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018)),var(--bg-card);
-  backdrop-filter:blur(14px);
-  border-color:rgba(255,255,255,.085);
-}
-.stat-card{
-  box-shadow:0 8px 26px rgba(0,0,0,.12);
-}
-.stat-card:hover,.quick-action-btn:hover{
-  border-color:rgba(34,197,94,.28);
-  box-shadow:0 12px 32px rgba(0,0,0,.2),0 0 24px rgba(34,197,94,.07);
-}
-.stat-card .stat-value{
-  letter-spacing:-.02em;
-  text-shadow:0 0 18px rgba(255,255,255,.035);
-}
-.pro-kpi{
-  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018)),var(--bg-card)!important;
-  backdrop-filter:blur(14px);
-  border-color:rgba(255,255,255,.085)!important;
-}
-.top-header{
-  box-shadow:0 10px 34px rgba(0,0,0,.12);
-}
-.btn{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  box-shadow:0 0 0 rgba(34,197,94,0);
-}
-.btn:hover{
-  box-shadow:0 8px 28px rgba(34,197,94,.24);
-}
-.btn:active{box-shadow:0 3px 12px rgba(34,197,94,.18);}
-.icon-btn:hover{
-  border-color:rgba(34,197,94,.3);
-  box-shadow:0 0 18px rgba(34,197,94,.08);
-}
-.search-container input:focus,
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus,
-.filter-bar select:focus,
-.filter-bar input:focus{
-  border-color:var(--premium-green)!important;
-  box-shadow:0 0 0 3px var(--premium-glow),0 0 20px rgba(34,197,94,.08)!important;
-}
-.page.active{animation:premiumPageIn .38s cubic-bezier(.2,.75,.25,1);}
-@keyframes premiumPageIn{
-  from{opacity:0;transform:translateY(12px) scale(.995)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-.premium-ripple{
-  position:absolute;
-  border-radius:50%;
-  transform:scale(0);
-  animation:premiumRipple .55s linear;
-  background:rgba(255,255,255,.26);
-  pointer-events:none;
-}
-@keyframes premiumRipple{to{transform:scale(4);opacity:0}}
-.premium-sidebar-toggle{
-  position:fixed;
-  left:calc(var(--sidebar-width) - 17px);
-  top:22px;
-  z-index:120;
-  width:34px;height:34px;
-  border-radius:50%;
-  border:1px solid rgba(34,197,94,.3);
-  background:var(--bg-card);
-  color:var(--premium-green-light);
-  cursor:pointer;
-  box-shadow:0 4px 20px rgba(0,0,0,.25),0 0 18px rgba(34,197,94,.08);
-  transition:all .3s ease;
-}
-.premium-sidebar-toggle:hover{transform:scale(1.08);box-shadow:0 0 24px rgba(34,197,94,.2);}
-body.sidebar-collapsed .sidebar{width:78px;padding:16px 10px;}
-body.sidebar-collapsed .main-content{margin-left:78px;}
-body.sidebar-collapsed .sidebar-header h2,
-body.sidebar-collapsed .sidebar-header small,
-body.sidebar-collapsed .sidebar-nav-item:not(.active) span:not(.icon),
-body.sidebar-collapsed .sidebar-nav-item span:not(.icon){display:none;}
-body.sidebar-collapsed .sidebar-header .shop-icon{font-size:1.7rem;}
-body.sidebar-collapsed .sidebar-nav-item{justify-content:center;padding:12px 8px;}
-body.sidebar-collapsed .premium-sidebar-toggle{left:61px;}
-.premium-welcome{
-  margin:-8px 0 18px;
-  padding:18px 20px;
-  border:1px solid rgba(34,197,94,.14);
-  border-radius:18px;
-  background:linear-gradient(120deg,rgba(34,197,94,.11),rgba(255,255,255,.025));
-  box-shadow:0 12px 34px rgba(0,0,0,.12);
-  animation:welcomeIn .7s cubic-bezier(.2,.75,.25,1);
-}
-.premium-welcome strong{
-  font-size:1.08rem;
-  display:block;
-  color:var(--text-primary);
-}
-.premium-welcome span{color:var(--text-secondary);font-size:.86rem;}
-@keyframes welcomeIn{
-  from{opacity:0;transform:translateY(-8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.premium-whatsapp{
-  position:fixed;
-  right:22px;
-  bottom:22px;
-  z-index:900;
-  display:flex;
-  align-items:center;
-  gap:0;
-  width:54px;height:54px;
-  padding:0;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:999px;
-  background:#25d366;
-  color:#fff;
-  cursor:pointer;
-  box-shadow:0 8px 28px rgba(0,0,0,.3),0 0 22px rgba(37,211,102,.24);
-  overflow:hidden;
-  transition:all .32s ease;
-}
-.premium-whatsapp .wa-icon{font-size:1.45rem;min-width:54px;text-align:center;}
-.premium-whatsapp .wa-text{
-  max-width:0;
-  opacity:0;
-  white-space:nowrap;
-  font-weight:700;
-  transition:all .32s ease;
-}
-.premium-whatsapp:hover{width:205px;box-shadow:0 10px 34px rgba(37,211,102,.28);}
-.premium-whatsapp:hover .wa-text{max-width:145px;opacity:1;}
-.premium-whatsapp::before{
-  content:"";
-  position:absolute;inset:-4px;
-  border:1px solid rgba(37,211,102,.6);
-  border-radius:999px;
-  animation:waPulse 2.2s ease-out infinite;
-}
-@keyframes waPulse{
-  0%{transform:scale(.92);opacity:.7}
-  75%,100%{transform:scale(1.18);opacity:0}
-}
-.premium-settings-card{
-  margin-top:14px;
-  padding:14px 16px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:rgba(255,255,255,.025);
-}
-.premium-switch-row{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.premium-switch{
-  position:relative;width:48px;height:26px;display:inline-block;
-}
-.premium-switch input{display:none}
-.premium-slider{
-  position:absolute;inset:0;border-radius:30px;background:#374151;cursor:pointer;transition:.25s;
-}
-.premium-slider::before{
-  content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;
-  border-radius:50%;background:#fff;transition:.25s;
-}
-.premium-switch input:checked + .premium-slider{background:#16a34a;box-shadow:0 0 16px rgba(34,197,94,.28)}
-.premium-switch input:checked + .premium-slider::before{transform:translateX(22px)}
-@media(max-width:768px){
-  .premium-sidebar-toggle{display:none}
-  body.sidebar-collapsed .sidebar{display:none}
-  body.sidebar-collapsed .main-content{margin-left:0}
-  .premium-whatsapp{right:14px;bottom:76px;width:50px;height:50px}
-  .premium-whatsapp .wa-icon{min-width:50px}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-}
-</style>
-
-
-<script id="premium-ui-upgrade-js">
-(function(){
-  const $ = id => document.getElementById(id);
-
-  function addPremiumWelcome(){
-    const dashboard = $('dashboardPage');
-    if(!dashboard || dashboard.querySelector('.premium-welcome')) return;
-    const header = dashboard.querySelector('.top-header');
-    if(!header) return;
-    const box = document.createElement('div');
-    box.className = 'premium-welcome';
-    box.innerHTML = '<strong>Welcome Back 👋</strong><span>Your shop is ready to manage — sales, stock, profit and payments in one place.</span>';
-    header.insertAdjacentElement('afterend', box);
-  }
-
-  function addSidebarToggle(){
-    if(document.querySelector('.premium-sidebar-toggle')) return;
-    const b=document.createElement('button');
-    b.className='premium-sidebar-toggle';
-    b.type='button';
-    b.title='Collapse / Expand Sidebar';
-    b.innerHTML='‹';
-    b.onclick=function(){
-      document.body.classList.toggle('sidebar-collapsed');
-      b.innerHTML=document.body.classList.contains('sidebar-collapsed')?'›':'‹';
-    };
-    document.body.appendChild(b);
-  }
-
-  function addWhatsApp(){
-    if(document.querySelector('.premium-whatsapp')) return;
-    const b=document.createElement('button');
-    b.className='premium-whatsapp';
-    b.type='button';
-    b.innerHTML='<span class="wa-icon">💬</span><span class="wa-text">Send on WhatsApp</span>';
-    b.onclick=function(){
-      const s=JSON.parse(localStorage.getItem('shopSettings')||'{}');
-      const number=String(s.whatsappNumber||'').replace(/\D/g,'');
-      if(!number){showToast('Add your WhatsApp number in Settings first','warning');return;}
-      const shop=s.shopName||'My Shop';
-      const msg=`Hello ${shop}, I would like to contact you.`;
-      window.open('https://wa.me/'+number+'?text='+encodeURIComponent(msg),'_blank','noopener');
-    };
-    document.body.appendChild(b);
-  }
-
-  function addRipples(){
-    document.addEventListener('click',function(e){
-      const target=e.target.closest('.btn,.icon-btn,.quick-action-btn,.mobile-nav-item');
-      if(!target || target.classList.contains('premium-sidebar-toggle')) return;
-      if(getComputedStyle(target).position==='static') target.style.position='relative';
-      target.style.overflow='hidden';
-      const r=document.createElement('span');
-      r.className='premium-ripple';
-      const rect=target.getBoundingClientRect();
-      const size=Math.max(rect.width,rect.height);
-      r.style.width=r.style.height=size+'px';
-      r.style.left=(e.clientX-rect.left-size/2)+'px';
-      r.style.top=(e.clientY-rect.top-size/2)+'px';
-      target.appendChild(r);
-      setTimeout(()=>r.remove(),600);
-    },true);
-  }
-
-  function animatedNumbers(){
-    if(document.body.classList.contains('premium-no-motion')) return;
-    const els=[...document.querySelectorAll('.inv-value,.stat-value,.pro-kpi .v')];
-    els.forEach(el=>{
-      if(el.dataset.premiumAnimated==='1') return;
-      const text=el.textContent.trim();
-      const m=text.match(/^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/);
-      if(!m)return;
-      const target=parseFloat(m[2].replace(/,/g,''));
-      if(!Number.isFinite(target) || target===0){el.dataset.premiumAnimated='1';return;}
-      const prefix=m[1], suffix=m[3];
-      const duration=650,start=performance.now();
-      function tick(now){
-        const p=Math.min(1,(now-start)/duration);
-        const eased=1-Math.pow(1-p,3);
-        const val=target*eased;
-        el.textContent=prefix+(Math.abs(target)>=1000?val.toLocaleString('en-PK',{maximumFractionDigits:2}):val.toFixed(target%1?2:0))+suffix;
-        if(p<1)requestAnimationFrame(tick);
-      }
-      el.dataset.premiumAnimated='1';
-      requestAnimationFrame(tick);
-    });
-  }
-
-  function installAnimationSetting(){
-    const settingsPage=$('settingsPage');
-    if(!settingsPage || settingsPage.querySelector('.premium-settings-card')) return;
-    const host=settingsPage.querySelector('.table-container') || settingsPage.lastElementChild;
-    if(!host)return;
-    const card=document.createElement('div');
-    card.className='premium-settings-card';
-    const enabled=localStorage.getItem('premiumAnimations')!=='off';
-    card.innerHTML='<div class="premium-switch-row"><div><strong>✨ Premium Animations</strong><div style="color:var(--text-secondary);font-size:.8rem;margin-top:3px">Smooth transitions, glowing effects and micro animations</div></div><label class="premium-switch"><input id="premiumMotionToggle" type="checkbox" '+(enabled?'checked':'')+'><span class="premium-slider"></span></label></div>';
-    host.parentNode.insertBefore(card,host.nextSibling);
-    $('premiumMotionToggle').addEventListener('change',function(){
-      document.body.classList.toggle('premium-no-motion',!this.checked);
-      localStorage.setItem('premiumAnimations',this.checked?'on':'off');
-      showToast(this.checked?'✨ Premium animations ON':'⏸️ Animations OFF');
-    });
-  }
-
-  function setupMotion(){
-    if(localStorage.getItem('premiumAnimations')==='off')document.body.classList.add('premium-no-motion');
-  }
-
-  function init(){
-    setupMotion();
-    addPremiumWelcome();
-    addSidebarToggle();
-    addWhatsApp();
-    addRipples();
-    installAnimationSetting();
-    setTimeout(animatedNumbers,500);
-    const obs=new MutationObserver(function(){
-      if(!document.body.classList.contains('premium-no-motion')) setTimeout(animatedNumbers,60);
-    });
-    const main=$('mainContent');
-    if(main)obs.observe(main,{childList:true,subtree:true});
-  }
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-  else init();
 })();
 </script>
 
