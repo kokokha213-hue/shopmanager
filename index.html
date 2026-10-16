@@ -236,28 +236,6 @@
             font-size: 0.9rem;
         }
 
-        .success-message {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--success);
-            padding: 10px 14px;
-            border-radius: var(--radius-xs);
-            margin-bottom: 16px;
-            display: none;
-            font-size: 0.9rem;
-        }
-
-        .warning-message {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: var(--warning);
-            padding: 10px 14px;
-            border-radius: var(--radius-xs);
-            margin-bottom: 16px;
-            display: none;
-            font-size: 0.9rem;
-        }
-
         /* APP LAYOUT */
         .app-container { display: flex; min-height: 100vh; }
 
@@ -409,6 +387,46 @@
         .stat-card.success { border-left: 3px solid var(--success); }
         .stat-card.warning { border-left: 3px solid var(--warning); }
         .stat-card.danger { border-left: 3px solid var(--danger); }
+        .stat-card.info { border-left: 3px solid #3b82f6; }
+        .stat-card.purple { border-left: 3px solid #a855f7; }
+
+        /* INVENTORY SUMMARY BAR */
+        .inventory-summary-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(34,197,94,.08), rgba(59,130,246,.06));
+            border: 1px solid rgba(34,197,94,.18);
+            border-radius: var(--radius);
+        }
+
+        .inv-sum-item {
+            text-align: center;
+            padding: 8px 6px;
+            border-radius: var(--radius-xs);
+            background: rgba(255,255,255,.025);
+        }
+
+        .inv-sum-item .inv-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .inv-sum-item .inv-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .inv-sum-item.purchase .inv-value { color: #f59e0b; }
+        .inv-sum-item.sell .inv-value { color: #3b82f6; }
+        .inv-sum-item.profit .inv-value { color: #22c55e; }
+        .inv-sum-item.items .inv-value { color: #a855f7; }
 
         /* QUICK ACTIONS */
         .quick-actions {
@@ -506,6 +524,13 @@
         .table tr:last-child td { border-bottom: none; }
 
         .table .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+
+        .table tfoot td {
+            background: linear-gradient(90deg, rgba(34,197,94,.08), rgba(59,130,246,.06));
+            font-weight: 700;
+            border-top: 2px solid rgba(34,197,94,.3);
+            font-size: 0.85rem;
+        }
 
         /* SALE HISTORY CARDS */
         .sale-history-card {
@@ -835,6 +860,8 @@
 
             .filter-bar { flex-direction: column; align-items: stretch; }
             .filter-bar select, .filter-bar input { width: 100%; }
+
+            .inventory-summary-bar { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 480px) {
@@ -849,6 +876,8 @@
 
             .mobile-nav-item { font-size: 0.55rem; }
             .mobile-nav-item .mni-icon { font-size: 1.1rem; }
+
+            .inv-sum-item .inv-value { font-size: 0.9rem; }
         }
 
         /* Print Styles */
@@ -872,6 +901,12 @@
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
+
+        /* Tab styles for import center */
+        .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+        .tab { padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); transition: var(--transition); }
+        .tab.active { background: var(--accent-glow); color: var(--accent-light); border-color: rgba(34,197,94,.3); font-weight: 600; }
+        .tab:hover { background: var(--bg-card-hover); color: var(--text-primary); }
     </style>
 
 <style id="smart-shop-pro-enhancements">
@@ -991,6 +1026,26 @@
                     <div class="header-actions">
                         <button class="icon-btn" onclick="toggleTheme()">🌓</button>
                         <button class="icon-btn" onclick="refreshDashboard()">🔄</button>
+                    </div>
+                </div>
+
+                <!-- INVENTORY SUMMARY BAR - NEW -->
+                <div class="inventory-summary-bar" id="inventorySummaryBar">
+                    <div class="inv-sum-item items">
+                        <div class="inv-label">📦 Total Items</div>
+                        <div class="inv-value" id="invTotalItems">0</div>
+                    </div>
+                    <div class="inv-sum-item purchase">
+                        <div class="inv-label">💰 Total Purchase Cost</div>
+                        <div class="inv-value" id="invTotalPurchase">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item sell">
+                        <div class="inv-label">🏷️ Total Selling Value</div>
+                        <div class="inv-value" id="invTotalSelling">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item profit">
+                        <div class="inv-label">📈 Expected Profit</div>
+                        <div class="inv-value" id="invExpectedProfit">Rs. 0</div>
                     </div>
                 </div>
 
@@ -1163,6 +1218,26 @@
                     </div>
                 </div>
 
+                <!-- PRODUCTS SUMMARY BAR - NEW -->
+                <div class="inventory-summary-bar" id="productsSummaryBar">
+                    <div class="inv-sum-item items">
+                        <div class="inv-label">📦 Total Products</div>
+                        <div class="inv-value" id="prodTotalCount">0</div>
+                    </div>
+                    <div class="inv-sum-item purchase">
+                        <div class="inv-label">💰 Total Purchase Cost</div>
+                        <div class="inv-value" id="prodTotalPurchase">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item sell">
+                        <div class="inv-label">🏷️ Total Selling Value</div>
+                        <div class="inv-value" id="prodTotalSelling">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item profit">
+                        <div class="inv-label">📈 Expected Profit</div>
+                        <div class="inv-value" id="prodExpectedProfit">Rs. 0</div>
+                    </div>
+                </div>
+
                 <div class="search-container">
                     <input type="text" id="productSearch" placeholder="🔍 Search products..." oninput="filterProducts()">
                 </div>
@@ -1176,12 +1251,15 @@
                                 <th>Stock</th>
                                 <th>Purchase</th>
                                 <th>Sell</th>
+                                <th>Total Cost</th>
+                                <th>Total Sell</th>
                                 <th>Profit</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="productsTable"></tbody>
+                        <tfoot id="productsTableFoot"></tfoot>
                     </table>
                 </div>
             </div>
@@ -1246,6 +1324,26 @@
                     </div>
                 </div>
 
+                <!-- STOCK SUMMARY BAR - NEW -->
+                <div class="inventory-summary-bar" id="stockSummaryBar">
+                    <div class="inv-sum-item items">
+                        <div class="inv-label">📦 Total Stock Items</div>
+                        <div class="inv-value" id="stockTotalItems">0</div>
+                    </div>
+                    <div class="inv-sum-item purchase">
+                        <div class="inv-label">💰 Total Stock Value (Cost)</div>
+                        <div class="inv-value" id="stockTotalValue">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item sell">
+                        <div class="inv-label">🏷️ Total Selling Value</div>
+                        <div class="inv-value" id="stockTotalSelling">Rs. 0</div>
+                    </div>
+                    <div class="inv-sum-item profit">
+                        <div class="inv-label">📈 Expected Profit</div>
+                        <div class="inv-value" id="stockExpectedProfit">Rs. 0</div>
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <table class="table">
                         <thead>
@@ -1256,11 +1354,13 @@
                                 <th>Purchase</th>
                                 <th>Sell</th>
                                 <th>Stock Value</th>
+                                <th>Sell Value</th>
                                 <th>Status</th>
                                 <th>Adjust</th>
                             </tr>
                         </thead>
                         <tbody id="stockTable"></tbody>
+                        <tfoot id="stockTableFoot"></tfoot>
                     </table>
                 </div>
             </div>
@@ -1607,6 +1707,7 @@
   <div class="pro-kpi-grid">
     <div class="pro-kpi"><div class="k">📦 Inventory Items</div><div class="v" id="proInventoryItems">0</div></div>
     <div class="pro-kpi"><div class="k">💰 Inventory Value</div><div class="v" id="proInventoryValue">Rs. 0</div></div>
+    <div class="pro-kpi"><div class="k">🏷️ Selling Value</div><div class="v" id="proSellingValue">Rs. 0</div></div>
     <div class="pro-kpi"><div class="k">⚠️ Low Stock</div><div class="v" id="proLowStock">0</div></div>
     <div class="pro-kpi"><div class="k">📒 Total Due</div><div class="v" id="proTotalDue">Rs. 0</div></div>
     <div class="pro-kpi"><div class="k">💳 Total Received</div><div class="v" id="proTotalReceived">Rs. 0</div></div>
@@ -1641,7 +1742,7 @@
     </div>
     <div class="table-container">
       <table class="table">
-        <thead><tr><th>Product</th><th>Stock</th><th>Purchase</th><th>Stock Value</th><th>Quick Change</th></tr></thead>
+        <thead><tr><th>Product</th><th>Stock</th><th>Purchase</th><th>Stock Value</th><th>Sell Value</th><th>Quick Change</th></tr></thead>
         <tbody id="proStockTable"></tbody>
       </table>
     </div>
@@ -1730,6 +1831,53 @@
         let originalSaleData = null;
 
         // ============================================================
+        // INVENTORY SUMMARY - GLOBAL FUNCTION
+        // ============================================================
+        function refreshInventorySummaries() {
+            const products = productsCache || [];
+            let totalItems = 0;
+            let totalPurchase = 0;
+            let totalSelling = 0;
+
+            products.forEach(p => {
+                const stock = Number(p.currentStock) || 0;
+                const purchasePrice = Number(p.purchasePrice) || 0;
+                const sellingPrice = Number(p.sellingPrice) || 0;
+                totalItems += stock;
+                totalPurchase += stock * purchasePrice;
+                totalSelling += stock * sellingPrice;
+            });
+
+            const expectedProfit = totalSelling - totalPurchase;
+
+            // Format helper
+            const fmt = (n) => 'Rs. ' + Number(n || 0).toLocaleString('en-PK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            // Dashboard
+            const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            setEl('invTotalItems', totalItems);
+            setEl('invTotalPurchase', fmt(totalPurchase));
+            setEl('invTotalSelling', fmt(totalSelling));
+            setEl('invExpectedProfit', fmt(expectedProfit));
+
+            // Products page
+            setEl('prodTotalCount', products.length);
+            setEl('prodTotalPurchase', fmt(totalPurchase));
+            setEl('prodTotalSelling', fmt(totalSelling));
+            setEl('prodExpectedProfit', fmt(expectedProfit));
+
+            // Stock page
+            setEl('stockTotalItems', totalItems);
+            setEl('stockTotalValue', fmt(totalPurchase));
+            setEl('stockTotalSelling', fmt(totalSelling));
+            setEl('stockExpectedProfit', fmt(expectedProfit));
+
+            // Pro page
+            setEl('proInventoryValue', fmt(totalPurchase));
+            setEl('proSellingValue', fmt(totalSelling));
+        }
+
+        // ============================================================
         // INITIALIZATION
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
@@ -1741,7 +1889,8 @@
         function setCurrentDate() {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = now.toLocaleDateString('en-US', options);
         }
 
         function checkAuthState() {
@@ -1819,6 +1968,7 @@
                 updateProductSelects();
                 loadCustomersIntoSelect();
                 initializeCharts();
+                refreshInventorySummaries();
                 checkForInitialImport();
             } catch (error) {
                 console.error('Error initializing app:', error);
@@ -1863,6 +2013,8 @@
                 case 'settings': loadSettings(); break;
             }
             if (pageName === 'receivedPayments') loadReceivedPayments();
+            // Always refresh inventory summaries when navigating
+            setTimeout(refreshInventorySummaries, 100);
         }
 
         function showMoreMenu() {
@@ -2014,6 +2166,9 @@
                 
                 document.getElementById('dashboardStats').innerHTML = statsHTML;
                 
+                // Refresh inventory summary
+                refreshInventorySummaries();
+                
                 loadLowStockAlerts();
                 await updateCharts();
                 await loadRecentSales();
@@ -2027,6 +2182,7 @@
             showToast('Refreshing...');
             loadDashboardData();
             loadLowStockAlerts();
+            refreshInventorySummaries();
         }
 
         // ============================================================
@@ -2211,6 +2367,7 @@
                 });
                 displayProducts(productsCache);
                 updateProductSelects();
+                refreshInventorySummaries();
             } catch (error) {
                 console.error('Error loading products:', error);
                 showToast('Error loading products', 'error');
@@ -2219,26 +2376,40 @@
 
         function displayProducts(products) {
             const table = document.getElementById('productsTable');
+            const foot = document.getElementById('productsTableFoot');
             if (products.length === 0) {
-                table.innerHTML = `<tr><td colspan="8" class="empty-state">📭 No products yet<br><small>Add your first product to start.</small></td></tr>`;
+                table.innerHTML = `<tr><td colspan="10" class="empty-state">📭 No products yet<br><small>Add your first product to start.</small></td></tr>`;
+                if (foot) foot.innerHTML = '';
                 return;
             }
             
             let html = '';
+            let totalCost = 0, totalSell = 0, totalStock = 0;
             products.forEach(p => {
-                const profit = (p.sellingPrice || 0) - (p.purchasePrice || 0);
-                const status = p.currentStock === 0 ? '<span class="badge badge-danger">Out</span>' :
-                              (p.currentStock <= (p.minStock || 5) ? '<span class="badge badge-warning">Low</span>' :
+                const stock = Number(p.currentStock) || 0;
+                const purchasePrice = Number(p.purchasePrice) || 0;
+                const sellingPrice = Number(p.sellingPrice) || 0;
+                const itemCost = stock * purchasePrice;
+                const itemSell = stock * sellingPrice;
+                const itemProfit = itemSell - itemCost;
+                totalCost += itemCost;
+                totalSell += itemSell;
+                totalStock += stock;
+                
+                const status = stock === 0 ? '<span class="badge badge-danger">Out</span>' :
+                              (stock <= (p.minStock || 5) ? '<span class="badge badge-warning">Low</span>' :
                               '<span class="badge badge-success">In Stock</span>');
                 
                 html += `
                     <tr>
                         <td>${p.icon || '📦'} ${p.name || 'Unknown'}</td>
                         <td>${p.category || 'General'}</td>
-                        <td>${p.currentStock || 0} ${p.unit || ''}</td>
-                        <td>Rs. ${(p.purchasePrice || 0).toFixed(2)}</td>
-                        <td>Rs. ${(p.sellingPrice || 0).toFixed(2)}</td>
-                        <td>Rs. ${profit.toFixed(2)}</td>
+                        <td>${stock} ${p.unit || ''}</td>
+                        <td>Rs. ${purchasePrice.toFixed(2)}</td>
+                        <td>Rs. ${sellingPrice.toFixed(2)}</td>
+                        <td style="color:var(--warning);font-weight:600;">Rs. ${itemCost.toFixed(2)}</td>
+                        <td style="color:#3b82f6;font-weight:600;">Rs. ${itemSell.toFixed(2)}</td>
+                        <td style="color:${itemProfit >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:600;">Rs. ${itemProfit.toFixed(2)}</td>
                         <td>${status}</td>
                         <td>
                             <button class="icon-btn" onclick="editProduct('${p.id}')">✏️</button>
@@ -2248,6 +2419,23 @@
                 `;
             });
             table.innerHTML = html;
+            
+            // Add total row
+            if (foot) {
+                const totalProfit = totalSell - totalCost;
+                foot.innerHTML = `
+                    <tr>
+                        <td colspan="2">📊 TOTAL (${products.length} products)</td>
+                        <td>${totalStock} items</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td style="color:var(--warning);">Rs. ${totalCost.toFixed(2)}</td>
+                        <td style="color:#3b82f6;">Rs. ${totalSell.toFixed(2)}</td>
+                        <td style="color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">Rs. ${totalProfit.toFixed(2)}</td>
+                        <td colspan="2">—</td>
+                    </tr>
+                `;
+            }
         }
 
         function filterProducts() {
@@ -2366,7 +2554,8 @@
                 await db.collection('products').add(data);
                 closeModal();
                 showToast('✅ Product added successfully!');
-                loadProducts();
+                await loadProducts();
+                refreshInventorySummaries();
             } catch (error) {
                 console.error('Error adding product:', error);
                 showToast('Error adding product', 'error');
@@ -2486,6 +2675,7 @@
                 await loadProducts();
                 await loadStock();
                 await loadDashboardData();
+                refreshInventorySummaries();
             } catch (error) {
                 console.error('Error updating product:', error);
                 showToast('Error updating product: ' + (error.message || 'Unknown error'), 'error');
@@ -2497,7 +2687,8 @@
             try {
                 await db.collection('products').doc(productId).delete();
                 showToast('✅ Product deleted');
-                loadProducts();
+                await loadProducts();
+                refreshInventorySummaries();
             } catch (error) {
                 console.error('Error deleting product:', error);
                 showToast('Error deleting product', 'error');
@@ -2568,7 +2759,6 @@
             document.getElementById('purchaseSearchResults').classList.remove('show');
             document.getElementById('purchaseProduct').value = p.id;
             
-            // Show current info
             showToast(`Selected: ${p.name} | Current Stock: ${p.currentStock} ${p.unit || 'pcs'}`, 'info');
         }
 
@@ -2621,9 +2811,10 @@
                 document.getElementById('purchaseForm').reset();
                 document.getElementById('purchaseSearch').value = '';
                 showToast(`✅ Added ${quantity} ${product.unit || 'pcs'} of ${product.name}`);
-                loadPurchases();
-                loadProducts();
-                loadDashboardData();
+                await loadPurchases();
+                await loadProducts();
+                await loadDashboardData();
+                refreshInventorySummaries();
                 
             } catch (error) {
                 console.error('Purchase error:', error);
@@ -2666,26 +2857,38 @@
         // ============================================================
         function loadStock() {
             const table = document.getElementById('stockTable');
+            const foot = document.getElementById('stockTableFoot');
             if (productsCache.length === 0) {
-                table.innerHTML = '<tr><td colspan="8" class="empty-state">No products in stock</td></tr>';
+                table.innerHTML = '<tr><td colspan="9" class="empty-state">No products in stock</td></tr>';
+                if (foot) foot.innerHTML = '';
                 return;
             }
             
             let html = '';
+            let totalStockVal = 0, totalSellVal = 0, totalStockQty = 0;
             productsCache.forEach(p => {
-                const stockValue = (p.currentStock || 0) * (p.purchasePrice || 0);
-                const status = p.currentStock === 0 ? '<span class="badge badge-danger">Out</span>' :
-                              (p.currentStock <= (p.minStock || 5) ? '<span class="badge badge-warning">Low</span>' :
+                const stock = Number(p.currentStock) || 0;
+                const purchasePrice = Number(p.purchasePrice) || 0;
+                const sellingPrice = Number(p.sellingPrice) || 0;
+                const stockValue = stock * purchasePrice;
+                const sellValue = stock * sellingPrice;
+                totalStockVal += stockValue;
+                totalSellVal += sellValue;
+                totalStockQty += stock;
+                
+                const status = stock === 0 ? '<span class="badge badge-danger">Out</span>' :
+                              (stock <= (p.minStock || 5) ? '<span class="badge badge-warning">Low</span>' :
                               '<span class="badge badge-success">Good</span>');
                 
                 html += `
                     <tr>
                         <td>${p.icon || '📦'} ${p.name}</td>
-                        <td><strong>${p.currentStock || 0}</strong></td>
+                        <td><strong>${stock}</strong></td>
                         <td>${p.unit || 'pcs'}</td>
-                        <td>Rs. ${(p.purchasePrice || 0).toFixed(2)}</td>
-                        <td>Rs. ${(p.sellingPrice || 0).toFixed(2)}</td>
-                        <td>Rs. ${stockValue.toFixed(2)}</td>
+                        <td>Rs. ${purchasePrice.toFixed(2)}</td>
+                        <td>Rs. ${sellingPrice.toFixed(2)}</td>
+                        <td style="color:var(--warning);font-weight:600;">Rs. ${stockValue.toFixed(2)}</td>
+                        <td style="color:#3b82f6;font-weight:600;">Rs. ${sellValue.toFixed(2)}</td>
                         <td>${status}</td>
                         <td>
                             <button class="icon-btn" onclick="adjustStock('${p.id}')">⚙️</button>
@@ -2694,6 +2897,24 @@
                 `;
             });
             table.innerHTML = html;
+            
+            if (foot) {
+                const totalProfit = totalSellVal - totalStockVal;
+                foot.innerHTML = `
+                    <tr>
+                        <td>📊 TOTAL</td>
+                        <td>${totalStockQty}</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td style="color:var(--warning);">Rs. ${totalStockVal.toFixed(2)}</td>
+                        <td style="color:#3b82f6;">Rs. ${totalSellVal.toFixed(2)}</td>
+                        <td colspan="2" style="color:${totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'};">Profit: Rs. ${totalProfit.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+            
+            refreshInventorySummaries();
         }
 
         function adjustStock(productId) {
@@ -2745,6 +2966,7 @@
                     closeModal();
                     showToast(`✅ Stock updated: ${actualChange > 0 ? '+' : ''}${actualChange} ${p.unit || 'pcs'}`);
                     await loadProducts(); await loadStock(); await loadDashboardData();
+                    refreshInventorySummaries();
                 } catch (error) {
                     console.error('Stock adjustment error:', error);
                     showToast(error.message || 'Error adjusting stock', 'error');
@@ -2846,7 +3068,6 @@
             });
         }
 
-        // Standalone Udhaar: add a debt without creating a product sale.
         async function showStandaloneUdhaar(customerId = '') {
             const modal = document.getElementById('modalOverlay');
             const content = document.getElementById('modalContent');
@@ -2908,10 +3129,7 @@
             try {
                 const customerRef = db.collection('customers').doc(customerId);
                 const txSnap = await db.collection('customerTransactions').where('customerId', '==', customerId).get();
-                let batch = db.batch(), count = 0;
-                txSnap.docs.forEach(doc => { batch.delete(doc.ref); count++; if (count === 450) { /* handled below */ } });
-                // Firestore batch limit safety: delete in chunks.
-                if (count > 0) {
+                if (txSnap.docs.length > 0) {
                     const docs = txSnap.docs;
                     for (let i = 0; i < docs.length; i += 450) {
                         const b = db.batch();
@@ -2934,7 +3152,6 @@
             const c = customersCache.find(c => c.id === customerId);
             if (!c) { showToast('Customer not found', 'error'); return; }
             try {
-                // Avoid Firestore where+orderBy composite index requirement.
                 const snap = await db.collection('customerTransactions')
                     .where('customerId', '==', customerId).limit(100).get();
                 const transactions = snap.docs.map(doc => ({id: doc.id, ...doc.data()})).sort((a,b) => {
@@ -3396,7 +3613,6 @@
             const finalTotal = Math.max(0, subtotal - discount);
             const profit = finalTotal - totalCost;
             
-            // Check stock
             for (const item of currentSaleItems) {
                 const p = productsCache.find(p => p.id === item.productId);
                 if (!p || item.quantity > p.currentStock) {
@@ -3412,7 +3628,7 @@
                 subtotal: subtotal,
                 discount: discount,
                 finalTotal: finalTotal,
-                total: finalTotal, // For backward compatibility
+                total: finalTotal,
                 cost: totalCost,
                 profit: profit,
                 paymentMethod: paymentMethod,
@@ -3427,7 +3643,6 @@
             try {
                 const saleRef = await db.collection('sales').add(saleData);
                 
-                // Update stock
                 for (const item of currentSaleItems) {
                     const p = productsCache.find(p => p.id === item.productId);
                     if (p) {
@@ -3450,7 +3665,6 @@
                     }
                 }
                 
-                // Update customer credit
                 if (paymentMethod === 'credit' && customerId) {
                     const c = customersCache.find(c => c.id === customerId);
                     if (c) {
@@ -3476,9 +3690,10 @@
                 currentSaleItems = [];
                 updateSaleDisplay();
                 document.getElementById('saleDiscount').value = 0;
-                loadProducts();
-                loadDashboardData();
-                loadSalesHistory();
+                await loadProducts();
+                await loadDashboardData();
+                await loadSalesHistory();
+                refreshInventorySummaries();
                 
                 showToast('✅ Sale completed!');
                 
@@ -3543,7 +3758,6 @@
             try {
                 let query = db.collection('sales').orderBy('createdAt', 'desc');
                 
-                // Date filter
                 const today = new Date();
                 let startDate = null;
                 
@@ -3573,7 +3787,6 @@
                     query = query.where('date', '>=', startStr);
                 }
                 
-                // Payment filter
                 if (paymentFilter !== 'all') {
                     query = query.where('paymentMethod', '==', paymentFilter);
                 }
@@ -3583,7 +3796,6 @@
                 let sales = [];
                 snap.docs.forEach(doc => {
                     const data = doc.data();
-                    // Apply search filter client-side
                     let matchesSearch = true;
                     if (searchTerm) {
                         const itemsMatch = data.items?.some(i => 
@@ -3600,7 +3812,6 @@
                     }
                 });
                 
-                // Pagination
                 const total = sales.length;
                 const start = (page - 1) * HISTORY_LIMIT;
                 const end = start + HISTORY_LIMIT;
@@ -3644,7 +3855,6 @@
                 
                 container.innerHTML = html;
                 
-                // Pagination controls
                 const pagination = document.getElementById('historyPagination');
                 const totalPages = Math.ceil(total / HISTORY_LIMIT);
                 if (totalPages > 1) {
@@ -3700,7 +3910,6 @@
                 const modal = document.getElementById('modalOverlay');
                 const content = document.getElementById('modalContent');
                 
-                // Build items HTML
                 let itemsHTML = '';
                 const items = sale.items || [];
                 items.forEach((item, index) => {
@@ -3806,7 +4015,6 @@
                 <button class="icon-btn" onclick="removeEditItem(this)" style="padding:2px 6px;">❌</button>
             `;
             
-            // Update price on select change
             const select = div.querySelector('.edit-product-select');
             select.addEventListener('change', function() {
                 const price = parseFloat(this.options[this.selectedIndex]?.dataset?.price || 0);
@@ -3850,7 +4058,6 @@
             document.getElementById('editSubtotal').textContent = 'Rs. ' + subtotal.toFixed(2);
             document.getElementById('editFinalTotal').textContent = 'Rs. ' + finalTotal.toFixed(2);
             
-            // Check if any item has no product selected
             let hasEmpty = false;
             items.forEach(item => {
                 const select = item.querySelector('.edit-product-select');
@@ -3931,19 +4138,16 @@
             const finalTotal = Math.max(0, subtotal - discount);
             const profit = finalTotal - totalCost;
             
-            // Check stock availability (excluding original items that will be restored)
             const originalItems = originalSaleData.items || [];
             
             for (const item of newItems) {
                 const p = productsCache.find(p => p.id === item.productId);
                 if (!p) continue;
                 
-                // Calculate stock change: new qty - original qty
                 const originalItem = originalItems.find(i => i.productId === item.productId);
                 const originalQty = originalItem?.quantity || 0;
                 const stockChange = item.quantity - originalQty;
                 
-                // Check if we have enough stock for increase
                 if (stockChange > 0 && p.currentStock < stockChange) {
                     showToast(`Not enough stock for ${item.name}. Available: ${p.currentStock}`, 'warning');
                     return;
@@ -3953,7 +4157,6 @@
             if (!confirm('Save these changes? This will update stock and profit calculations.')) return;
             
             try {
-                // 1. Restore original stock
                 for (const item of originalItems) {
                     const p = productsCache.find(p => p.id === item.productId);
                     if (p) {
@@ -3964,7 +4167,6 @@
                     }
                 }
                 
-                // 2. Apply new stock deductions
                 for (const item of newItems) {
                     const p = productsCache.find(p => p.id === item.productId);
                     if (p) {
@@ -3975,13 +4177,10 @@
                     }
                 }
                 
-                // 3. Handle customer credit changes
                 const oldCustomerId = originalSaleData.customerId;
                 const oldFinalTotal = originalSaleData.finalTotal || originalSaleData.total || 0;
                 
-                // If customer changed or amount changed, update credits
                 if (oldCustomerId && oldCustomerId !== customerId) {
-                    // Remove from old customer
                     const oldCust = customersCache.find(c => c.id === oldCustomerId);
                     if (oldCust) {
                         await db.collection('customers').doc(oldCustomerId).update({
@@ -3995,9 +4194,7 @@
                 if (customerId && paymentMethod === 'credit') {
                     const newCust = customersCache.find(c => c.id === customerId);
                     if (newCust) {
-                        // Check if this customer already had this sale
                         if (oldCustomerId === customerId) {
-                            // Same customer, adjust difference
                             const diff = finalTotal - oldFinalTotal;
                             await db.collection('customers').doc(customerId).update({
                                 totalCredit: Math.max(0, (newCust.totalCredit || 0) + diff),
@@ -4005,7 +4202,6 @@
                                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                             });
                         } else {
-                            // New customer, add full amount
                             await db.collection('customers').doc(customerId).update({
                                 totalCredit: (newCust.totalCredit || 0) + finalTotal,
                                 remainingCredit: (newCust.remainingCredit || 0) + finalTotal,
@@ -4015,7 +4211,6 @@
                     }
                 }
                 
-                // 4. Update the sale record
                 const updateData = {
                     items: newItems,
                     subtotal: subtotal,
@@ -4032,7 +4227,6 @@
                 
                 await db.collection('sales').doc(isEditingSale).update(updateData);
                 
-                // 5. Log stock movements
                 await db.collection('stockMovements').add({
                     type: 'sale_edit',
                     description: `Edited sale ${isEditingSale}`,
@@ -4044,10 +4238,10 @@
                 closeModal();
                 showToast('✅ Sale updated successfully!');
                 
-                // Refresh all data
                 await loadProducts();
                 await loadDashboardData();
                 await loadSalesHistory(currentHistoryPage);
+                refreshInventorySummaries();
                 
                 isEditingSale = null;
                 originalSaleData = null;
@@ -4077,7 +4271,6 @@
                 const items = sale.items || [];
                 const finalTotal = sale.finalTotal || sale.total || 0;
                 
-                // Restore stock
                 for (const item of items) {
                     const p = productsCache.find(p => p.id === item.productId);
                     if (p) {
@@ -4088,7 +4281,6 @@
                     }
                 }
                 
-                // Remove customer credit
                 if (sale.customerId && sale.paymentMethod === 'credit') {
                     const c = customersCache.find(c => c.id === sale.customerId);
                     if (c) {
@@ -4100,7 +4292,6 @@
                     }
                 }
                 
-                // Mark as voided
                 await db.collection('sales').doc(saleId).update({
                     status: 'voided',
                     voidedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -4117,9 +4308,10 @@
                 });
                 
                 showToast('✅ Sale voided. Stock restored.');
-                loadProducts();
-                loadDashboardData();
-                loadSalesHistory(currentHistoryPage);
+                await loadProducts();
+                await loadDashboardData();
+                await loadSalesHistory(currentHistoryPage);
+                refreshInventorySummaries();
                 
             } catch (error) {
                 console.error('Void sale error:', error);
@@ -4333,19 +4525,19 @@
         }
 
         // ============================================================
-        // IMPORT CENTER (Preserved from original)
+        // IMPORT CENTER
         // ============================================================
         function switchImportTab(tab) {
             document.querySelectorAll('.import-tab').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
-            document.getElementById('import' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab').style.display = 'block';
+            const target = document.getElementById('import' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab');
+            if (target) target.style.display = 'block';
             document.querySelectorAll('.tab').forEach(t => {
                 if (t.textContent.toLowerCase().includes(tab.toLowerCase())) t.classList.add('active');
             });
         }
 
-        // Initial Products for import
         const initialProducts = [
             { name: "Heart Plasting Ring", category: "Mobile Accessory", unit: "Piece", packQuantity: 1, purchasePrice: 70, sellingPrice: 100, stock: 4, minStock: 2, supplier: "Asif Mobile" },
             { name: "XTEND XT722", category: "Charger", unit: "Piece", packQuantity: 1, purchasePrice: 460, sellingPrice: 650, stock: 1, minStock: 1, supplier: "Asif Mobile" },
@@ -4407,11 +4599,11 @@
                 <div class="table-container">
                     <div style="padding:16px;">
                         <h3>📋 Import Preview</h3>
-                        <div class="import-summary">
-                            <div class="import-summary-item"><div class="label">Products</div><div class="value">${initialProducts.length}</div></div>
-                            <div class="import-summary-item"><div class="label">Total Stock</div><div class="value">${initialProducts.reduce((sum, p) => sum + p.stock, 0)}</div></div>
-                            <div class="import-summary-item"><div class="label">Total Cost</div><div class="value">Rs. ${totalCost.toFixed(2)}</div></div>
-                            <div class="import-summary-item"><div class="label">New Products</div><div class="value">${initialProducts.filter(p => !productsCache.find(prod => prod.name?.toLowerCase() === p.name?.toLowerCase())).length}</div></div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:12px 0;">
+                            <div class="stat-card"><div class="stat-label">Products</div><div class="stat-value">${initialProducts.length}</div></div>
+                            <div class="stat-card"><div class="stat-label">Total Stock</div><div class="stat-value">${initialProducts.reduce((sum, p) => sum + p.stock, 0)}</div></div>
+                            <div class="stat-card"><div class="stat-label">Total Cost</div><div class="stat-value">Rs. ${totalCost.toFixed(2)}</div></div>
+                            <div class="stat-card"><div class="stat-label">New Products</div><div class="stat-value">${initialProducts.filter(p => !productsCache.find(prod => prod.name?.toLowerCase() === p.name?.toLowerCase())).length}</div></div>
                         </div>
                         <div style="max-height:300px;overflow-y:auto;">
                             <table class="table">
@@ -4460,8 +4652,9 @@
             
             showToast(`✅ ${imported} products imported, ${skipped} skipped (already exist)`);
             document.getElementById('initialImportPreview').style.display = 'none';
-            loadProducts();
-            loadDashboardData();
+            await loadProducts();
+            await loadDashboardData();
+            refreshInventorySummaries();
         }
 
         function getCategoryIcon(category) {
@@ -4480,7 +4673,6 @@
             return icons[category] || '📦';
         }
 
-        // CSV Import
         async function importCSV() {
             const file = document.getElementById('csvFileInput').files[0];
             if (!file) { showToast('Please select a CSV file', 'warning'); return; }
@@ -4522,13 +4714,13 @@
                 }
                 
                 showToast(`✅ ${imported} imported, ${skipped} skipped`);
-                loadProducts();
-                loadDashboardData();
+                await loadProducts();
+                await loadDashboardData();
+                refreshInventorySummaries();
             };
             reader.readAsText(file);
         }
 
-        // JSON Import
         async function importJSON() {
             const input = document.getElementById('jsonInput').value;
             if (!input) { showToast('Please paste JSON data', 'warning'); return; }
@@ -4595,11 +4787,11 @@
             }
             
             showToast(`✅ ${imported} imported, ${skipped} skipped`);
-            loadProducts();
-            loadDashboardData();
+            await loadProducts();
+            await loadDashboardData();
+            refreshInventorySummaries();
         }
 
-        // Manual Add
         document.getElementById('manualProductForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -4629,8 +4821,9 @@
                 await db.collection('products').add(data);
                 showToast('✅ Product added!');
                 this.reset();
-                loadProducts();
-                loadDashboardData();
+                await loadProducts();
+                await loadDashboardData();
+                refreshInventorySummaries();
             } catch (error) {
                 console.error('Manual add error:', error);
                 showToast('Error adding product', 'error');
@@ -4669,7 +4862,6 @@
             
             let html = '';
             filtered.slice(0, 15).forEach(p => {
-                const profit = (p.sellingPrice || 0) - (p.purchasePrice || 0);
                 html += `
                     <div class="search-result-item" onclick="showResearchDetail('${p.id}')">
                         <div>
@@ -4691,23 +4883,32 @@
             document.getElementById('researchResults').classList.remove('show');
             document.getElementById('researchDetail').style.display = 'block';
             
-            const profit = (p.sellingPrice || 0) - (p.purchasePrice || 0);
-            const profitMargin = p.purchasePrice > 0 ? ((profit / p.purchasePrice) * 100).toFixed(1) : 0;
+            const stock = Number(p.currentStock) || 0;
+            const pp = Number(p.purchasePrice) || 0;
+            const sp = Number(p.sellingPrice) || 0;
+            const profit = sp - pp;
+            const profitMargin = pp > 0 ? ((profit / pp) * 100).toFixed(1) : 0;
+            const totalCost = stock * pp;
+            const totalSell = stock * sp;
+            const totalProfit = totalSell - totalCost;
             
             document.getElementById('researchDetailContent').innerHTML = `
                 <h2>${p.icon || '📦'} ${p.name}</h2>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;">
                     <div class="stat-card"><div class="stat-label">Model</div><div class="stat-value" style="font-size:1rem;">${p.model || '—'}</div></div>
                     <div class="stat-card"><div class="stat-label">Category</div><div class="stat-value" style="font-size:1rem;">${p.category || 'General'}</div></div>
-                    <div class="stat-card"><div class="stat-label">Purchase Cost</div><div class="stat-value">Rs. ${(p.purchasePrice || 0).toFixed(2)}</div></div>
-                    <div class="stat-card"><div class="stat-label">Selling Price</div><div class="stat-value">Rs. ${(p.sellingPrice || 0).toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Purchase Cost</div><div class="stat-value">Rs. ${pp.toFixed(2)}</div></div>
+                    <div class="stat-card"><div class="stat-label">Selling Price</div><div class="stat-value">Rs. ${sp.toFixed(2)}</div></div>
                     <div class="stat-card ${profit >= 0 ? 'success' : 'danger'}"><div class="stat-label">Profit Per Unit</div><div class="stat-value">Rs. ${profit.toFixed(2)}</div></div>
                     <div class="stat-card"><div class="stat-label">Profit Margin</div><div class="stat-value">${profitMargin}%</div></div>
-                    <div class="stat-card"><div class="stat-label">Current Stock</div><div class="stat-value">${p.currentStock || 0} ${p.unit || 'pcs'}</div></div>
+                    <div class="stat-card"><div class="stat-label">Current Stock</div><div class="stat-value">${stock} ${p.unit || 'pcs'}</div></div>
                     <div class="stat-card"><div class="stat-label">Supplier</div><div class="stat-value" style="font-size:1rem;">${p.supplier || '—'}</div></div>
+                    <div class="stat-card warning"><div class="stat-label">Total Cost (Stock)</div><div class="stat-value">Rs. ${totalCost.toFixed(2)}</div></div>
+                    <div class="stat-card info"><div class="stat-label">Total Sell Value</div><div class="stat-value">Rs. ${totalSell.toFixed(2)}</div></div>
+                    <div class="stat-card ${totalProfit >= 0 ? 'success' : 'danger'}"><div class="stat-label">Expected Profit</div><div class="stat-value">Rs. ${totalProfit.toFixed(2)}</div></div>
                 </div>
                 ${profit < 0 ? `<div class="warning-message" style="display:block;margin-top:12px;">🔴 LOSS WARNING: Selling below purchase cost!</div>` : 
-                  profit < (p.purchasePrice || 0) * 0.1 ? `<div class="warning-message" style="display:block;margin-top:12px;">⚠️ LOW PROFIT: Less than 10% margin</div>` : ''}
+                  profit < pp * 0.1 ? `<div class="warning-message" style="display:block;margin-top:12px;">⚠️ LOW PROFIT: Less than 10% margin</div>` : ''}
                 <div style="margin-top:12px;">
                     <button class="btn btn-sm btn-outline" onclick="document.getElementById('researchSearch').value='';document.getElementById('researchDetail').style.display='none';">🔙 Back</button>
                 </div>
@@ -4772,28 +4973,18 @@
             }
         }
 
-        // ============================================================
-        // CHECK FOR INITIAL IMPORT
-        // ============================================================
         function checkForInitialImport() {
             if (productsCache.length === 0) {
                 showToast('📥 No products found. Use Import Center to add your stock.', 'warning');
             }
         }
 
-        // ============================================================
-        // INITIALIZE
-        // ============================================================
         console.log('🚀 Smart Shop Manager loaded successfully!');
-        console.log(`📦 ${productsCache.length} products loaded`);
-        console.log(`👥 ${customersCache.length} customers loaded`);
 
-        // Close modals on backdrop click
         document.getElementById('modalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // Close search results on outside click
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-container')) {
                 document.querySelectorAll('.search-results').forEach(el => el.classList.remove('show'));
@@ -4828,18 +5019,25 @@
       if(typeof loadDashboardData==='function') await loadDashboardData();
       await proLoadPayments();
       proRenderStock(); proRenderCustomers(); proRefreshKPIs(); proRefreshReport();
+      if(typeof refreshInventorySummaries==='function') refreshInventorySummaries();
     }catch(e){ console.error('PRO refresh:',e); }
   };
 
   window.proRefreshKPIs = function(){
     const ps=window.productsCache||[];
     const cs=window.customersCache||[];
-    const inventoryValue=ps.reduce((a,p)=>a+(Number(p.currentStock)||0)*(Number(p.purchasePrice)||0),0);
+    let inventoryValue=0, sellingValue=0;
+    ps.forEach(p=>{
+      const stock=Number(p.currentStock)||0;
+      inventoryValue+=stock*(Number(p.purchasePrice)||0);
+      sellingValue+=stock*(Number(p.sellingPrice)||0);
+    });
     const low=ps.filter(p=>(Number(p.currentStock)||0)<=Number(p.minStock??5)).length;
     const due=cs.reduce((a,c)=>a+(Number(c.remainingCredit)||0),0);
     const received=cs.reduce((a,c)=>a+(Number(c.totalPaid)||0),0);
     const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
     set('proInventoryItems',ps.length); set('proInventoryValue',money(inventoryValue));
+    set('proSellingValue',money(sellingValue));
     set('proLowStock',low); set('proTotalDue',money(due)); set('proTotalReceived',money(received));
   };
 
@@ -4852,11 +5050,13 @@
       const match=(p.name||'').toLowerCase().includes(q)||(p.model||'').toLowerCase().includes(q);
       return match && (f==='all'||(f==='low'&&stock<=Number(p.minStock??5)&&stock>0)||(f==='out'&&stock<=0));
     });
-    if(!arr.length){tb.innerHTML='<tr><td colspan="5" class="pro-empty">No products found</td></tr>';return;}
+    if(!arr.length){tb.innerHTML='<tr><td colspan="6" class="pro-empty">No products found</td></tr>';return;}
     tb.innerHTML=arr.map(p=>{
-      const id=esc(p.id), stock=Number(p.currentStock)||0, val=stock*(Number(p.purchasePrice)||0);
+      const id=esc(p.id), stock=Number(p.currentStock)||0;
+      const val=stock*(Number(p.purchasePrice)||0);
+      const sellVal=stock*(Number(p.sellingPrice)||0);
       return `<tr><td>${esc(p.icon||'📦')} ${esc(p.name)}</td><td><strong>${stock}</strong> ${esc(p.unit||'pcs')}</td>
-      <td>${money(p.purchasePrice)}</td><td>${money(val)}</td><td>
+      <td>${money(p.purchasePrice)}</td><td>${money(val)}</td><td>${money(sellVal)}</td><td>
       <button class="btn btn-sm" onclick="proAdjustStock('${id}',1)">+1</button>
       <button class="btn btn-sm btn-outline" onclick="proAdjustStock('${id}',-1)">−1</button>
       <button class="btn btn-sm btn-outline" onclick="proSetStock('${id}')">Set</button></td></tr>`;
@@ -5054,7 +5254,7 @@ body.premium-no-motion *::after{
   45%{transform:translateY(-3px) rotate(-4deg)}
   75%{transform:translateY(1px) rotate(3deg)}
 }
-.stat-card,.quick-action-btn,.chart-card,.table-container,.sale-history-card{
+.stat-card,.quick-action-btn,.chart-card,.table-container,.sale-history-card,.inventory-summary-bar{
   background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018)),var(--bg-card);
   backdrop-filter:blur(14px);
   border-color:rgba(255,255,255,.085);
@@ -5219,24 +5419,6 @@ body.sidebar-collapsed .premium-sidebar-toggle{left:61px;}
 }
 .premium-switch input:checked + .premium-slider{background:#16a34a;box-shadow:0 0 16px rgba(34,197,94,.28)}
 .premium-switch input:checked + .premium-slider::before{transform:translateX(22px)}
-.premium-success-pop{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);
-  z-index:3000;opacity:0;pointer-events:none;
-  padding:24px 30px;border-radius:20px;
-  background:rgba(10,14,23,.94);border:1px solid rgba(34,197,94,.4);
-  box-shadow:0 0 60px rgba(34,197,94,.2);
-  text-align:center;
-}
-.premium-success-pop.show{animation:successPop .9s ease both;}
-@keyframes successPop{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}
-  20%,75%{opacity:1;transform:translate(-50%,-50%) scale(1)}
-  100%{opacity:0;transform:translate(-50%,-50%) scale(1.04)}
-}
-.premium-success-pop .check{
-  font-size:3rem;display:block;
-  filter:drop-shadow(0 0 14px rgba(34,197,94,.6));
-}
 @media(max-width:768px){
   .premium-sidebar-toggle{display:none}
   body.sidebar-collapsed .sidebar{display:none}
@@ -5296,20 +5478,6 @@ body.sidebar-collapsed .premium-sidebar-toggle{left:61px;}
     document.body.appendChild(b);
   }
 
-  function addSuccessOverlay(){
-    if(document.querySelector('.premium-success-pop')) return;
-    const p=document.createElement('div');
-    p.className='premium-success-pop';
-    p.id='premiumSuccessPop';
-    p.innerHTML='<span class="check">✓</span><strong>Payment Successful</strong><div style="margin-top:4px;color:#9ca3af;font-size:.82rem">Transaction saved successfully</div>';
-    document.body.appendChild(p);
-  }
-
-  window.premiumPaymentSuccess=function(){
-    const p=$('premiumSuccessPop'); if(!p)return;
-    p.classList.remove('show'); void p.offsetWidth; p.classList.add('show');
-  };
-
   function addRipples(){
     document.addEventListener('click',function(e){
       const target=e.target.closest('.btn,.icon-btn,.quick-action-btn,.mobile-nav-item');
@@ -5330,7 +5498,7 @@ body.sidebar-collapsed .premium-sidebar-toggle{left:61px;}
 
   function animatedNumbers(){
     if(document.body.classList.contains('premium-no-motion')) return;
-    const els=[...document.querySelectorAll('.stat-value,.pro-kpi .v')];
+    const els=[...document.querySelectorAll('.inv-value,.stat-value,.pro-kpi .v')];
     els.forEach(el=>{
       if(el.dataset.premiumAnimated==='1') return;
       const text=el.textContent.trim();
@@ -5378,7 +5546,6 @@ body.sidebar-collapsed .premium-sidebar-toggle{left:61px;}
     addPremiumWelcome();
     addSidebarToggle();
     addWhatsApp();
-    addSuccessOverlay();
     addRipples();
     installAnimationSetting();
     setTimeout(animatedNumbers,500);
